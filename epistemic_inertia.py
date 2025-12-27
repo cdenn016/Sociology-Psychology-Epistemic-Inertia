@@ -251,10 +251,14 @@ def compute_epistemic_inertia(system: MultiAgentSystem) -> np.ndarray:
     Epistemic inertia measures how resistant each agent is to belief change.
     High inertia = agent is hard to persuade.
 
+    The complete 4-term formula:
+        M_i = Λ_p + Λ_o + Σ_k β_ik Ω_ik Λ_q,k Ω_ik^T + (Σ_j β_ji) Λ_q,i
+
     Components of inertia:
-    1. Prior precision: Strong priors → high inertia
-    2. Observation precision: Confident observations → high inertia
-    3. Social connections: Many influential connections → high inertia
+    1. Prior precision Λ_p = Σ_p^{-1}: Strong priors → high inertia
+    2. Observation precision Λ_o = R_obs^{-1}: Confident observations → high inertia
+    3. Outgoing attention Σ_k β_ik Ω_ik Λ_q,k Ω_ik^T: Listening to confident others
+    4. Incoming attention (Σ_j β_ji) Λ_q,i: Being listened to stabilizes beliefs
 
     Args:
         system: MultiAgentSystem to analyze
