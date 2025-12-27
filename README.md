@@ -55,24 +55,40 @@ print(f"Final polarization: {history.compute_polarization():.3f}")
 
 ## The Core Insight: Epistemic Inertia
 
-The key theoretical contribution is the **mass matrix** (epistemic inertia):
+The key theoretical contribution is the **mass matrix** (epistemic inertia), a complete 4-term formula:
 
 ```
-M_i = Σ_p^{-1} + Σ_obs^{-1} + Σ_j β_ij · Σ_j^{-1}
-      ^^^^^^^^   ^^^^^^^^^^   ^^^^^^^^^^^^^^^^^^^^^^^
-      Prior      Observation  Social
-      precision  precision    influence
+M_i = Λ_p + Λ_o + Σ_k β_ik Ω_ik Λ_q,k Ω_ik^T + (Σ_j β_ji) Λ_q,i
+
+Where:
+    Λ_p = Σ_p^{-1}         Prior precision (ideological commitment)
+    Λ_o = R_obs^{-1}       Observation precision (evidential confidence)
+    β_ik                   Outgoing attention (who I listen to)
+    β_ji                   Incoming attention (who listens to me)
+    Ω_ik                   Parallel transport (frame alignment)
+    Λ_q,k = Σ_q,k^{-1}     Belief precision of agent k
 ```
+
+**The four terms represent:**
+
+| Term | Formula | Sociological Meaning |
+|------|---------|---------------------|
+| **Prior inertia** | Σ_p^{-1} | Strong ideology → hard to change |
+| **Observation inertia** | R_obs^{-1} | Confident in evidence → hard to change |
+| **Outgoing social** | Σ_k β_ik Ω_ik Λ_q,k Ω_ik^T | Listening to confident others → inherit their inertia |
+| **Incoming social** | (Σ_j β_ji) Λ_q,i | Being listened to → my own beliefs stabilized |
 
 **High inertia agents** (large M_i):
 - Have strong priors (ideologically committed)
 - Have high-confidence observations (experts)
-- Have many influential connections (high status)
+- Listen to confident others (inherit inertia)
+- Are listened to by many (social status stabilizes beliefs)
 
 **These agents resist belief change**, matching empirical observations:
 - Experts update more slowly than novices
 - High-status individuals resist social pressure
 - Ideologically committed individuals show confirmation bias
+- Well-connected individuals have more stable beliefs
 
 ## Module Structure
 
