@@ -35,12 +35,12 @@ Key Modules:
 - analysis: Visualization and analysis tools
 - experiments: Empirical validation on real data
 
-Author: Chris & Christine Denniston
+Author: Robert C. Dennis
 Date: 2025
 """
 
 __version__ = "1.0.0"
-__author__ = "Chris Denniston & Christine Denniston"
+__author__ = "Robert C. Dennis"
 
 # Re-export simplified API
 from epistemic_inertia import (
