@@ -3,82 +3,86 @@
 Math Utilities Module
 =====================
 
-Mathematical utilities for both NumPy (CPU) and PyTorch (GPU) backends.
+Mathematical utilities for the Variational Free Energy framework.
 
-NumPy (CPU):
-    - transport: Gauge transport operators
+Core utilities:
+    - transport: Gauge transport operators (parallel transport Ω_ij)
     - push_pull: Gaussian push-pull operations
-    - sigma: Covariance utilities
+    - sigma: Covariance field initialization
     - generators: SO(3) Lie algebra generators
+    - numerical_utils: KL divergence, softmax, entropy
+    - fisher_metric: Information-geometric Fisher metric
+    - so3_frechet: Fréchet mean on SO(3) manifold
 
-PyTorch (GPU):
-    - migration: NumPy <-> Tensor conversion utilities
-    - batched_ops: Compiled batched operations for GPU
-    - torch_backend: PyTorch backend utilities
+Sociological interpretation:
+    - Transport: How beliefs are compared across different cultural frames
+    - Push/pull: How agents incorporate information from others
+    - Generators: Orientation of agent's reference frame
 """
 
-# NumPy utilities
-from .transport import compute_transport as np_transport_operator
-from .push_pull import push_gaussian as np_transport_gaussian
-from .generators import generate_so3_generators
-from .numerical_utils import safe_inv
-
-# Simple NumPy utilities (not in separate module)
 import numpy as np
+
+# Core utilities
+from .transport import compute_transport as transport_operator
+from .push_pull import push_gaussian as transport_gaussian, GaussianDistribution
+from .generators import generate_so3_generators
+from .numerical_utils import (
+    safe_inv,
+    kl_gaussian,
+    softmax_numerically_stable,
+    entropy_gaussian,
+)
+from .sigma import CovarianceFieldInitializer
+from .fisher_metric import compute_fisher_matrix
+from .so3_frechet import average_gauge_frames_so3
+
 
 def symmetrize(M: np.ndarray) -> np.ndarray:
     """Symmetrize a matrix: (M + M^T) / 2"""
     return 0.5 * (M + np.swapaxes(M, -1, -2))
 
-def np_ensure_spd(Sigma: np.ndarray, eps: float = 1e-6) -> np.ndarray:
-    """Ensure matrix is symmetric positive definite (NumPy version)."""
+
+def ensure_spd(Sigma: np.ndarray, eps: float = 1e-6) -> np.ndarray:
+    """
+    Ensure matrix is symmetric positive definite.
+
+    In sociological terms: ensures belief uncertainty is well-defined
+    (you can't have negative uncertainty about anything).
+
+    Args:
+        Sigma: Covariance matrix
+        eps: Small regularization constant
+
+    Returns:
+        SPD covariance matrix
+    """
     Sigma = symmetrize(Sigma)
     K = Sigma.shape[-1]
     Sigma = Sigma + eps * np.eye(K, dtype=Sigma.dtype)
     return Sigma
 
-# PyTorch utilities
-from .migration import (
-    numpy_to_tensor,
-    tensor_to_numpy,
-    create_tensor_agent_from_agent,
-    create_tensor_system_from_system,
-    get_device,
-    get_device_info,
-)
-from .batched_ops import (
-    batched_kl_divergence,
-    batched_transport_operator,
-    batched_transport_gaussian,
-    compute_all_pairwise_kl,
-    compute_softmax_attention,
-    ensure_spd,
-    project_to_principal_ball,
-    is_compiled,
-)
 
 __all__ = [
-    # NumPy
-    'np_transport_operator',
-    'np_transport_gaussian',
+    # Core transport
+    'transport_operator',
+    'transport_gaussian',
+    'GaussianDistribution',
+
+    # SO(3) operations
     'generate_so3_generators',
+    'average_gauge_frames_so3',
+
+    # Numerical utilities
     'safe_inv',
+    'kl_gaussian',
+    'softmax_numerically_stable',
+    'entropy_gaussian',
+
+    # Covariance utilities
+    'CovarianceFieldInitializer',
     'symmetrize',
-    'np_ensure_spd',
-    # PyTorch migration
-    'numpy_to_tensor',
-    'tensor_to_numpy',
-    'create_tensor_agent_from_agent',
-    'create_tensor_system_from_system',
-    'get_device',
-    'get_device_info',
-    # PyTorch batched ops
-    'batched_kl_divergence',
-    'batched_transport_operator',
-    'batched_transport_gaussian',
-    'compute_all_pairwise_kl',
-    'compute_softmax_attention',
     'ensure_spd',
-    'project_to_principal_ball',
-    'is_compiled',
+
+    # Information geometry
+    'compute_fisher_matrix',
 ]
