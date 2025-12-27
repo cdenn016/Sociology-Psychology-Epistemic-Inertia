@@ -439,7 +439,149 @@ class TrainingConfig:
     checkpoint_dir: Optional[Path] = None
 
     save_checkpoints: bool = False
-    
 
 
+# =============================================================================
+# Sociology/Psychology Presets
+# =============================================================================
 
+def get_consensus_config() -> Tuple[AgentConfig, SystemConfig, TrainingConfig]:
+    """
+    Configuration for consensus formation dynamics.
+
+    Models: Convergent opinion dynamics where agents reach agreement.
+    Expected outcome: Rapid convergence to a shared belief.
+
+    Sociological applications:
+    - Groupthink formation
+    - Conformity under social pressure
+    - Expert consensus emergence
+    """
+    agent = AgentConfig(
+        K=3,
+        mu_scale=0.1,
+        sigma_scale=0.2,
+        lr_mu_q=0.1,
+        lr_sigma_q=0.01,
+    )
+    system = SystemConfig(
+        lambda_self=1.0,
+        lambda_belief_align=0.8,
+        lambda_prior_align=0.1,
+        kappa_beta=1.0,
+    )
+    training = TrainingConfig(
+        n_steps=200,
+        lr_mu_q=0.1,
+        lr_sigma_q=0.01,
+    )
+    return agent, system, training
+
+
+def get_polarization_config() -> Tuple[AgentConfig, SystemConfig, TrainingConfig]:
+    """
+    Configuration for polarization dynamics.
+
+    Models: Opinion polarization where groups form and persist.
+    Expected outcome: Two or more stable opinion clusters.
+
+    Sociological applications:
+    - Political polarization
+    - In-group/out-group dynamics
+    - Echo chamber formation
+    """
+    agent = AgentConfig(
+        K=3,
+        mu_scale=1.0,
+        sigma_scale=0.3,
+        lr_mu_q=0.05,
+        lr_sigma_q=0.005,
+    )
+    system = SystemConfig(
+        lambda_self=1.0,
+        lambda_belief_align=0.3,
+        lambda_prior_align=0.5,
+        kappa_beta=0.5,  # Lower temperature = sharper attention
+    )
+    training = TrainingConfig(
+        n_steps=300,
+        lr_mu_q=0.05,
+        lr_sigma_q=0.005,
+    )
+    return agent, system, training
+
+
+def get_expert_novice_config() -> Tuple[AgentConfig, SystemConfig, TrainingConfig]:
+    """
+    Configuration for expert-novice interaction dynamics.
+
+    Models: How experts influence novices and vice versa.
+    Expected outcome: Novices converge toward expert beliefs.
+
+    Sociological applications:
+    - Expert authority and influence
+    - Knowledge diffusion
+    - Epistemic deference
+    """
+    agent = AgentConfig(
+        K=3,
+        mu_scale=0.3,
+        sigma_scale=0.5,  # Varies per agent
+        lr_mu_q=0.08,
+        lr_sigma_q=0.008,
+    )
+    system = SystemConfig(
+        lambda_self=1.0,
+        lambda_belief_align=0.5,
+        lambda_prior_align=0.4,
+        kappa_beta=1.0,
+    )
+    training = TrainingConfig(
+        n_steps=250,
+        lr_mu_q=0.08,
+        lr_sigma_q=0.008,
+    )
+    return agent, system, training
+
+
+def get_backfire_config() -> Tuple[AgentConfig, SystemConfig, TrainingConfig]:
+    """
+    Configuration for backfire effect dynamics.
+
+    Models: Situations where presenting contrary evidence strengthens
+    existing beliefs rather than changing them.
+    Expected outcome: Beliefs may strengthen despite contrary evidence.
+
+    Psychological applications:
+    - Confirmation bias
+    - Backfire effect
+    - Motivated reasoning
+    """
+    agent = AgentConfig(
+        K=3,
+        mu_scale=0.5,
+        sigma_scale=0.1,  # Very confident
+        lr_mu_q=0.02,
+        lr_sigma_q=0.002,
+    )
+    system = SystemConfig(
+        lambda_self=1.0,
+        lambda_belief_align=0.1,  # Low social influence
+        lambda_prior_align=0.9,   # Strong prior anchoring
+        kappa_beta=0.3,  # Very selective attention
+    )
+    training = TrainingConfig(
+        n_steps=200,
+        lr_mu_q=0.02,
+        lr_sigma_q=0.002,
+    )
+    return agent, system, training
+
+
+# Export preset functions
+SOCIOLOGY_PRESETS = {
+    'consensus': get_consensus_config,
+    'polarization': get_polarization_config,
+    'expert_novice': get_expert_novice_config,
+    'backfire': get_backfire_config,
+}
