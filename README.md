@@ -167,10 +167,10 @@ pip install requests pandas
 If you use this framework, please cite:
 ```bibtex
 @software{epistemic_inertia2025,
-  author = {Denniston, Chris and Denniston, Christine},
+  author = {Dennis, Robert C.},
   title = {Epistemic Inertia: A Variational Free Energy Framework},
   year = {2025},
-  url = {https://github.com/...}
+  url = {https://github.com/cdenn016/Sociology-Psychology-Epistemic-Inertia}
 }
 ```
 

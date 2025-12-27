@@ -41,7 +41,7 @@ Key Concepts:
 - **Epistemic inertia**: M_i - how resistant agent i is to belief change
 - **Free energy**: S - total "cognitive dissonance" in the system
 
-Author: Chris & Christine Denniston
+Author: Robert C. Dennis
 Date: December 2025
 """
 
