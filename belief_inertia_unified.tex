@@ -1952,8 +1952,6 @@ z_{ik} \in \mathbb{R}^{d}
 \end{equation}
 The variable $z_{ik}$ represents what agent $i$ believes agent $k$'s belief looks like after transporting $k$'s belief into $i$'s gauge frame. These auxiliary variables serve as latent mediators that, when integrated out, yield the effective pairwise coupling between agents.
 
-This construction guarantees a normalized joint distribution by design, in contrast to unnormalized Markov random fields of the form $p(\{q_i\}) \propto \exp[-\sum_{ik} \psi_{ik}(q_i, q_k)]$ where the partition function is generally intractable.
-
 \subsection{The Product-of-Gaussians Construction}
 
 Each agreement variable $z_{ik}$ is drawn from a product of two Gaussians that simultaneously constrain it to match both agent $i$'s belief and the gauge-transported belief of agent $k$:
@@ -1962,20 +1960,25 @@ p(z_{ik} \mid \mu_i, \mu_k) \propto \mathcal{N}(z_{ik}; \mu_i, \Lambda_{ik}^{-1}
 \end{equation}
 where $\Lambda_{ik} \succ 0$ is the alignment precision matrix and $\Omega_{ik} \in \mathrm{SO}(d)$ is the gauge transport operator from agent $k$'s frame to agent $i$'s frame.
 
-The full joint generative model over all belief means and agreement variables is:
+Crucially, when we integrate out the agreement variable $z_{ik}$, the normalizing constant depends on $(\mu_i, \mu_k)$. Using the standard result for products of Gaussians:
 \begin{equation}
-p(\{\mu_i\}, \{z_{ik}\}) = \left[\prod_i p_i(\mu_i)\right] \times \left[\prod_{i,k} \mathcal{N}(z_{ik}; \mu_i, \Lambda_{ik}^{-1}) \cdot \mathcal{N}(z_{ik}; \Omega_{ik}\mu_k, \Lambda_{ik}^{-1})\right]
+\int \mathcal{N}(z; a, \Sigma) \cdot \mathcal{N}(z; b, \Sigma) \, dz = \mathcal{N}(a; b, 2\Sigma) \propto \exp\left(-\frac{1}{4}(a-b)^\top\Sigma^{-1}(a-b)\right)
 \end{equation}
-where $p_i(\mu_i) = \mathcal{N}(\mu_i; \bar{\mu}_i, \bar{\Sigma}_i)$ is agent $i$'s local prior. This joint distribution is properly normalized since each factor is a normalized Gaussian and the agreement variables mediate between disjoint variable sets.
 
-\subsection{Integration Yields KL Coupling}
+This induces an effective coupling between agents. The marginal prior over belief means, after integrating out all agreement variables, takes the form:
+\begin{equation}
+p(\{\mu_i\}) \propto \left[\prod_i p_i(\mu_i)\right] \cdot \exp\left(-\frac{1}{4}\sum_{i,k}(\mu_i - \Omega_{ik}\mu_k)^\top\Lambda_{ik}(\mu_i - \Omega_{ik}\mu_k)\right)
+\end{equation}
+where $p_i(\mu_i) = \mathcal{N}(\mu_i; \bar{\mu}_i, \bar{\Sigma}_i)$ is agent $i$'s local prior. The quadratic terms in the exponential encode pairwise alignment costs, with the factor of $1/4$ arising directly from the Gaussian product formula. This construction yields tractable quadratic potentials, in contrast to general unnormalized Markov random fields where partition functions are intractable.
 
-Under a mean-field posterior approximation $q(\{\mu_i\}) = \prod_i q_i(\mu_i)$ with Gaussian factors $q_i = \mathcal{N}(\mu_i; \mu_{q,i}, \Sigma_{q,i})$, the variational free energy takes the form:
+\subsection{Variational Free Energy}
+
+Under a mean-field posterior approximation $q(\{\mu_i\}) = \prod_i q_i(\mu_i)$ with Gaussian factors $q_i = \mathcal{N}(\mu_i; \mu_{q,i}, \Sigma_{q,i})$, the variational free energy is:
 \begin{equation}
 \mathcal{F} = \mathbb{E}_q[\log q] - \mathbb{E}_q[\log p(\{\mu_i\})] - \mathbb{E}_q[\log p(o \mid \{\mu_i\})]
 \end{equation}
 
-Expanding using the joint model and integrating out the agreement variables yields:
+Using the marginal prior from the previous section, we have $-\log p(\{\mu_i\}) = \sum_i [-\log p_i(\mu_i)] + \frac{1}{4}\sum_{i,k}(\mu_i - \Omega_{ik}\mu_k)^\top\Lambda_{ik}(\mu_i - \Omega_{ik}\mu_k) + \text{const}$. Taking expectations:
 \begin{equation}
 \mathcal{F} = \sum_i D_{\mathrm{KL}}(q_i \| p_i) + \frac{1}{4}\sum_{i,k} \mathbb{E}_{q_i q_k}\left[(\mu_i - \Omega_{ik}\mu_k)^\top \Lambda_{ik} (\mu_i - \Omega_{ik}\mu_k)\right] - \mathbb{E}_q[\log p(o \mid \{\mu_i\})]
 \end{equation}
