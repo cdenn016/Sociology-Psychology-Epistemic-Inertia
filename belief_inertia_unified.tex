@@ -179,53 +179,18 @@ This is analogous to proper time in special relativity, where different observer
 \label{sec:hamiltonian}
 %==============================================================================
 
-The proper time metric introduced above equips belief space with a natural notion of kinetic energy: $T = \frac{1}{2}\dot{\mu}^T\mathbf{M}\dot{\mu}$ where we derive the form of $\mathbf{M}$ below. Combined with the free energy as potential, this suggests a Hamiltonian formulation where precision plays the role of an inertial mass. We adopt this as an ansatz which is not derived from first principles, but motivated by the geometric structure and its empirical consequences.
+The proper time metric introduced above equips belief space with a natural notion of kinetic energy: $T = \frac{1}{2}\dot{\mu}^T \mathbf{M} \dot{\mu}$ where $\mathbf{M}$ is derived below. Combined with the free energy as potential, this suggests a Hamiltonian formulation where precision plays the role of inertial mass. We adopt this as an ansatz not derived from first principles, but motivated by the geometric structure and its empirical consequences.
 
-
-%------------------------------------------------------------------------------
-\subsection{The Adiabatic Approximation}
-%------------------------------------------------------------------------------
-
-Cognitive systems operate hierarchically across multiple timescales. Beliefs generally update rapidly in response to sensory evidence when compared to priors which encode stable world-views, personality traits, or cultural assumptions.  These evolve slowly through learning and interaction. We formalize this separation via the adiabatic approximation
-
-Let the prior parameters $(\bar{\mu}_i, \bar{\Sigma}_i)$ evolve on a slow timescale $T$, while beliefs $(\mu_i, \Sigma_i)$ evolve on a fast timescale $t$, with $\epsilon = t/T \ll 1$. 
-
-
-In the quasi-static limit $\epsilon \to 0$, priors $(\bar{\mu}_i, \bar{\Sigma}_i)$ are treated as fixed external parameters, only beliefs $(\mu_i, \Sigma_i)$ are dynamical variables, and the configuration space reduces to $\mathcal{Q} = \prod_i [\mathbb{R}^d \times \mathrm{SPD}(d)]$. This approximation captures the phenomenology of rapid belief inference against a stable anchor of learned expectations and behaviors. The slow drift of priors toward equilibrated beliefs constitutes learning.
-
-%------------------------------------------------------------------------------
-\subsection{State Space and Phase Space}
-%------------------------------------------------------------------------------
-
-Each agent $i$ maintains a Gaussian belief $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ anchored to a fixed prior $p_i = \mathcal{N}(\bar{\mu}_i, \bar{\Sigma}_i)$. The dynamical state vector is then
-
-\begin{equation}
-\xi_i = (\mu_i, \Sigma_i) \in \mathbb{R}^d \times \mathrm{SPD}(d)
-\end{equation}
-
-with dimension $d + \frac{d(d+1)}{2} = \frac{d(d+3)}{2}$ per agent.
-
-The full system for $N$ agents is $\xi = (\xi_1, \ldots, \xi_N)$, living on the product manifold
-
-\begin{equation}
-\mathcal{Q} = \prod_{i=1}^N \left[\mathbb{R}^d \times \mathrm{SPD}(d)\right]
-\end{equation}
-
-To formulate Hamiltonian mechanics, we introduce \textbf{conjugate momenta}
-
-\begin{align}
-\pi_i^\mu &\in \mathbb{R}^d & &\text{(momentum conjugate to mean)} \\
-\Pi_i^\Sigma &\in \mathrm{Sym}(d) & &\text{(momentum conjugate to covariance)}
-\end{align}
-
-The phase space is then the cotangent bundle $T^*\mathcal{Q}$ where $(\xi, \pi) = (\mu, \Sigma, \pi^\mu, \Pi^\Sigma)$.
+Under the adiabatic approximation where priors evolve slowly relative to beliefs 
+(see Appendix~\ref{app:hamiltonian} for the complete phase space construction), 
+the mass matrix takes a remarkably interpretable form.
 
 
 %------------------------------------------------------------------------------
 \subsection{Mass as Fisher Information: The Complete Derivation}
 %------------------------------------------------------------------------------
 
-The central result enabling Hamiltonian mechanics on belief space is that the effective cognitive inertia — the resistance to belief change — emerges as the total Fisher information from all sources of constraint. We derive this explicitly from the variational free energy functional.
+Our central result enabling Hamiltonian mechanics on belief space is that the effective cognitive inertia (the resistance to belief change) emerges as the total Fisher information from all sources of constraint. We derive this explicitly from the variational free energy functional.
 
 \subsubsection{The Variational Free Energy}
 
