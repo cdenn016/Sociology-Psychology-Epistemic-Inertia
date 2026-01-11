@@ -1299,9 +1299,9 @@ Consider an infinitesimal variation of the connection:
 
 The variation of transported precision is:
 \begin{equation}
-\delta\tilde{\Lambda}_k = \omega_{ik}\tilde{\Lambda}_k + \tilde{\Lambda}_k\omega_{ik}^T = [\omega_{ik}, \tilde{\Lambda}_k]_+
+\delta\tilde{\Lambda}_k = \omega_{ik}\tilde{\Lambda}_k + \tilde{\Lambda}_k\omega_{ik}^T = [\omega_{ik}, \tilde{\Lambda}_k]
 \end{equation}
-where $[\cdot,\cdot]_+$ is the anticommutator (since $\omega_{ik}$ is antisymmetric).
+where this equals the commutator since $\omega_{ik}^T = -\omega_{ik}$ (antisymmetry).
 
 %------------------------------------------------------------------------------
 \subsection{Variation of the Mass Matrix Under Connection Changes}
@@ -1310,7 +1310,7 @@ where $[\cdot,\cdot]_+$ is the anticommutator (since $\omega_{ik}$ is antisymmet
 \subsubsection{Diagonal Block Variation}
 
 \begin{equation}
-\delta[\mathbf{M}^\mu]_{ii} = \sum_k \beta_{ik} \, \delta\tilde{\Lambda}_{qk} = \sum_k \beta_{ik} \, [\omega_{ik}, \tilde{\Lambda}_{qk}]_+
+\delta[\mathbf{M}^\mu]_{ii} = \sum_k \beta_{ik} \, \delta\tilde{\Lambda}_{qk} = \sum_k \beta_{ik} \, [\omega_{ik}, \tilde{\Lambda}_{qk}]
 \end{equation}
 
 \subsubsection{Off-Diagonal Block Variation}
@@ -1318,12 +1318,12 @@ where $[\cdot,\cdot]_+$ is the anticommutator (since $\omega_{ik}$ is antisymmet
 \begin{align}
 \delta[\mathbf{M}^\mu]_{ik} &= -\beta_{ik} \, \delta(\Omega_{ik}\Lambda_{qk}) - \beta_{ki} \, \delta(\Lambda_{qi}\Omega_{ki}^T) \nonumber\\
 &= -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{qk} - \beta_{ki}\Lambda_{qi}(\omega_{ki}\Omega_{ki})^T \nonumber\\
-&= -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{qk} + \beta_{ki}\Lambda_{qi}\Omega_{ki}^T\omega_{ki}^T
+&= -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{qk} - \beta_{ki}\Lambda_{qi}\Omega_{ki}^T\omega_{ki}^T
 \end{align}
 
 Using $\omega_{ki}^T = -\omega_{ki}$ (antisymmetry):
 \begin{equation}
-\boxed{\delta[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{qk} - \beta_{ki}\Lambda_{qi}\Omega_{ki}^T\omega_{ki}}
+\boxed{\delta[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{qk} + \beta_{ki}\Lambda_{qi}\Omega_{ki}^T\omega_{ki}}
 \end{equation}
 
 %------------------------------------------------------------------------------
@@ -1452,7 +1452,7 @@ Each agent $i$ maintains a belief distribution $q_i = \mathcal{N}(\mu_i, \Sigma_
 \tilde{\Lambda}_{qk} &= \Omega_{ik}\Lambda_{qk}\Omega_{ik}^T & &\text{(transported precision)}
 \end{align}
 %
-where $\Omega_{ik} \in \mathrm{SO}(d)$ is the gauge transport operator from agent $k$'s frame to agent $i$'s frame, given by $\Omega_{ik} = e^{\phi_i}e^{-\phi_j}$ with $\phi_i \in \mathfrak{so}(d)$.
+where $\Omega_{ik} \in \mathrm{SO}(d)$ is the gauge transport operator from agent $k$'s frame to agent $i$'s frame, given by $\Omega_{ik} = e^{\phi_i}e^{-\phi_k}$ with $\phi_i \in \mathfrak{so}(d)$.
 
 %-----------------------------------------------------------------------
 \subsection{The Extended Free Energy Functional}
