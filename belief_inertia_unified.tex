@@ -179,7 +179,7 @@ This is analogous to proper time in special relativity, where different observer
 \label{sec:hamiltonian}
 %==============================================================================
 
-The proper time metric introduced above equips belief space with a natural notion of kinetic energy: $T = \frac{1}{2}\dot{\mu}^T \mathbf{M} \dot{\mu}$ where $\mathbf{M}$ is derived below. Combined with the free energy as potential, this suggests a Hamiltonian formulation where precision plays the role of inertial mass. We adopt this as an ansatz not derived from first principles, but motivated by the geometric structure and its empirical consequences.
+The proper time metric introduced above equips belief space with a natural notion of kinetic energy: $T = \frac{1}{2}\dot{\mu}^T \mathbf{M} \dot{\mu}$ where $\mathbf{M}$ is derived below. Combined with the free energy as potential, this suggests a Hamiltonian formulation where precision plays the role of inertial mass. We adopt this as an ansatz (not derived from first principles) motivated by the geometric structure and its empirical consequences.
 
 Under the adiabatic approximation where priors evolve slowly relative to beliefs 
 (see Appendix~\ref{app:hamiltonian} for the complete phase space construction), 
@@ -201,6 +201,7 @@ F = \underbrace{\sum_i D_{\mathrm{KL}}(q_i \| p_i)}_{\text{complexity}} - \under
 \end{equation}
 
 where $q_i$ is agent $i$'s posterior belief, $p_i$ is agent $i$'s prior, $p(o_i|c_i)$ is the observation likelihood with hidden state $c_i$, $\Omega_{ik}\cdot q_k$ is neighbor $k$'s belief transported into agent $i$'s reference frame, and $\beta_{ik}$ is the attention-weighted coupling strength. Denoting the full state vector $\xi = (\mu_1, \ldots, \mu_N, \Sigma_1, \ldots, \Sigma_N)$, the mass matrix is the Hessian of this free energy:
+
 \begin{equation}
 \mathbf{M} = \frac{\partial^2 F}{\partial\xi\partial\xi^\top}
 \end{equation}
