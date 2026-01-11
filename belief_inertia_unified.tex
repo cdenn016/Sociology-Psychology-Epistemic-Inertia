@@ -210,7 +210,8 @@ This Hessian defines the effective mass matrix $\mathbf{M}$ for belief dynamics.
 
 \subsubsection{Contribution 1: Prior Precision}
 
-The complexity cost $D_{\mathrm{KL}}(q_i \| p_i)$ penalizes deviation from the prior. Its Hessian with respect to the mean yields:
+The complexity cost $D_{\mathrm{KL}}(q_i \| p_i)$ penalizes deviation from the prior. Its Hessian with respect to the mean yields
+
 \begin{equation}
 \frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} D_{\mathrm{KL}}(q_i \| p_i) = \bar{\Sigma}_{p_i}^{-1} \equiv \bar{\Lambda}_{p_i}
 \end{equation}
@@ -252,13 +253,13 @@ M_i = \underbrace{\bar{\Lambda}_{p_i}}_{\substack{\text{prior} \\ \text{precisio
 }
 \end{equation}
 
-This four-part structure has transparent physical meaning. The term $\bar{\Lambda}_{p_i}$ represents \textbf{prior inertia}, the resistance arising from the cost of deviating from deep expectations. The term $\Lambda_{o_i}$ represents \textbf{sensory inertia}, grounding through observation whereby precise senses anchor beliefs. The term $\sum_k \beta_{ik}\tilde{\Lambda}_{q_k}$ represents \textbf{incoming social inertia}, the effect of being pulled toward confident neighbors. Finally, the term $\sum_j \beta_{ji}\Lambda_{q_i}$ represents \textbf{outgoing social inertia}, the recoil from exerting influence on others.
+This four-part structure has transparent intuitive meaning. The term $\bar{\Lambda}_{p_i}$ represents \textbf{prior inertia}, the resistance arising from the cost of deviating from deep expectations. The term $\Lambda_{o_i}$ represents \textbf{sensory inertia}, grounding through observation whereby precise senses anchor beliefs. The term $\sum_k \beta_{ik}\tilde{\Lambda}_{q_k}$ represents \textbf{incoming social inertia}, the effect of being pulled toward confident neighbors. Finally, the term $\sum_j \beta_{ji}\Lambda_{q_i}$ represents \textbf{outgoing social inertia}, the recoil from exerting influence on others.
 
-\subsubsection{Physical Interpretation}
+\subsubsection{Interpretation}
 
 The identification of mass with total Fisher information yields several insights:
 
-\paragraph{Sensory anchoring.} Agents with precise observations ($\Lambda_o$ large) have greater belief inertia. This seems counterintuitive; shouldn't better data make beliefs more flexible? The resolution is that precise observations provide strong evidence for the current state. An agent with low-noise sensors has high Fisher information, meaning small belief changes would dramatically worsen the likelihood fit. The agent is anchored by its own sensory precision. This predicts that experts with reliable instrumentation become harder to move than novices relying on noisy signals---not because the expert is stubborn, but because their high-fidelity observations geometrically constrain the belief manifold. The very precision that makes expertise valuable simultaneously makes it rigid.
+\paragraph{Sensory anchoring.} Agents with precise observations ($\Lambda_o$ large) have greater belief inertia. This seems counterintuitive; shouldn't better data make beliefs more flexible? The resolution is that precise observations provide strong evidence for the current state. An agent with low-noise sensors has high Fisher information, meaning small belief changes would dramatically worsen the likelihood fit. The agent is anchored by its own sensory precision. This predicts that experts with reliable instrumentation become harder to move than novices relying on noisy signals; not because the expert is stubborn, but because their high-fidelity observations geometrically constrain the belief manifold. The very precision that makes expertise valuable simultaneously makes it rigid.
 
  
 
