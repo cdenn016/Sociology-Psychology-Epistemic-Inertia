@@ -239,7 +239,7 @@ This Hessian defines the effective mass matrix $\mathbf{M}$ for belief dynamics.
 
 The complexity cost $D_{\mathrm{KL}}(q_i \| p_i)$ penalizes deviation from the prior. Its Hessian with respect to the mean yields:
 \begin{equation}
-\frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} D_{\mathrm{KL}}(q_i \| p_i) = \bar{\Sigma}_{pi}^{-1} \equiv \bar{\Lambda}_{pi}
+\frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} D_{\mathrm{KL}}(q_i \| p_i) = \bar{\Sigma}_{p_i}^{-1} \equiv \bar{\Lambda}_{p_i}
 \end{equation}
 
 This is the prior precision, i.e. resistance to deviating from innate or learned expectations.
@@ -249,24 +249,24 @@ This is the prior precision, i.e. resistance to deviating from innate or learned
 The accuracy term $-\mathbb{E}_{q_i}[\log p(o_i|c_i)]$ rewards explaining observations. For a Gaussian observation model $p(o_i|\mu_i) = \mathcal{N}(o_i \,|\, c_i, R_i)$ where $R_i$ is the sensory noise covariance:
 
 \begin{equation}
-\frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} \left[-\mathbb{E}_{q_i}[\log p(o_i|c_i)]\right] = R_i^{-1} \equiv \Lambda_{oi}
+\frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} \left[-\mathbb{E}_{q_i}[\log p(o_i|c_i)]\right] = R_i^{-1} \equiv \Lambda_{o_i}
 \end{equation}
 
-This is the observation precision—the inverse sensory noise covariance. Precise observations (small $R_i$, large $\Lambda_{oi}$) provide strong grounding that resists belief change.
+This is the observation precision—the inverse sensory noise covariance. Precise observations (small $R_i$, large $\Lambda_{o_i}$) provide strong grounding that resists belief change.
 
 
 \subsubsection{Contribution 3: Social Precision}
 
 The consensus term $\sum_k \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}[q_k])$ penalizes disagreement with neighbors. Taking the Hessian:
 \begin{equation}
-\frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} \sum_k \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}[q_k]) = \sum_k \beta_{ik} \Omega_{ik} \Sigma_{qk}^{-1} \Omega_{ik}^\top = \sum_k \beta_{ik} \tilde{\Lambda}_{qk}
+\frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} \sum_k \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}[q_k]) = \sum_k \beta_{ik} \Omega_{ik} \Sigma_{q_k}^{-1} \Omega_{ik}^\top = \sum_k \beta_{ik} \tilde{\Lambda}_{q_k}
 \end{equation}
 
-where $\tilde{\Lambda}_{qk} = \Omega_{ik}\Lambda_{qk}\Omega_{ik}^\top$ is the precision of neighbor $k$ transported into agent $i$'s frame.
+where $\tilde{\Lambda}_{q_k} = \Omega_{ik}\Lambda_{q_k}\Omega_{ik}^\top$ is the precision of neighbor $k$ transported into agent $i$'s frame.
 
 Additionally, agent $i$ appears in the consensus terms of its neighbors $j$, contributing a \textit{reciprocal} mass:
 \begin{equation}
-\frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} \sum_j \beta_{ji} D_{\mathrm{KL}}(q_j \| \Omega_{ji}[q_i]) = \sum_j \beta_{ji} \Lambda_{qi}
+\frac{\partial^2}{\partial\mu_i\partial\mu_i^\top} \sum_j \beta_{ji} D_{\mathrm{KL}}(q_j \| \Omega_{ji}[q_i]) = \sum_j \beta_{ji} \Lambda_{q_i}
 \end{equation}
 
 \subsubsection{The Complete Mass Formula}
@@ -275,11 +275,11 @@ Combining all contributions, the effective mass of agent $i$ is:
 
 \begin{equation}
 \boxed{
-M_i = \underbrace{\bar{\Lambda}_{pi}}_{\substack{\text{prior} \\ \text{precision}}} + \underbrace{\Lambda_{oi}}_{\substack{\text{observation} \\ \text{precision}}} + \underbrace{\sum_k \beta_{ik}\tilde{\Lambda}_{qk}}_{\substack{\text{incoming} \\ \text{social precision}}} + \underbrace{\sum_j \beta_{ji}\Lambda_{qi}}_{\substack{\text{outgoing} \\ \text{social precision}}}
+M_i = \underbrace{\bar{\Lambda}_{p_i}}_{\substack{\text{prior} \\ \text{precision}}} + \underbrace{\Lambda_{o_i}}_{\substack{\text{observation} \\ \text{precision}}} + \underbrace{\sum_k \beta_{ik}\tilde{\Lambda}_{q_k}}_{\substack{\text{incoming} \\ \text{social precision}}} + \underbrace{\sum_j \beta_{ji}\Lambda_{q_i}}_{\substack{\text{outgoing} \\ \text{social precision}}}
 }
 \end{equation}
 
-This four-part structure has transparent physical meaning. The term $\bar{\Lambda}_{pi}$ represents \textbf{prior inertia}, the resistance arising from the cost of deviating from deep expectations. The term $\Lambda_{oi}$ represents \textbf{sensory inertia}, grounding through observation whereby precise senses anchor beliefs. The term $\sum_k \beta_{ik}\tilde{\Lambda}_{qk}$ represents \textbf{incoming social inertia}, the effect of being pulled toward confident neighbors. Finally, the term $\sum_j \beta_{ji}\Lambda_{qi}$ represents \textbf{outgoing social inertia}, the recoil from exerting influence on others.
+This four-part structure has transparent physical meaning. The term $\bar{\Lambda}_{p_i}$ represents \textbf{prior inertia}, the resistance arising from the cost of deviating from deep expectations. The term $\Lambda_{o_i}$ represents \textbf{sensory inertia}, grounding through observation whereby precise senses anchor beliefs. The term $\sum_k \beta_{ik}\tilde{\Lambda}_{q_k}$ represents \textbf{incoming social inertia}, the effect of being pulled toward confident neighbors. Finally, the term $\sum_j \beta_{ji}\Lambda_{q_i}$ represents \textbf{outgoing social inertia}, the recoil from exerting influence on others.
 
 \subsubsection{Physical Interpretation}
 
@@ -289,11 +289,11 @@ The identification of mass with total Fisher information yields several insights
 
  
 
-\paragraph{Social amplification.} The social terms show that inertia is \textit{collective}. An agent coupled to confident neighbors inherits their precision as mass via the incoming term $\sum_k \beta_{ik}\tilde{\Lambda}_{qk}$. A population of high-precision agents becomes collectively rigid, while uncertain agents readily reach consensus. This predicts that expertise clusters resist external perturbation: a group of confident specialists, each attending to the others, forms a mutually reinforcing mass that deflects outside information. Conversely, low-confidence agents coalesce readily around any confident neighbor, explaining how charismatic leaders can rapidly consolidate uncertain populations. The dynamics are asymmetric: confident clusters repel, uncertain populations attract.
+\paragraph{Social amplification.} The social terms show that inertia is \textit{collective}. An agent coupled to confident neighbors inherits their precision as mass via the incoming term $\sum_k \beta_{ik}\tilde{\Lambda}_{q_k}$. A population of high-precision agents becomes collectively rigid, while uncertain agents readily reach consensus. This predicts that expertise clusters resist external perturbation: a group of confident specialists, each attending to the others, forms a mutually reinforcing mass that deflects outside information. Conversely, low-confidence agents coalesce readily around any confident neighbor, explaining how charismatic leaders can rapidly consolidate uncertain populations. The dynamics are asymmetric: confident clusters repel, uncertain populations attract.
 
  
 
-\paragraph{Reciprocal costs.} The outgoing term $\sum_j \beta_{ji}\Lambda_{qi}$ reveals that \textit{influencing others costs flexibility}. An agent that strongly affects its neighbors accumulates mass from those interactions, becoming less responsive itself. Influence is not free but instead is paid for in epistemic rigidity. The more others attend to your beliefs, the more those beliefs resist change. This has profound implications: leaders become trapped by their followers, gurus ossify under the weight of their disciples' attention, and public figures grow deaf to feedback as their audience grows. Henry Adams observed that "power is poison. Its effect on Presidents has always been tragic" \citet{adams1918education}. Our framework provides a geometric mechanism for this tragedy. The very act of projecting influence onto others accumulates as inertial mass, progressively consuming the capacity for empathy and update. The powerful become rigid not through moral failure but through the geometry of attention: when many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below.
+\paragraph{Reciprocal costs.} The outgoing term $\sum_j \beta_{ji}\Lambda_{q_i}$ reveals that \textit{influencing others costs flexibility}. An agent that strongly affects its neighbors accumulates mass from those interactions, becoming less responsive itself. Influence is not free but instead is paid for in epistemic rigidity. The more others attend to your beliefs, the more those beliefs resist change. This has profound implications: leaders become trapped by their followers, gurus ossify under the weight of their disciples' attention, and public figures grow deaf to feedback as their audience grows. Henry Adams observed that "power is poison. Its effect on Presidents has always been tragic" \citet{adams1918education}. Our framework provides a geometric mechanism for this tragedy. The very act of projecting influence onto others accumulates as inertial mass, progressively consuming the capacity for empathy and update. The powerful become rigid not through moral failure but through the geometry of attention: when many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below.
 
 \begin{tcolorbox}[colback=yellow!5,colframe=orange!75,title=Important Caveat: The Hamiltonian as Ansatz]
 The preceding development identifies the Fisher information metric with an inertial mass tensor. This identification is natural and geometrically principled---the Fisher metric is the unique (up to scaling) Riemannian metric on statistical manifolds. However, we emphasize that the \textbf{second-order (Hamiltonian) dynamics are an ansatz, not a derivation}.
@@ -322,7 +322,7 @@ The Hamiltonian formulation introduces a quantity absent from standard treatment
 The cognitive momentum of agent $i$ is the product of epistemic mass and belief velocity
 
 \begin{equation}
-\boxed{\pi_i = M_i \dot{\mu}_i = \left(\bar{\Lambda}_{pi} + \Lambda_{oi}+ \sum_k \beta_{ik}\tilde{\Lambda}_{qk} + \sum_j \beta_{ji}\Lambda_{qi}\right) \dot{\mu}_i}
+\boxed{\pi_i = M_i \dot{\mu}_i = \left(\bar{\Lambda}_{p_i} + \Lambda_{o_i}+ \sum_k \beta_{ik}\tilde{\Lambda}_{q_k} + \sum_j \beta_{ji}\Lambda_{q_i}\right) \dot{\mu}_i}
 \end{equation}
 
 where $\dot{\mu}_i$ is the rate of belief change.
@@ -346,9 +346,9 @@ For an isolated agent with isotropic uncertainty $\Sigma_i = \sigma_i^2 I$, this
 \toprule
 \textbf{Component} & \textbf{Formula} & \textbf{Psychological Role} \\
 \midrule
-Bare momentum & $\bar{\Lambda}_{pi}\dot{\mu}_i$ & Inertia from prior expectations \\
-Social momentum & $\sum_k\beta_{ik}\tilde{\Lambda}_{qk}\dot{\mu}_i$ & Inertia from social embedding \\
-Recoil momentum & $\sum_j\beta_{ji}\Lambda_{qi}\dot{\mu}_i$ & Inertia from influencing others \\
+Bare momentum & $\bar{\Lambda}_{p_i}\dot{\mu}_i$ & Inertia from prior expectations \\
+Social momentum & $\sum_k\beta_{ik}\tilde{\Lambda}_{q_k}\dot{\mu}_i$ & Inertia from social embedding \\
+Recoil momentum & $\sum_j\beta_{ji}\Lambda_{q_i}\dot{\mu}_i$ & Inertia from influencing others \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -491,7 +491,7 @@ Curiously this implies that high-mass (confident) agents have larger resonance a
 The characteristic time for a belief to relax toward equilibrium in a social setting is given by
 
 \begin{equation}
-\boxed{\tau = \frac{M_i}{\gamma_i} = \frac{\bar{\Lambda}_{pi} + \Lambda_{oi}+ \sum_k\beta_{ik}\tilde{\Lambda}_{qk} + \sum_j\beta_{ji}\Lambda_{qi}}{\gamma_i}}
+\boxed{\tau = \frac{M_i}{\gamma_i} = \frac{\bar{\Lambda}_{p_i} + \Lambda_{o_i}+ \sum_k\beta_{ik}\tilde{\Lambda}_{q_k} + \sum_j\beta_{ji}\Lambda_{q_i}}{\gamma_i}}
 \end{equation}
 
 
@@ -527,7 +527,7 @@ The full multi-agent dynamics with damping are
 We may expand the gradient as 
 
 \begin{equation}
-M_i\ddot{\mu}_i = -\gamma_i\dot{\mu}_i - \bar{\Lambda}_{pi}(\mu_i - \bar{\mu}_i) - \sum_k\beta_{ik}\tilde{\Lambda}_{qk}(\mu_i - \tilde{\mu}_k) - \sum_j\beta_{ji}\Lambda_{qi}\Omega_{ji}^T(\tilde{\mu}_i^{(j)} - \mu_j)
+M_i\ddot{\mu}_i = -\gamma_i\dot{\mu}_i - \bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i) - \sum_k\beta_{ik}\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) - \sum_j\beta_{ji}\Lambda_{q_i}\Omega_{ji}^T(\tilde{\mu}_i^{(j)} - \mu_j)
 \end{equation}
 
 Then this can be written as
@@ -543,13 +543,13 @@ Then this can be written as
 When agent $k$ changes belief, it transfers epistemic momentum to agent $i$ according to
 
 \begin{equation}
-\frac{d\pi_i}{dt}\bigg|_{\text{from } k} = -\beta_{ik}\tilde{\Lambda}_{qk}(\mu_i - \tilde{\mu}_k) - \beta_{ki}\Lambda_{qi}\Omega_{ki}^T(\tilde{\mu}_k^{(i)} - \mu_i)
+\frac{d\pi_i}{dt}\bigg|_{\text{from } k} = -\beta_{ik}\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) - \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T(\tilde{\mu}_k^{(i)} - \mu_i)
 \end{equation}
 
 The total momentum transfer over a given interaction time scale $[0, T]$ is
 
 \begin{equation}
-\boxed{\Delta\pi_i = -\int_0^T \left[\beta_{ik}\tilde{\Lambda}_{qk}(\mu_i - \tilde{\mu}_k) + \beta_{ki}\Lambda_{qi}\Omega_{ki}^T(\tilde{\mu}_k^{(i)} - \mu_i)\right] dt}
+\boxed{\Delta\pi_i = -\int_0^T \left[\beta_{ik}\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) + \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T(\tilde{\mu}_k^{(i)} - \mu_i)\right] dt}
 \end{equation}
 \end{theorem}
 
@@ -564,23 +564,23 @@ Without priors and damping, the total momentum is a conserved quantity.
 In contrast,  with priors and damping, momentum is assuredly not conserved. Momentum flows into the environment (the prior) and is then dissipated
 
 \begin{equation}
-\frac{d}{dt}\sum_i \pi_i = -\sum_i\gamma_i\dot{\mu}_i - \sum_i\bar{\Lambda}_{pi}(\mu_i - \bar{\mu}_i)
+\frac{d}{dt}\sum_i \pi_i = -\sum_i\gamma_i\dot{\mu}_i - \sum_i\bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i)
 \end{equation}
 
 
 This allows us to define a momentum current from agent $k$ to agent $i$ as
 
 \begin{equation}
-J_{k\rightarrow i} = \beta_{ik}\tilde{\Lambda}_{qk}(\tilde{\mu}_k - \mu_i)
+J_{k\rightarrow i} = \beta_{ik}\tilde{\Lambda}_{q_k}(\tilde{\mu}_k - \mu_i)
 \end{equation}
 
 This satisfies the continuity equation
 
 \begin{equation}
-\dot{\pi}_i + \gamma_i\dot{\mu}_i + \bar{\Lambda}_{pi}(\mu_i - \bar{\mu}_i) = \sum_k J_{k\rightarrow i}
+\dot{\pi}_i + \gamma_i\dot{\mu}_i + \bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i) = \sum_k J_{k\rightarrow i}
 \end{equation}
 
-We find that momentum flows from agents with different beliefs via attention $\beta_{ik}$ and sender precision $\Lambda_{qk}$. High-precision agents are powerful momentum sources as their motion strongly affects coupled neighbors. However, their strength is weighted by their relative attentions $\beta_{ij}$
+We find that momentum flows from agents with different beliefs via attention $\beta_{ik}$ and sender precision $\Lambda_{q_k}$. High-precision agents are powerful momentum sources as their motion strongly affects coupled neighbors. However, their strength is weighted by their relative attentions $\beta_{ij}$
 
 %------------------------------------------------------------------------------
 \subsection{Summary}
@@ -958,7 +958,7 @@ A striking implication of our framework is that phenomena often attributed to "c
 
 \textbf{Confirmation bias}, the tendency to seek and weight evidence consistent with existing beliefs \citet{nickerson1998}, can be reinterpreted as a consequence of inertial dynamics. Beliefs with high momentum in a particular direction are less deflected by contradictory evidence than by confirmatory evidence. This is not a bias in the pejorative sense but a geometrical consequence of how informationally massive objects respond to epistemic forces.
 
-\textbf{The rigidity of influence.} Perhaps most striking is the prediction that influence itself accumulates as inertial mass. The outgoing social term $\sum_j \beta_{ji}\Lambda_{qi}$ in the mass formula means that agents whose beliefs are attended to by many others become progressively more rigid. This provides a geometric mechanism for observations that leaders, experts, and public figures often exhibit reduced sensitivity to feedback; what Adams called "poison" and which Solzhenitsyn poetically described as "power is a poison well known for thousands of years... for those who are unaware of any higher sphere, it is a deadly poison. For them there is no antidote" \citet{adams1918education, solzhenitsyn1973gulag}. The phenomenon is not necessarily a moral failure but mathematical inevitability. When many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. Empathy, the capacity to update one's model of others, requires precisely the flexibility that influence consumes. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below, and suggests that the "isolation of power" documented by historians and political scientists emerges from the same geometric principles governing individual belief dynamics.
+\textbf{The rigidity of influence.} Perhaps most striking is the prediction that influence itself accumulates as inertial mass. The outgoing social term $\sum_j \beta_{ji}\Lambda_{q_i}$ in the mass formula means that agents whose beliefs are attended to by many others become progressively more rigid. This provides a geometric mechanism for observations that leaders, experts, and public figures often exhibit reduced sensitivity to feedback; what Adams called "poison" and which Solzhenitsyn poetically described as "power is a poison well known for thousands of years... for those who are unaware of any higher sphere, it is a deadly poison. For them there is no antidote" \citet{adams1918education, solzhenitsyn1973gulag}. The phenomenon is not necessarily a moral failure but mathematical inevitability. When many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. Empathy, the capacity to update one's model of others, requires precisely the flexibility that influence consumes. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below, and suggests that the "isolation of power" documented by historians and political scientists emerges from the same geometric principles governing individual belief dynamics.
 
 
 This reframing provides a mechanistic basis for intervention. If belief perseverance stems from high precision rather than stubbornness, then interventions targeting uncertainty (increasing $\gamma/M$) may be more effective than those targeting content. Similarly, if the rigidity of leadership emerges from accumulated social attention, then institutional designs that distribute attention more evenly may preserve epistemic flexibility at the top.
@@ -1127,7 +1127,7 @@ Under this transformation, belief parameters transform as:
 \begin{align}
 \mu_i &\mapsto \mu_i' = g_i \mu_i \\
 \Sigma_i &\mapsto \Sigma_i' = g_i \Sigma_i g_i^T \\
-\Lambda_{qi} &\mapsto \Lambda_{qi}' = g_i \Lambda_{qi} g_i^T
+\Lambda_{q_i} &\mapsto \Lambda_{q_i}' = g_i \Lambda_{q_i} g_i^T
 \end{align}
 
 The transport operators transform as:
@@ -1137,7 +1137,7 @@ The transport operators transform as:
 
 This ensures that the transported belief $\tilde{q}_k = \Omega_{ik}[q_k]$ transforms consistently:
 \begin{equation}
-\tilde{\mu}_k' = g_i \tilde{\mu}_k, \quad \tilde{\Lambda}_{qk}' = g_i \tilde{\Lambda}_{qk} g_i^T
+\tilde{\mu}_k' = g_i \tilde{\mu}_k, \quad \tilde{\Lambda}_{q_k}' = g_i \tilde{\Lambda}_{q_k} g_i^T
 \end{equation}
 
 %------------------------------------------------------------------------------
@@ -1150,17 +1150,17 @@ The mean-sector mass matrix transforms as a tensor under gauge transformations.
 
 \paragraph{Diagonal blocks:}
 \begin{align}
-[\mathbf{M}^\mu]_{ii}' &= \bar{\Lambda}_{pi}' + \sum_k \beta_{ik}\tilde{\Lambda}_{qk}' + \sum_j \beta_{ji}\Lambda_{qi}' \nonumber\\
-&= g_i\bar{\Lambda}_{pi} g_i^T + \sum_k \beta_{ik} g_i\tilde{\Lambda}_{qk} g_i^T + \sum_j \beta_{ji} g_i\Lambda_{qi} g_i^T \nonumber\\
-&= g_i \left[\bar{\Lambda}_{pi} + \sum_k \beta_{ik}\tilde{\Lambda}_{qk} + \sum_j \beta_{ji}\Lambda_{qi}\right] g_i^T \nonumber\\
+[\mathbf{M}^\mu]_{ii}' &= \bar{\Lambda}_{p_i}' + \sum_k \beta_{ik}\tilde{\Lambda}_{q_k}' + \sum_j \beta_{ji}\Lambda_{q_i}' \nonumber\\
+&= g_i\bar{\Lambda}_{p_i} g_i^T + \sum_k \beta_{ik} g_i\tilde{\Lambda}_{q_k} g_i^T + \sum_j \beta_{ji} g_i\Lambda_{q_i} g_i^T \nonumber\\
+&= g_i \left[\bar{\Lambda}_{p_i} + \sum_k \beta_{ik}\tilde{\Lambda}_{q_k} + \sum_j \beta_{ji}\Lambda_{q_i}\right] g_i^T \nonumber\\
 &= g_i \, [\mathbf{M}^\mu]_{ii} \, g_i^T
 \end{align}
 
 \paragraph{Off-diagonal blocks:}
 \begin{align}
-[\mathbf{M}^\mu]_{ik}' &= -\beta_{ik}\Omega_{ik}'\Lambda_{qk}' - \beta_{ki}\Lambda_{qi}'(\Omega_{ki}')^T \nonumber\\
-&= -\beta_{ik}(g_i\Omega_{ik}g_k^{-1})(g_k\Lambda_{qk} g_k^T) - \beta_{ki}(g_i\Lambda_{qi} g_i^T)(g_k\Omega_{ki}g_i^{-1})^T \nonumber\\
-&= -\beta_{ik} g_i\Omega_{ik}\Lambda_{qk} g_k^T - \beta_{ki} g_i\Lambda_{qi}\Omega_{ki}^T g_k^T \nonumber\\
+[\mathbf{M}^\mu]_{ik}' &= -\beta_{ik}\Omega_{ik}'\Lambda_{q_k}' - \beta_{ki}\Lambda_{q_i}'(\Omega_{ki}')^T \nonumber\\
+&= -\beta_{ik}(g_i\Omega_{ik}g_k^{-1})(g_k\Lambda_{q_k} g_k^T) - \beta_{ki}(g_i\Lambda_{q_i} g_i^T)(g_k\Omega_{ki}g_i^{-1})^T \nonumber\\
+&= -\beta_{ik} g_i\Omega_{ik}\Lambda_{q_k} g_k^T - \beta_{ki} g_i\Lambda_{q_i}\Omega_{ki}^T g_k^T \nonumber\\
 &= g_i \, [\mathbf{M}^\mu]_{ik} \, g_k^T
 \end{align}
 
@@ -1182,9 +1182,9 @@ This is the transformation law for a $(0,2)$-tensor (metric tensor) on the produ
 
 The covariance-sector mass involves Kronecker products. Under gauge transformation:
 \begin{align}
-[\mathbf{M}^\Sigma]_{ii}' &= \frac{1}{2}(\Lambda_{qi}' \otimes \Lambda_{qi}') \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right) \nonumber\\
-&= \frac{1}{2}(g_i\Lambda_{qi} g_i^T \otimes g_i\Lambda_{qi} g_i^T) \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right) \nonumber\\
-&= \frac{1}{2}(g_i \otimes g_i)(\Lambda_{qi} \otimes \Lambda_{qi})(g_i^T \otimes g_i^T) \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right)
+[\mathbf{M}^\Sigma]_{ii}' &= \frac{1}{2}(\Lambda_{q_i}' \otimes \Lambda_{q_i}') \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right) \nonumber\\
+&= \frac{1}{2}(g_i\Lambda_{q_i} g_i^T \otimes g_i\Lambda_{q_i} g_i^T) \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right) \nonumber\\
+&= \frac{1}{2}(g_i \otimes g_i)(\Lambda_{q_i} \otimes \Lambda_{q_i})(g_i^T \otimes g_i^T) \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right)
 \end{align}
 
 The transformation law is:
@@ -1310,20 +1310,20 @@ where this equals the commutator since $\omega_{ik}^T = -\omega_{ik}$ (antisymme
 \subsubsection{Diagonal Block Variation}
 
 \begin{equation}
-\delta[\mathbf{M}^\mu]_{ii} = \sum_k \beta_{ik} \, \delta\tilde{\Lambda}_{qk} = \sum_k \beta_{ik} \, [\omega_{ik}, \tilde{\Lambda}_{qk}]
+\delta[\mathbf{M}^\mu]_{ii} = \sum_k \beta_{ik} \, \delta\tilde{\Lambda}_{q_k} = \sum_k \beta_{ik} \, [\omega_{ik}, \tilde{\Lambda}_{q_k}]
 \end{equation}
 
 \subsubsection{Off-Diagonal Block Variation}
 
 \begin{align}
-\delta[\mathbf{M}^\mu]_{ik} &= -\beta_{ik} \, \delta(\Omega_{ik}\Lambda_{qk}) - \beta_{ki} \, \delta(\Lambda_{qi}\Omega_{ki}^T) \nonumber\\
-&= -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{qk} - \beta_{ki}\Lambda_{qi}(\omega_{ki}\Omega_{ki})^T \nonumber\\
-&= -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{qk} - \beta_{ki}\Lambda_{qi}\Omega_{ki}^T\omega_{ki}^T
+\delta[\mathbf{M}^\mu]_{ik} &= -\beta_{ik} \, \delta(\Omega_{ik}\Lambda_{q_k}) - \beta_{ki} \, \delta(\Lambda_{q_i}\Omega_{ki}^T) \nonumber\\
+&= -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{q_k} - \beta_{ki}\Lambda_{q_i}(\omega_{ki}\Omega_{ki})^T \nonumber\\
+&= -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{q_k} - \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T\omega_{ki}^T
 \end{align}
 
 Using $\omega_{ki}^T = -\omega_{ki}$ (antisymmetry):
 \begin{equation}
-\boxed{\delta[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{qk} + \beta_{ki}\Lambda_{qi}\Omega_{ki}^T\omega_{ki}}
+\boxed{\delta[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{q_k} + \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T\omega_{ki}}
 \end{equation}
 
 %------------------------------------------------------------------------------
@@ -1366,7 +1366,7 @@ where $\xi_X$ is the vector field generated by $X$.
 
 \subsubsection{Physical (Gauge-Invariant) Quantities}
 
-Only horizontal components of velocities and momenta correspond to physical observables. Key gauge-invariant quantities include the \textbf{consensus divergence} $\|\mu_i - \tilde{\mu}_k\|_{\tilde{\Lambda}_{qk}}^2 = (\mu_i - \tilde{\mu}_k)^T\tilde{\Lambda}_{qk}(\mu_i - \tilde{\mu}_k)$, the \textbf{free energy} $F[\{q_i\}]$ which is gauge-invariant by construction, the \textbf{Hamiltonian} $H = \frac{1}{2}\langle\pi, \mathbf{M}^{-1}\pi\rangle + F$, and the \textbf{inter-agent KL divergence} $\mathrm{KL}(q_i \| \Omega_{ik}[q_k])$.
+Only horizontal components of velocities and momenta correspond to physical observables. Key gauge-invariant quantities include the \textbf{consensus divergence} $\|\mu_i - \tilde{\mu}_k\|_{\tilde{\Lambda}_{q_k}}^2 = (\mu_i - \tilde{\mu}_k)^T\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k)$, the \textbf{free energy} $F[\{q_i\}]$ which is gauge-invariant by construction, the \textbf{Hamiltonian} $H = \frac{1}{2}\langle\pi, \mathbf{M}^{-1}\pi\rangle + F$, and the \textbf{inter-agent KL divergence} $\mathrm{KL}(q_i \| \Omega_{ik}[q_k])$.
 
 %------------------------------------------------------------------------------
 \subsection{Gauge-Fixed Dynamics}
@@ -1445,11 +1445,11 @@ This appendix derives the complete mass matrix structure for multi-agent belief 
 Each agent $i$ maintains a belief distribution $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ anchored to a fixed prior $p_i = \mathcal{N}(\bar{\mu}_i, \bar{\Sigma}_i)$ and receives observations $o_i$ through a likelihood $p(o_i \mid \theta) = \mathcal{N}(o_i; \theta, \Sigma_{o_i})$. Define:
 %
 \begin{align}
-\Lambda_{qi} &= \Sigma_i^{-1} & &\text{(belief precision)} \\
-\bar{\Lambda}_{pi} &= \bar{\Sigma}_i^{-1} & &\text{(prior precision)} \\
+\Lambda_{q_i} &= \Sigma_i^{-1} & &\text{(belief precision)} \\
+\bar{\Lambda}_{p_i} &= \bar{\Sigma}_i^{-1} & &\text{(prior precision)} \\
 \Lambda_{o_i} &= \Sigma_{o_i}^{-1} & &\text{(observation precision)} \\
 \tilde{\mu}_k &= \Omega_{ik}\mu_k & &\text{(transported mean)} \\
-\tilde{\Lambda}_{qk} &= \Omega_{ik}\Lambda_{qk}\Omega_{ik}^T & &\text{(transported precision)}
+\tilde{\Lambda}_{q_k} &= \Omega_{ik}\Lambda_{q_k}\Omega_{ik}^T & &\text{(transported precision)}
 \end{align}
 %
 where $\Omega_{ik} \in \mathrm{SO}(d)$ is the gauge transport operator from agent $k$'s frame to agent $i$'s frame, given by $\Omega_{ik} = e^{\phi_i}e^{-\phi_k}$ with $\phi_i \in \mathfrak{so}(d)$.
@@ -1512,22 +1512,22 @@ Therefore:
 \subsubsection{Prior Term: $D_{\mathrm{KL}}(q_i \| p_i)$}
 
 \begin{align}
-\frac{\partial D_{\mathrm{KL}}(q_i \| p_i)}{\partial \mu_i} &= \bar{\Lambda}_{pi}(\mu_i - \bar{\mu}_i) \label{eq:grad_prior_mu} \\[6pt]
-\frac{\partial D_{\mathrm{KL}}(q_i \| p_i)}{\partial \Sigma_i} &= \frac{1}{2}(\bar{\Lambda}_{pi} - \Lambda_{qi}) \label{eq:grad_prior_sigma}
+\frac{\partial D_{\mathrm{KL}}(q_i \| p_i)}{\partial \mu_i} &= \bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i) \label{eq:grad_prior_mu} \\[6pt]
+\frac{\partial D_{\mathrm{KL}}(q_i \| p_i)}{\partial \Sigma_i} &= \frac{1}{2}(\bar{\Lambda}_{p_i} - \Lambda_{q_i}) \label{eq:grad_prior_sigma}
 \end{align}
 
 \subsubsection{Consensus Term: $D_{\mathrm{KL}}(q_i \| \tilde{q}_k)$}
 
 With respect to receiver $i$:
 \begin{align}
-\frac{\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_i} &= \tilde{\Lambda}_{qk}(\mu_i - \tilde{\mu}_k) \label{eq:grad_consensus_mu_i} \\[6pt]
-\frac{\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \Sigma_i} &= \frac{1}{2}(\tilde{\Lambda}_{qk} - \Lambda_{qi}) \label{eq:grad_consensus_sigma_i}
+\frac{\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_i} &= \tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) \label{eq:grad_consensus_mu_i} \\[6pt]
+\frac{\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \Sigma_i} &= \frac{1}{2}(\tilde{\Lambda}_{q_k} - \Lambda_{q_i}) \label{eq:grad_consensus_sigma_i}
 \end{align}
 
 With respect to sender $k$:
 \begin{align}
-\frac{\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_k} &= \Lambda_{qk}\Omega_{ik}^T(\tilde{\mu}_k - \mu_i) \label{eq:grad_consensus_mu_k} \\[6pt]
-\frac{\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \Sigma_k} &= \frac{1}{2}\Omega_{ik}^T\left[\tilde{\Lambda}_{qk} - \tilde{\Lambda}_{qk}\Sigma_i\tilde{\Lambda}_{qk}\right]\Omega_{ik} \label{eq:grad_consensus_sigma_k}
+\frac{\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_k} &= \Lambda_{q_k}\Omega_{ik}^T(\tilde{\mu}_k - \mu_i) \label{eq:grad_consensus_mu_k} \\[6pt]
+\frac{\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \Sigma_k} &= \frac{1}{2}\Omega_{ik}^T\left[\tilde{\Lambda}_{q_k} - \tilde{\Lambda}_{q_k}\Sigma_i\tilde{\Lambda}_{q_k}\right]\Omega_{ik} \label{eq:grad_consensus_sigma_k}
 \end{align}
 
 \subsubsection{Sensory Term: $-\mathbb{E}_{q_i}[\log p(o_i \mid \theta)]$}
@@ -1541,7 +1541,7 @@ With respect to sender $k$:
 
 \begin{equation}
 \boxed{
-\frac{\partial \mathcal{F}}{\partial \mu_i} = \bar{\Lambda}_{pi}(\mu_i - \bar{\mu}_i) + \sum_k \beta_{ik}\tilde{\Lambda}_{qk}(\mu_i - \tilde{\mu}_k) + \sum_j \beta_{ji}\Lambda_{qi}\Omega_{ji}^T(\tilde{\mu}_i^{(j)} - \mu_j) + \Lambda_{o_i}(\mu_i - o_i)
+\frac{\partial \mathcal{F}}{\partial \mu_i} = \bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i) + \sum_k \beta_{ik}\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) + \sum_j \beta_{ji}\Lambda_{q_i}\Omega_{ji}^T(\tilde{\mu}_i^{(j)} - \mu_j) + \Lambda_{o_i}(\mu_i - o_i)
 }
 \label{eq:total_gradient_mu}
 \end{equation}
@@ -1549,7 +1549,7 @@ With respect to sender $k$:
 where $\tilde{\mu}_i^{(j)} = \Omega_{ji}\mu_i$ is agent $i$'s mean transported into agent $j$'s frame.
 
 \begin{equation}
-\frac{\partial \mathcal{F}}{\partial \Sigma_i} = \frac{1}{2}(\bar{\Lambda}_{pi} - \Lambda_{qi}) + \sum_k \frac{\beta_{ik}}{2}(\tilde{\Lambda}_{qk} - \Lambda_{qi}) + \sum_j \frac{\beta_{ji}}{2}\Omega_{ji}^T\left[\tilde{\Lambda}_{qi}^{(j)} - \tilde{\Lambda}_{qi}^{(j)}\Sigma_j\tilde{\Lambda}_{qi}^{(j)}\right]\Omega_{ji} + \frac{1}{2}\Lambda_{o_i}
+\frac{\partial \mathcal{F}}{\partial \Sigma_i} = \frac{1}{2}(\bar{\Lambda}_{p_i} - \Lambda_{q_i}) + \sum_k \frac{\beta_{ik}}{2}(\tilde{\Lambda}_{q_k} - \Lambda_{q_i}) + \sum_j \frac{\beta_{ji}}{2}\Omega_{ji}^T\left[\tilde{\Lambda}_{qi}^{(j)} - \tilde{\Lambda}_{qi}^{(j)}\Sigma_j\tilde{\Lambda}_{qi}^{(j)}\right]\Omega_{ji} + \frac{1}{2}\Lambda_{o_i}
 \label{eq:total_gradient_sigma}
 \end{equation}
 
@@ -1565,17 +1565,17 @@ The Hessian $\mathbf{M} = \partial^2\mathcal{F}/\partial\xi\partial\xi$ serves a
 
 From prior:
 \begin{equation}
-\frac{\partial^2 D_{\mathrm{KL}}(q_i \| p_i)}{\partial \mu_i \partial \mu_i^T} = \bar{\Lambda}_{pi}
+\frac{\partial^2 D_{\mathrm{KL}}(q_i \| p_i)}{\partial \mu_i \partial \mu_i^T} = \bar{\Lambda}_{p_i}
 \end{equation}
 
 From consensus (as receiver):
 \begin{equation}
-\frac{\partial^2 D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_i \partial \mu_i^T} = \tilde{\Lambda}_{qk} = \Omega_{ik}\Lambda_{qk}\Omega_{ik}^T
+\frac{\partial^2 D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_i \partial \mu_i^T} = \tilde{\Lambda}_{q_k} = \Omega_{ik}\Lambda_{q_k}\Omega_{ik}^T
 \end{equation}
 
 From consensus (as sender to agent $j$):
 \begin{equation}
-\frac{\partial^2 D_{\mathrm{KL}}(q_j \| \tilde{q}_i)}{\partial \mu_i \partial \mu_i^T} = \Omega_{ji}^T\tilde{\Lambda}_{qi}^{(j)}\Omega_{ji} = \Lambda_{qi}
+\frac{\partial^2 D_{\mathrm{KL}}(q_j \| \tilde{q}_i)}{\partial \mu_i \partial \mu_i^T} = \Omega_{ji}^T\tilde{\Lambda}_{qi}^{(j)}\Omega_{ji} = \Lambda_{q_i}
 \end{equation}
 
 From sensory evidence:
@@ -1586,7 +1586,7 @@ From sensory evidence:
 \textbf{Total diagonal mass:}
 \begin{equation}
 \boxed{
-[\mathbf{M}^\mu]_{ii} = \underbrace{\bar{\Lambda}_{pi}}_{\text{prior}} + \underbrace{\sum_k \beta_{ik}\tilde{\Lambda}_{qk}}_{\text{incoming social}} + \underbrace{\sum_j \beta_{ji}\Lambda_{qi}}_{\text{outgoing recoil}} + \underbrace{\Lambda_{o_i}}_{\text{sensory}}
+[\mathbf{M}^\mu]_{ii} = \underbrace{\bar{\Lambda}_{p_i}}_{\text{prior}} + \underbrace{\sum_k \beta_{ik}\tilde{\Lambda}_{q_k}}_{\text{incoming social}} + \underbrace{\sum_j \beta_{ji}\Lambda_{q_i}}_{\text{outgoing recoil}} + \underbrace{\Lambda_{o_i}}_{\text{sensory}}
 }
 \label{eq:mass_diagonal}
 \end{equation}
@@ -1595,18 +1595,18 @@ From sensory evidence:
 
 From $D_{\mathrm{KL}}(q_i \| \tilde{q}_k)$:
 \begin{equation}
-\frac{\partial^2 D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_i \partial \mu_k^T} = -\tilde{\Lambda}_{qk}\Omega_{ik} = -\Omega_{ik}\Lambda_{qk}
+\frac{\partial^2 D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_i \partial \mu_k^T} = -\tilde{\Lambda}_{q_k}\Omega_{ik} = -\Omega_{ik}\Lambda_{q_k}
 \end{equation}
 
 From $D_{\mathrm{KL}}(q_k \| \tilde{q}_i)$ (if $k$ also listens to $i$):
 \begin{equation}
-\frac{\partial^2 D_{\mathrm{KL}}(q_k \| \tilde{q}_i)}{\partial \mu_i \partial \mu_k^T} = -\Lambda_{qi}\Omega_{ki}^T
+\frac{\partial^2 D_{\mathrm{KL}}(q_k \| \tilde{q}_i)}{\partial \mu_i \partial \mu_k^T} = -\Lambda_{q_i}\Omega_{ki}^T
 \end{equation}
 
 The sensory term does not couple different agents. Therefore:
 \begin{equation}
 \boxed{
-[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\Omega_{ik}\Lambda_{qk} - \beta_{ki}\Lambda_{qi}\Omega_{ki}^T \quad (i \neq k)
+[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\Omega_{ik}\Lambda_{q_k} - \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T \quad (i \neq k)
 }
 \label{eq:mass_offdiagonal}
 \end{equation}
@@ -1633,12 +1633,12 @@ For matrix-valued variables, we use the directional derivative convention:
 
 From prior:
 \begin{equation}
-\frac{\partial^2 D_{\mathrm{KL}}(q_i \| p_i)}{\partial \Sigma_i \partial \Sigma_i}[V, W] = \frac{1}{2}\mathrm{tr}\left[\Lambda_{qi}V\Lambda_{qi}W\right]
+\frac{\partial^2 D_{\mathrm{KL}}(q_i \| p_i)}{\partial \Sigma_i \partial \Sigma_i}[V, W] = \frac{1}{2}\mathrm{tr}\left[\Lambda_{q_i}V\Lambda_{q_i}W\right]
 \end{equation}
 
 In tensor notation:
 \begin{equation}
-\frac{\partial^2 D_{\mathrm{KL}}(q_i \| p_i)}{\partial \Sigma_i \partial \Sigma_i} = \frac{1}{2}(\Lambda_{qi} \otimes \Lambda_{qi})
+\frac{\partial^2 D_{\mathrm{KL}}(q_i \| p_i)}{\partial \Sigma_i \partial \Sigma_i} = \frac{1}{2}(\Lambda_{q_i} \otimes \Lambda_{q_i})
 \end{equation}
 
 From consensus (as receiver and sender), identical contributions arise.
@@ -1651,7 +1651,7 @@ From consensus (as receiver and sender), identical contributions arise.
 Therefore:
 \begin{equation}
 \boxed{
-[\mathbf{M}^\Sigma]_{ii} = \frac{1}{2}(\Lambda_{qi} \otimes \Lambda_{qi}) \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right)
+[\mathbf{M}^\Sigma]_{ii} = \frac{1}{2}(\Lambda_{q_i} \otimes \Lambda_{q_i}) \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right)
 }
 \label{eq:mass_covariance}
 \end{equation}
@@ -1672,9 +1672,9 @@ The sensory precision $\Lambda_{o_i}$ does \textbf{not} contribute to the covari
 [\mathbf{C}^{\mu\Sigma}]_{ii}^{\text{sensory}} = 0
 \end{equation}
 
-\paragraph{Consensus (cross-agent):} From $\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)/\partial \mu_i = \tilde{\Lambda}_{qk}(\mu_i - \tilde{\mu}_k)$, varying $\Sigma_k$:
+\paragraph{Consensus (cross-agent):} From $\partial D_{\mathrm{KL}}(q_i \| \tilde{q}_k)/\partial \mu_i = \tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k)$, varying $\Sigma_k$:
 \begin{equation}
-\frac{\partial^2 D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_i \partial \Sigma_k}[V] = -\Omega_{ik}\Lambda_{qk}V\Lambda_{qk}\Omega_{ik}^T(\mu_i - \tilde{\mu}_k)
+\frac{\partial^2 D_{\mathrm{KL}}(q_i \| \tilde{q}_k)}{\partial \mu_i \partial \Sigma_k}[V] = -\Omega_{ik}\Lambda_{q_k}V\Lambda_{q_k}\Omega_{ik}^T(\mu_i - \tilde{\mu}_k)
 \end{equation}
 
 This vanishes at consensus ($\mu_i = \tilde{\mu}_k$):
@@ -1699,18 +1699,18 @@ where each block is an $N \times N$ matrix of sub-blocks.
 
 \paragraph{Mean sector diagonal:}
 \begin{equation}
-[\mathbf{M}^\mu]_{ii} = \underbrace{\bar{\Lambda}_{pi}}_{\text{prior anchoring}} + \underbrace{\sum_k \beta_{ik}\Omega_{ik}\Lambda_{qk}\Omega_{ik}^T}_{\text{incoming consensus}} + \underbrace{\sum_j \beta_{ji}\Lambda_{qi}}_{\text{outgoing recoil}} + \underbrace{\Lambda_{o_i}}_{\text{sensory grounding}}
+[\mathbf{M}^\mu]_{ii} = \underbrace{\bar{\Lambda}_{p_i}}_{\text{prior anchoring}} + \underbrace{\sum_k \beta_{ik}\Omega_{ik}\Lambda_{q_k}\Omega_{ik}^T}_{\text{incoming consensus}} + \underbrace{\sum_j \beta_{ji}\Lambda_{q_i}}_{\text{outgoing recoil}} + \underbrace{\Lambda_{o_i}}_{\text{sensory grounding}}
 \label{eq:mass_full_diagonal}
 \end{equation}
 
 \paragraph{Mean sector off-diagonal:}
 \begin{equation}
-[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\Omega_{ik}\Lambda_{qk} - \beta_{ki}\Lambda_{qi}\Omega_{ki}^T \quad (i \neq k)
+[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\Omega_{ik}\Lambda_{q_k} - \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T \quad (i \neq k)
 \end{equation}
 
 \paragraph{Covariance sector diagonal:}
 \begin{equation}
-[\mathbf{M}^\Sigma]_{ii} = \frac{1}{2}(\Lambda_{qi} \otimes \Lambda_{qi}) \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right)
+[\mathbf{M}^\Sigma]_{ii} = \frac{1}{2}(\Lambda_{q_i} \otimes \Lambda_{q_i}) \cdot \left(1 + \sum_k \beta_{ik} + \sum_j \beta_{ji}\right)
 \end{equation}
 
 \paragraph{Cross mean-covariance (at consensus):}
@@ -1727,12 +1727,12 @@ where each block is an $N \times N$ matrix of sub-blocks.
 The mean-sector effective mass for agent $i$ is:
 \begin{equation}
 \boxed{
-M_i = \bar{\Lambda}_{pi} + \sum_k \beta_{ik}\tilde{\Lambda}_{qk} + \sum_j \beta_{ji}\Lambda_{qi} + \Lambda_{o_i}
+M_i = \bar{\Lambda}_{p_i} + \sum_k \beta_{ik}\tilde{\Lambda}_{q_k} + \sum_j \beta_{ji}\Lambda_{q_i} + \Lambda_{o_i}
 }
 \label{eq:effective_mass}
 \end{equation}
 
-The term $\bar{\Lambda}_{pi}$ represents \textbf{bare mass}, providing inertia against deviation from the prior. The term $\sum_k \beta_{ik}\tilde{\Lambda}_{qk}$ represents \textbf{incoming relational mass}, the inertia from being ``pulled'' by neighbors. The term $\sum_j \beta_{ji}\Lambda_{qi}$ represents \textbf{outgoing relational mass}, the inertia from ``pulling'' neighbors (recoil). Finally, $\Lambda_{o_i}$ represents \textbf{sensory mass}, the inertia from grounding in observations.
+The term $\bar{\Lambda}_{p_i}$ represents \textbf{bare mass}, providing inertia against deviation from the prior. The term $\sum_k \beta_{ik}\tilde{\Lambda}_{q_k}$ represents \textbf{incoming relational mass}, the inertia from being ``pulled'' by neighbors. The term $\sum_j \beta_{ji}\Lambda_{q_i}$ represents \textbf{outgoing relational mass}, the inertia from ``pulling'' neighbors (recoil). Finally, $\Lambda_{o_i}$ represents \textbf{sensory mass}, the inertia from grounding in observations.
 
 \subsubsection{Asymmetry of Sensory Contribution}
 
@@ -1776,7 +1776,7 @@ H = \frac{1}{2}\langle\pi, \mathbf{M}^{-1}\pi\rangle + \mathcal{F}[\xi]
 The potential forces decompose into four physically distinct contributions:
 \begin{equation}
 \boxed{
--\frac{\partial \mathcal{F}}{\partial \mu_i} = \underbrace{-\bar{\Lambda}_{pi}(\mu_i - \bar{\mu}_i)}_{\text{prior restoring}} \underbrace{- \sum_k \beta_{ik}\tilde{\Lambda}_{qk}(\mu_i - \tilde{\mu}_k)}_{\text{consensus}} \underbrace{- \sum_j \beta_{ji}\Lambda_{qi}\Omega_{ji}^T(\tilde{\mu}_i^{(j)} - \mu_j)}_{\text{reciprocal}} \underbrace{- \Lambda_{o_i}(\mu_i - o_i)}_{\text{sensory evidence}}
+-\frac{\partial \mathcal{F}}{\partial \mu_i} = \underbrace{-\bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i)}_{\text{prior restoring}} \underbrace{- \sum_k \beta_{ik}\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k)}_{\text{consensus}} \underbrace{- \sum_j \beta_{ji}\Lambda_{q_i}\Omega_{ji}^T(\tilde{\mu}_i^{(j)} - \mu_j)}_{\text{reciprocal}} \underbrace{- \Lambda_{o_i}(\mu_i - o_i)}_{\text{sensory evidence}}
 }
 \label{eq:force_decomposition}
 \end{equation}
@@ -1819,12 +1819,12 @@ The discriminant $\Delta = \gamma_i^2 - 4K_iM_i$ determines three regimes: the \
 
 Between agents, the momentum current is:
 \begin{equation}
-J_{k \to i} = \beta_{ik}\tilde{\Lambda}_{qk}(\tilde{\mu}_k - \mu_i)
+J_{k \to i} = \beta_{ik}\tilde{\Lambda}_{q_k}(\tilde{\mu}_k - \mu_i)
 \end{equation}
 
 The continuity equation becomes:
 \begin{equation}
-\dot{\pi}_i + \gamma_i\dot{\mu}_i + \bar{\Lambda}_{pi}(\mu_i - \bar{\mu}_i) + \Lambda_{o_i}(\mu_i - o_i) = \sum_k J_{k \to i}
+\dot{\pi}_i + \gamma_i\dot{\mu}_i + \bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i) + \Lambda_{o_i}(\mu_i - o_i) = \sum_k J_{k \to i}
 \end{equation}
 
 The sensory term $\Lambda_{o_i}(\mu_i - o_i)$ acts as an additional ``anchoring force'' that grounds the agent in observations, distinct from the social momentum currents.
@@ -1849,7 +1849,7 @@ The sensory term $\Lambda_{o_i}(\mu_i - o_i)$ acts as an additional ``anchoring 
 
 \textbf{Effective Mass:}
 \begin{equation}
-M_i = \bar{\Lambda}_{pi} + \sum_k \beta_{ik}\tilde{\Lambda}_{qk} + \sum_j \beta_{ji}\Lambda_{qi} + \Lambda_{o_i}
+M_i = \bar{\Lambda}_{p_i} + \sum_k \beta_{ik}\tilde{\Lambda}_{q_k} + \sum_j \beta_{ji}\Lambda_{q_i} + \Lambda_{o_i}
 \end{equation}
 
 \textbf{Dynamics:}
