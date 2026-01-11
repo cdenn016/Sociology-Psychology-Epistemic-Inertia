@@ -112,7 +112,7 @@ This operator acts by right action as
 q_j \to \Omega_{ij} \cdot q_j = \mathcal{N}(\Omega_{ij}\mu_j, \Omega_{ij}\Sigma_j\Omega_{ij}^T)
 \end{equation} 
 
-For concreteness, consider $d = 3$ so that $\Omega_{ij} \in \mathrm{SO}(3)$ represents rotations; then $\phi_i \in \mathfrak{so}(3)$ is an antisymmetric matrix encoding the agent's ``interpretive orientation.''
+For concreteness, consider $d = 3$ so that $\Omega_{ij} \in \mathrm{SO}(3)$ represents rotations; then $\phi_i \in \mathfrak{so}(3)$ is an antisymmetric matrix encoding the agent's interpretive orientation.
 
 The transformed belief can then be compared with agent $i$'s own beliefs via KL divergence
 
@@ -144,22 +144,25 @@ with temperature $\tau$ controlling selectivity. This softmax form is not arbitr
 \label{sec:proper_time}
 %==============================================================================
 
-A fundamental issue in any dynamical theory of belief is the definition of time. Wall-clock time is unsuitable because cognitive processes operate on different timescales for different agents and contexts. We propose defining \textbf{proper time} as the information-theoretic arc length traversed on the statistical manifold---time as ``a difference which makes a difference.''
+A fundamental issue in any dynamical theory of belief is the definition of time. Wall-clock time is unsuitable because cognitive processes operate on different timescales for different agents and contexts. We propose defining proper time as the information-theoretic arc length traversed on the statistical manifold whereby time i taken as "a difference which makes a difference".
 
-For an infinitesimal belief change $d\mu$, the proper time increment is:
+For an infinitesimal belief change $d\mu$, the proper time increment is
+
 \begin{equation}
 \boxed{d\tau = \sqrt{d\mu^T \Sigma^{-1} d\mu} = \|d\mu\|_{\Sigma^{-1}}}
 \end{equation}
 
 This definition has several appealing properties:
 
-\paragraph{Scale dependence.} For a high-precision agent ($\Sigma$ small, $\Sigma^{-1}$ large), a small change in $\mu$ corresponds to a large proper time---``time moves fast'' in the sense that each update is cognitively significant. For a low-precision agent, the same parametric change corresponds to a small proper time---updates are relatively insignificant. A single bit of information is enormous for a simple agent but imperceptible for a complex one.
+\paragraph{Scale dependence.} For a high-precision agent ($\Sigma$ small, $\Sigma^{-1}$ large), a small change in $\mu$ corresponds to a large proper time such that "time moves fast" in the sense that each update is cognitively significant. For a low-precision agent, the same parametric change corresponds to a small proper time whereby updates are relatively insignificant or slow. A single bit of information is enormous for a simple, small-scale agent but imperceptible for a complex one such as humans.
 
-\paragraph{Information-theoretic interpretation.} To second order, both KL directions give the same result:
+\paragraph{Information-theoretic interpretation.} To second order, both KL directions give the same result
+
 \begin{equation}
 \text{KL}(q + dq \| q) \approx \text{KL}(q \| q + dq) \approx \frac{1}{2} d\mu^T \Sigma^{-1} d\mu = \frac{1}{2} d\tau^2
 \end{equation}
-Thus proper time measures accumulated ``surprise'' or information change. The choice between KL directions is immaterial at this order.
+
+Thus proper time measures accumulated information change. The choice between KL directions is immaterial at this order.
 
 \paragraph{Invariance.} Proper time is invariant under reparameterization of the belief space, depending only on the intrinsic geometry of the statistical manifold.
 
@@ -168,7 +171,7 @@ For a trajectory $\mu(t)$ parameterized by some external parameter $t$, the tota
 \tau = \int \sqrt{\dot{\mu}^T \Sigma^{-1} \dot{\mu}} \, dt
 \end{equation}
 
-This is analogous to proper time in special relativity, where different observers (agents) experience time differently depending on their state. Here, the ``velocity through belief space'' determines how quickly proper time accumulates, with high-precision agents experiencing ``faster'' proper time for identical parametric motion.
+This is analogous to proper time in special relativity, where different observers (agents) experience time differently depending on their state. Here, the velocity through belief space determines how quickly proper time accumulates, with high-precision agents experiencing faster proper time for identical parametric motion.
 
 
 %==============================================================================
@@ -176,13 +179,14 @@ This is analogous to proper time in special relativity, where different observer
 \label{sec:hamiltonian}
 %==============================================================================
 
-The proper time metric introduced above equips belief space with a natural notion of kinetic energy: $T = \frac{1}{2}\dot{\mu}^T \mathbf{M} \dot{\mu}$. Combined with the free energy as potential, this suggests a Hamiltonian formulation where precision plays the role of inertial mass. We adopt this as an ansatz—not derived from first principles, but motivated by the geometric structure and its empirical consequences.
+The proper time metric introduced above equips belief space with a natural notion of kinetic energy: $T = \frac{1}{2}\dot{\mu}^T\mathbf{M}\dot{\mu}$ where we derive the form of $\mathbf{M}$ below. Combined with the free energy as potential, this suggests a Hamiltonian formulation where precision plays the role of an inertial mass. We adopt this as an ansatz which is not derived from first principles, but motivated by the geometric structure and its empirical consequences.
+
 
 %------------------------------------------------------------------------------
 \subsection{The Adiabatic Approximation}
 %------------------------------------------------------------------------------
 
-Cognitive systems operate across multiple timescales often hierarchically. Beliefs generally update rapidly in response to sensory evidence when compared to priors which encode stable world-views, personality traits, or cultural assumptions.  These evolve slowly through learning and interaction. We formalize this separation via the adiabatic approximation
+Cognitive systems operate hierarchically across multiple timescales. Beliefs generally update rapidly in response to sensory evidence when compared to priors which encode stable world-views, personality traits, or cultural assumptions.  These evolve slowly through learning and interaction. We formalize this separation via the adiabatic approximation
 
 Let the prior parameters $(\bar{\mu}_i, \bar{\Sigma}_i)$ evolve on a slow timescale $T$, while beliefs $(\mu_i, \Sigma_i)$ evolve on a fast timescale $t$, with $\epsilon = t/T \ll 1$. 
 
