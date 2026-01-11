@@ -1935,6 +1935,83 @@ The reverse KL has Hessian $\nabla^2_q D_{\mathrm{KL}}(p \| q)\big|_{q=p} = \mat
 
 In variational inference, the forward KL $D_{\mathrm{KL}}(q \| p)$ is the natural objective when $q$ is the variational approximation and $p$ is the target. Minimizing this drives $q$ toward $p$ in an information-theoretic sense. Our social coupling term $D_{\mathrm{KL}}(q_i \| \Omega_{ik}[q_k])$ follows this convention: agent $i$'s belief $q_i$ is driven toward the transported neighbor belief $\Omega_{ik}[q_k]$. The reverse direction would have neighbors' beliefs driving toward agent $i$, inverting the causal structure of social influence.
 
+%==============================================================================
+% APPENDIX: DERIVATION OF SOCIAL COUPLING FROM NORMALIZED GENERATIVE MODEL
+%==============================================================================
+
+\section{Derivation of Social Coupling from Normalized Generative Model}
+\label{app:social_coupling}
+
+The social coupling term $\sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}[q_k])$ in our free energy is not an ad hoc regularizer but emerges naturally from a properly normalized generative model with auxiliary agreement variables. This appendix provides the derivation, establishing the coupling as a consequence of gauge-transported Gaussian consistency constraints.
+
+\subsection{Auxiliary Agreement Variables}
+
+To enforce consistency between agents after gauge transport, we introduce an auxiliary ``agreement'' variable for each ordered pair $(i,k)$:
+\begin{equation}
+z_{ik} \in \mathbb{R}^{d}
+\end{equation}
+The variable $z_{ik}$ represents what agent $i$ believes agent $k$'s belief looks like after transporting $k$'s belief into $i$'s gauge frame. These auxiliary variables serve as latent mediators that, when integrated out, yield the effective pairwise coupling between agents.
+
+This construction guarantees a normalized joint distribution by design, in contrast to unnormalized Markov random fields of the form $p(\{q_i\}) \propto \exp[-\sum_{ik} \psi_{ik}(q_i, q_k)]$ where the partition function is generally intractable.
+
+\subsection{The Product-of-Gaussians Construction}
+
+Each agreement variable $z_{ik}$ is drawn from a product of two Gaussians that simultaneously constrain it to match both agent $i$'s belief and the gauge-transported belief of agent $k$:
+\begin{equation}
+p(z_{ik} \mid \mu_i, \mu_k) \propto \mathcal{N}(z_{ik}; \mu_i, \Lambda_{ik}^{-1}) \cdot \mathcal{N}(z_{ik}; \Omega_{ik}\mu_k, \Lambda_{ik}^{-1})
+\end{equation}
+where $\Lambda_{ik} \succ 0$ is the alignment precision matrix and $\Omega_{ik} \in \mathrm{SO}(d)$ is the gauge transport operator from agent $k$'s frame to agent $i$'s frame.
+
+The full joint generative model over all belief means and agreement variables is:
+\begin{equation}
+p(\{\mu_i\}, \{z_{ik}\}) = \left[\prod_i p_i(\mu_i)\right] \times \left[\prod_{i,k} \mathcal{N}(z_{ik}; \mu_i, \Lambda_{ik}^{-1}) \cdot \mathcal{N}(z_{ik}; \Omega_{ik}\mu_k, \Lambda_{ik}^{-1})\right]
+\end{equation}
+where $p_i(\mu_i) = \mathcal{N}(\mu_i; \bar{\mu}_i, \bar{\Sigma}_i)$ is agent $i$'s local prior. This joint distribution is properly normalized since each factor is a normalized Gaussian and the agreement variables mediate between disjoint variable sets.
+
+\subsection{Integration Yields KL Coupling}
+
+Under a mean-field posterior approximation $q(\{\mu_i\}) = \prod_i q_i(\mu_i)$ with Gaussian factors $q_i = \mathcal{N}(\mu_i; \mu_{q,i}, \Sigma_{q,i})$, the variational free energy takes the form:
+\begin{equation}
+\mathcal{F} = \mathbb{E}_q[\log q] - \mathbb{E}_q[\log p(\{\mu_i\})] - \mathbb{E}_q[\log p(o \mid \{\mu_i\})]
+\end{equation}
+
+Expanding using the joint model and integrating out the agreement variables yields:
+\begin{equation}
+\mathcal{F} = \sum_i D_{\mathrm{KL}}(q_i \| p_i) + \frac{1}{4}\sum_{i,k} \mathbb{E}_{q_i q_k}\left[(\mu_i - \Omega_{ik}\mu_k)^\top \Lambda_{ik} (\mu_i - \Omega_{ik}\mu_k)\right] - \mathbb{E}_q[\log p(o \mid \{\mu_i\})]
+\end{equation}
+
+For independent Gaussians, the quadratic expectation evaluates to:
+\begin{equation}
+\mathbb{E}_{q_i q_k}[(\mu_i - \Omega_{ik}\mu_k)^\top \Lambda_{ik} (\mu_i - \Omega_{ik}\mu_k)] = \mathrm{tr}\left[\Lambda_{ik}(\Sigma_{q,i} + \Omega_{ik}\Sigma_{q,k}\Omega_{ik}^\top)\right] + (\mu_{q,i} - \Omega_{ik}\mu_{q,k})^\top \Lambda_{ik} (\mu_{q,i} - \Omega_{ik}\mu_{q,k})
+\end{equation}
+
+\subsection{The Alignment Regime}
+
+We choose the coupling precision to be proportional to the transported neighbor's precision:
+\begin{equation}
+\Lambda_{ik} := \tau_{ik} (\Omega_{ik}\Sigma_{q,k}\Omega_{ik}^\top)^{-1}
+\end{equation}
+where $\tau_{ik} > 0$ is a dimensionless coupling strength.
+
+In the alignment regime where the coupling drives beliefs toward consistency, we have $\Sigma_{q,i} \approx \Omega_{ik}\Sigma_{q,k}\Omega_{ik}^\top$. Under this condition, the quadratic expectation becomes proportional to the KL divergence:
+\begin{equation}
+\frac{1}{4}\mathbb{E}_{q_i q_k}[(\mu_i - \Omega_{ik}\mu_k)^\top \Lambda_{ik} (\mu_i - \Omega_{ik}\mu_k)] \approx \frac{\tau_{ik}}{2} D_{\mathrm{KL}}(q_i \| \Omega_{ik}[q_k]) + \mathrm{const}
+\end{equation}
+where the constant absorbs dimension-dependent terms. Defining the normalized attention weight $\beta_{ik} := \tau_{ik}/2$, we obtain the final form of the social coupling term.
+
+\subsection{The Complete Free Energy}
+
+Assembling all terms, the variational free energy takes the form used throughout this paper:
+\begin{equation}
+\boxed{
+\mathcal{F}[\{q_i\}] = \sum_i D_{\mathrm{KL}}(q_i \| p_i) + \sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}[q_k]) - \sum_i \mathbb{E}_{q_i}[\log p(o_i \mid \theta)]
+}
+\end{equation}
+
+This derivation establishes several key points. First, the KL-based social coupling is not an ad hoc choice but emerges from integrating out agreement variables in a normalized generative model. Second, the attention weights $\beta_{ik}$ have a clear interpretation as half the dimensionless coupling strength $\tau_{ik}$. Third, the forward KL direction arises naturally from the construction where agent $i$'s belief is compared against transported neighbor beliefs. Fourth, the gauge transport operators $\Omega_{ik}$ enter through the agreement variable construction, ensuring gauge covariance of the full theory.
+
+The agreement variable construction can be understood intuitively: $z_{ik}$ represents a ``negotiated'' belief state that both agents would accept as consistent. The product-of-Gaussians prior penalizes disagreement between agent $i$'s belief and the transported belief of agent $k$. Integrating out this mediator leaves an effective attraction between the beliefs, weighted by how precisely they are required to agree.
+
 
 \bibliographystyle{apalike}
 \bibliography{references}
