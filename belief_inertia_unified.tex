@@ -230,10 +230,10 @@ F = \underbrace{\sum_i D_{\mathrm{KL}}(q_i \| p_i)}_{\text{complexity}} - \under
 
 where $q_i$ is agent $i$'s posterior belief, $p_i$ is agent $i$'s prior, $p(o_i|c_i)$ is the observation likelihood with hidden state $c_i$, $\Omega_{ik}[q_k]$ is neighbor $k$'s belief transported into agent $i$'s reference frame, and $\beta_{ik}$ is the attention-weighted coupling strength. The mass matrix is the Hessian of this free energy:
 \begin{equation}
-\mathbf{M} = \frac{\partial^2 F}{\partial\xi\partial\xi^\top} = \mathcal{G}
+\mathbf{M} = \frac{\partial^2 F}{\partial\xi\partial\xi^\top}
 \end{equation}
 
-This Hessian defines the effective mass matrix $\mathcal{G}$ for belief dynamics. Unlike the intrinsic Fisher-Rao metric (which depends only on the belief geometry), this Hessian mass matrix incorporates contributions from priors, observations, and social coupling. Each term in $F$ contributes independently to the total mass.
+This Hessian defines the effective mass matrix $\mathbf{M}$ for belief dynamics. Unlike the intrinsic Fisher-Rao metric (which depends only on the belief geometry), this Hessian mass matrix incorporates contributions from priors, observations, and social coupling. Each term in $F$ contributes independently to the total mass.
 
 \subsubsection{Contribution 1: Prior Precision}
 
@@ -1557,7 +1557,7 @@ where $\tilde{\mu}_i^{(j)} = \Omega_{ji}\mu_i$ is agent $i$'s mean transported i
 \subsection{Second Variations (Hessian = Mass Matrix)}
 %-----------------------------------------------------------------------
 
-The Hessian $\mathcal{G} = \partial^2\mathcal{F}/\partial\xi\partial\xi$ serves as the mass matrix. This is distinct from the intrinsic Fisher-Rao metric on the statistical manifold; it is a ``Hessian mass matrix'' whose curvature depends on the full free energy landscape including priors, sensory evidence, and social coupling.
+The Hessian $\mathbf{M} = \partial^2\mathcal{F}/\partial\xi\partial\xi$ serves as the mass matrix. This is distinct from the intrinsic Fisher-Rao metric on the statistical manifold; it is a ``Hessian mass matrix'' whose curvature depends on the full free energy landscape including priors, sensory evidence, and social coupling.
 
 \subsubsection{Mean Sector: $\partial^2\mathcal{F}/\partial\mu\partial\mu^T$}
 
@@ -1794,7 +1794,7 @@ The geodesic force $f_i^{\text{geo}} = -\frac{1}{2}\sum_{jkl}(\pi_j^\mu)^T\frac{
 }
 \end{equation}
 
-with $dH/dt = 0$ along trajectories.
+with $dH/dt = 0$ along trajectories. Since $\mathbf{M}$ depends on $\Sigma$, the Hamiltonian is non-separable, requiring implicit or splitting methods for symplectic integration.
 
 %-----------------------------------------------------------------------
 \subsection{Damped Dynamics}
