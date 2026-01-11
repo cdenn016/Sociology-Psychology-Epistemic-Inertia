@@ -82,12 +82,12 @@ q &= \mathcal{N}(\mu_q, \Sigma_q) \\
 p &= \mathcal{N}(\mu_p, \Sigma_p)
 \end{align}
 
-where $\mu_\nu$ represents the believed value and $\Sigma_\nu$ represents uncertainty.
+where $\mu_\nu$ represents the mean value and $\Sigma_\nu$ represents uncertainty.
 
 The Kullback-Leibler (KL) divergence measures the epistemic distance between an agent's belief $q$ and their prior model $p$
 
 \begin{equation}
-\text{KL}(q \| p) = \int q(x) \log \frac{q(x)}{p(x)} dx
+D_{\mathrm{KL}}(q \| p) = \int q(x) \log \frac{q(x)}{p(x)} dx
 \end{equation}
 
 
