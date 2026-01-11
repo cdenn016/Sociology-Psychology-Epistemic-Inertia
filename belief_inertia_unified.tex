@@ -93,12 +93,12 @@ The Kullback-Leibler (KL) divergence measures the epistemic distance between an 
 
 \subsection{Multi-Agent Belief Geometry}
 
-We extend our single-agent framework to networks of interacting cognitive agents via attention. Following \citet{Dennis2025}, we model agents as residing on a gauge-theoretic bundle geometry where each agent $i$ maintains beliefs and priors $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ as well as an internal reference frame $\phi_i$ that determine how they interpret information.
+We extend our single-agent framework to networks of interacting cognitive agents via attention. The geometric setting is a principal $G$-bundle $\pi: P \to \mathcal{C}$ where the base manifold $\mathcal{C}$ encodes agent positions and social network topology, and the gauge group $G = \mathrm{SO}(d)$ consists of rotations in belief space (see Appendix~\ref{app:gauge} for the complete geometric treatment). Each agent $i$ maintains beliefs $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ anchored to a prior $p_i = \mathcal{N}(\bar{\mu}_i, \bar{\Sigma}_i)$, along with an internal reference frame $\phi_i \in \mathfrak{so}(d)$ (the Lie algebra of $\mathrm{SO}(d)$) that determines how they interpret information.
 
-Importantly, agents cannot directly compare beliefs. Instead, they must first align their gauge frames via parallel transport operators given by
+Importantly, agents cannot directly compare beliefs---they inhabit different fibers of the bundle. Instead, they must first align their gauge frames via \textbf{parallel transport operators}:
 
 \begin{equation}
-\Omega_{ij} = e^{\phi_i}e^{-\phi_j}
+\Omega_{ij} = e^{\phi_i}e^{-\phi_j} \in \mathrm{SO}(d)
 \end{equation}
 
  
@@ -111,7 +111,7 @@ This operator acts by right action as
 q_j \to \Omega_{ij} \cdot q_j = \mathcal{N}(\Omega_{ij}\mu_j, \Omega_{ij}\Sigma_j\Omega_{ij}^T)
 \end{equation} 
 
-For example, it may be helpful to consider $\Omega_{ij} \in SO(3)$, the group of rotations where $\phi \in \mathfrak{so}3$, the Lie algebra of SO(3).
+For concreteness, consider $d = 3$ so that $\Omega_{ij} \in \mathrm{SO}(3)$ represents rotations; then $\phi_i \in \mathfrak{so}(3)$ is an antisymmetric matrix encoding the agent's ``interpretive orientation.''
 
 The transformed belief can then be compared with agent $i$'s own beliefs via KL divergence
 
@@ -123,7 +123,7 @@ Notice that this transport is, in general, asymmetric.
 
 \subsection{Multi-Agent Free Energy}
 
-As we derive in full detail in \citet{Dennis2025} the total variational free energy for a network of agents balances individual belief maintenance with social consensus pressure as
+The total variational free energy for a network of agents balances individual belief maintenance with social consensus pressure (see Appendix~\ref{app:hamiltonian} for the complete derivation and Appendix~\ref{app:social_coupling} for the generative model foundation):
 
 \begin{align}
 \mathcal{F}[\{q_i\}, \{\phi_i\}] &= \sum_i \underbrace{D_{\mathrm{KL}}(q_i \| p_i)}_{\text{Prior beliefs}} + \sum_{i,j} \underbrace{\beta_{ij} D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)}_{\text{Social alignment}} \\
@@ -136,7 +136,7 @@ where $\beta_{ij}$ represents the attention agent $i$ places in agent $j$'s beli
 \beta_{ij} = \frac{\exp(-D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)/\tau)}{\sum_k \exp(-D_{\mathrm{KL}}(q_i \| \Omega_{ik} \cdot q_k)/\tau)}
 \end{equation}
 
-with temperature $\tau$ controlling selectivity (recovering transformer attention mechanisms \citet{Dennis2025}). In previous work we have shown that sensory evidence and/or observations are equivalent to agent-agent attention coupling.\citet{Dennis2025a}
+with temperature $\tau$ controlling selectivity. This softmax form is not arbitrary but emerges uniquely from maximum entropy principles (Appendix~\ref{app:softmax}), and recovers the attention mechanism used in transformer architectures. The forward KL direction in the social term is similarly principled (Appendix~\ref{app:forward_kl}).
 
 %==============================================================================
 \subsection{Proper Time as Information-Theoretic Arc Length}
