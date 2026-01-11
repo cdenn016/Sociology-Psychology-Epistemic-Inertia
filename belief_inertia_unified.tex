@@ -352,7 +352,7 @@ This result differs from constant-force braking models. It implies that for a gi
 While less dramatic than a linear scaling, this square-root relationship is a rigid constraint imposed by the harmonic geometry of Gaussian belief spaces.
 
 %------------------------------------------------------------------------------
-\subsection{Belief Overshooting}
+\subsection{Belief Oscillation}
 %------------------------------------------------------------------------------
 
 Another prediction of our Hamiltonian epistemic dynamics is oscillation phenomena. Unlike gradient descent, which monotonically approaches equilibrium, Hamiltonian systems can overshoot, oscillate, and decay (see Figure~\ref{fig:phase_portraits})
@@ -473,7 +473,7 @@ Agent A's false beliefs persist ten times longer than that of B's, despite ident
 
 \subsubsection{The Debunking Problem}
 
-Typically debunking assumes beliefs respond instantaneously to evidence yet our theory of epistemic momentum predicts that immediate debunking is ineffective.  The belief should flow past the correction target. Furthermore, repeated debunking, if not properly timed, can lead to amplification (a well studied phenomenon in debunking studies).  A candidate method for debunking, then, is to properly time the belief trajectory before reinforcing the correction.  However, predicting that time scale for a given agent may be difficult.
+Typically debunking assumes beliefs respond instantaneously to evidence yet our theory of epistemic momentum predicts that immediate debunking is ineffective.  The belief should flow past the correction target. Furthermore, if debunking occurs at intervals matching the belief's natural oscillation period, resonance could amplify rather than dampen the response.  A candidate method for debunking, then, is to properly time the belief trajectory before reinforcing the correction.  However, predicting that time scale for a given agent may be difficult.
 
 
 %------------------------------------------------------------------------------
@@ -502,9 +502,8 @@ Then this can be written as
 \boxed{\underbrace{M_i\ddot{\mu}_i}_{\text{Inertia}} = -\underbrace{\gamma_i\dot{\mu}_i}_{\text{Damping}} - \underbrace{\nabla_{\mu_i}F_{\text{prior}}}_{\text{Prior force}} - \underbrace{\nabla_{\mu_i}F_{\text{consensus}}}_{\text{Social force}}}
 \end{equation}
 
-\subsubsection{Momentum Transfer Theorem}
+\subsubsection{Epistemic Momentum Transfer}
 
-\begin{theorem}[Momentum Transfer Between Agents]
 
 When agent $k$ changes belief, it transfers epistemic momentum to agent $i$ according to
 
@@ -517,7 +516,7 @@ The total momentum transfer over a given interaction time scale $[0, T]$ is
 \begin{equation}
 \boxed{\Delta\pi_i = -\int_0^T \left[\beta_{ik}\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) + \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T(\tilde{\mu}_k^{(i)} - \mu_i)\right] dt}
 \end{equation}
-\end{theorem}
+
 
 \subsubsection{Conservation and Non-Conservation}
 
@@ -561,7 +560,7 @@ We find that momentum flows from agents with different beliefs via attention $\b
 \toprule
 \textbf{Phenomenon} & \textbf{Prediction} & \textbf{Experimental Test} \\
 \midrule
-Confirmation bias & Stopping distance is $\propto$ precision & Measure belief change latency vs. covariance \\[6pt]
+Overshoot & Distance $\propto \sqrt{\text{precision}}$ & Measure overshoot vs. confidence \\[6pt]
 Belief oscillation & Under-damped agents overshoot truth and oscillate & Track belief trajectories over time \\[6pt]
 Resonance & Optimal persuasion occurs at $\omega_{\text{res}} = \sqrt{K/M}$ & Vary message timing, measure change \\[6pt]
 Perseverance & Decay time $\tau = M/\gamma$ & Measure false belief persistence vs. uncertainty \\[6pt]
@@ -571,7 +570,7 @@ Recoil & Persuaders become harder to persuade & Measure attitude stiffness after
 \end{tabular}
 \end{table}
 
-Our epistemic momentum framework unifies seemingly disparate phenomena such as confirmation bias, belief perseverance, oscillation, and social influence into manifestations of a single underlying epistemic Hamiltonian mechanics. Beliefs are not just updated,  they are accelerated. Evidence does not instantly change minds but rather applies an epistemic force. Finally, confident beliefs don't only resist change rather, they possess epistemic inertia that carries them further than evidence alone would have lead them.
+Our epistemic momentum framework unifies seemingly disparate phenomena such as confirmation bias, belief perseverance, oscillation, and social influence into manifestations of a single underlying epistemic Hamiltonian mechanics. Beliefs are not just updated,  they are dynamic. Evidence does not instantly change minds but rather applies an epistemic force. Finally, confident beliefs don't only resist change rather, they possess epistemic inertia that carries them further than evidence alone would have lead them.
 
 %==============================================================================
 \section{Classical Sociological Models as Limiting Cases}
