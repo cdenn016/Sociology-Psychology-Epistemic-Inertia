@@ -284,10 +284,6 @@ The empirical adequacy of the underdamped regime remains to be established. The 
 %==============================================================================
 
 The Hamiltonian formulation introduces a quantity absent from standard treatments of Bayesian belief updating: epistemic momentum. Just as physical momentum allows objects to flow past equilibrium, epistemic momentum allows beliefs to overshoot, oscillate, and resist change in ways that pure gradient descent fundamentally cannot capture. 
-%------------------------------------------------------------------------------
-\subsection{Defining Cognitive Momentum}
-%------------------------------------------------------------------------------
-
 
 
 \begin{definition}[Cognitive Momentum]
@@ -356,7 +352,7 @@ This result differs from constant-force braking models. It implies that for a gi
 While less dramatic than a linear scaling, this square-root relationship is a rigid constraint imposed by the harmonic geometry of Gaussian belief spaces.
 
 %------------------------------------------------------------------------------
-\subsection{Belief Oscillation and Overshooting}
+\subsection{Belief Overshooting}
 %------------------------------------------------------------------------------
 
 Another prediction of our Hamiltonian epistemic dynamics is oscillation phenomena. Unlike gradient descent, which monotonically approaches equilibrium, Hamiltonian systems can overshoot, oscillate, and decay (see Figure~\ref{fig:phase_portraits})
@@ -390,7 +386,7 @@ By including dissipation (for example, attention deficits, fatigue, etc), the eq
 M_i\ddot{\mu}_i + \gamma_i\dot{\mu}_i + \nabla_{\mu_i}F = 0
 \end{equation}
 
-where $\gamma_i > 0$ is a damping coefficient.  This equation, from the physics perspective, is the well-known driven and damped oscillator.
+where $\gamma_i > 0$ is a damping coefficient.  This equation, from the physics perspective, is the well-known damped harmonic oscillator.
 
 For small displacements from equilibrium $\mu^*$ we have
 
@@ -417,11 +413,9 @@ In the sub-critical ($\gamma_i < 2\sqrt{K_i M_i}$) regime, beliefs will oscillat
 
 As the standard physics of oscillators show, the discriminant $\Delta = \gamma_i^2 - 4K_iM_i$ manifestly determines different behaviors. In the \textbf{over-damped} regime ($\Delta > 0$), beliefs decay to equilibrium monotonically without oscillation, resembling standard Bayesian updating in the literature. In the \textbf{critically damped} regime ($\Delta = 0$), the system exhibits the fastest approach to equilibrium without oscillation, suggesting this may be optimal for rapid learning. In the \textbf{under-damped} regime ($\Delta < 0$), beliefs oscillate around the equilibrium value, overshooting periodically before equilibrating, producing distinctly non-standard Bayesian dynamics.
 
-As an intuitive and timely example, consider an agent (such as a conspiracy theorist) with high precision (strong prior beliefs) and low damping (resistance to evidence). When confronted with strong contradictory evidence, the agent will generally exhibit \textbf{initial resistance} as the high mass $M = \Lambda$ resists the force of evidence, followed by \textbf{acceleration} as persistent evidence eventually accelerates belief change, then \textbf{overshoot} as momentum carries belief past the truth, then \textbf{oscillation} as belief swings between acceptance and rejection, and finally \textbf{settling} as damping eventually brings convergence to equilibrium.
+As an intuitive and timely example, consider an agent with strong prior beliefs and low receptivity to counter-evidence. When confronted with strong contradictory evidence, the agent will generally exhibit \textbf{initial resistance} as the high mass $M = \Lambda$ resists the force of evidence, followed by \textbf{acceleration} as persistent evidence eventually accelerates belief change, then \textbf{overshoot} as momentum carries belief past the truth, then \textbf{oscillation} as belief swings between acceptance and rejection, and finally \textbf{settling} as damping eventually brings convergence to equilibrium.
 
 This pattern (resist, over-correct, oscillate) is consistent with phenomena documented in attitude change and belief correction research \citet{Eagly1993, Lewandowsky2012} but remains unexplained by standard Bayesian models. Here we find a natural and intuitive account.
-
-
 
 \subsection{Resonant Response to Periodic Evidence}
 
@@ -433,7 +427,7 @@ frequency. This mechanical effect, not to be confused with metaphorical uses of
 Periodic evidence driving achieves maximum belief change at the agents belief resonance frequency given by
 
 \begin{equation}
-\boxed{\omega_{\text{res}} = \sqrt{\frac{K_i}{M_i}} = \sqrt{\frac{\text{Evidence strength} \times \text{Precision}}{\text{Epistemic mass}}}}
+\boxed{\omega_{\text{res}} = \sqrt{\frac{K_i}{M_i}} = \sqrt{\frac{\text{Evidence strength}}{\text{Epistemic mass}}}}
 \end{equation}
 
 
