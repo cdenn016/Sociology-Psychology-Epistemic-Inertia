@@ -323,43 +323,37 @@ For an isolated agent with isotropic uncertainty $\Sigma_i = \sigma_i^2 I$, this
 \textbf{Component} & \textbf{Formula} & \textbf{Psychological Role} \\
 \midrule
 Bare momentum & $\bar{\Lambda}_{p_i}\dot{\mu}_i$ & Inertia from prior expectations \\
+Sensory momentum & $\Lambda_{o_i}\dot{\mu}_i$ & Inertia from observation precision \\
 Social momentum & $\sum_k\beta_{ik}\tilde{\Lambda}_{q_k}\dot{\mu}_i$ & Inertia from social embedding \\
 Recoil momentum & $\sum_j\beta_{ji}\Lambda_{q_i}\dot{\mu}_i$ & Inertia from influencing others \\
 \bottomrule
+
 \end{tabular}
 \end{table}
 
-%------------------------------------------------------------------------------
-\subsection{Confirmation Bias as Momentum}
-%------------------------------------------------------------------------------
-
-Presently, research treats confirmation bias as a flaw in evidence evaluation and/or irrationality. Epistemic momentum yields an alternative perspective: confirmation bias is the natural dynamical consequence of beliefs possessing inertia and the underlying informational geometry holding a Fisher metric.
-
-Therefore, we may predict that confident beliefs possess momentum that causes continued motion in their current direction even against mild opposing evidence. The stopping distance for a belief moving at velocity $\dot{\mu}$ against constant opposing force $f$ is then
+\subsection{Belief Overshoot and Perseverance}\label{sec:overshoot}Presently, research treats belief perseverance---the tendency to maintain beliefs despite discrediting evidence---as a flaw in information processing. Epistemic momentum yields an alternative perspective: perseverance is the natural dynamical consequence of beliefs possessing inertia.Consider an agent moving toward a conclusion with velocity $\dot{\mu}$ who encounters a sudden shift in evidence (a new equilibrium). A massless agent would instantly reverse course. An inertial agent, however, possesses kinetic energy that must be converted into potential energy before they can stop and reverse.In the low-damping limit, energy conservation on the quadratic free energy landscape dictates that the initial kinetic energy converts to potential energy at the point of maximum overshoot:
 
 \begin{equation}
-d_{\text{stop}} = \frac{M_i \|\dot{\mu}_i\|^2}{2\|f\|}= \frac{\|\pi_i\|^2}{2M_i\|f\|}
+\frac{1}{2} M_i |\dot{\mu}_i|^2 = \frac{1}{2} K_i |d_{\text{overshoot}}|^2
 \end{equation}
 
+where $K_i$ is the stiffness (curvature) of the free energy well provided by the new evidence. 
 
-From energy conservation we have that the initial kinetic energy $\frac{1}{2}\pi^T M^{-1}\pi$ must be dissipated by the work done against force $f$ over distance $d$
+Solving for the overshoot distance:
 
 \begin{equation}
-\frac{1}{2}\pi^T M^{-1}\pi = f \cdot d_{\text{stop}}
+\boxed{d_{\text{overshoot}} = |\dot{\mu}_i| \sqrt{\frac{M_i}{K_i}}}
 \end{equation}
-Solving for $d_{\text{stop}}$ gives the result.
 
-This represents a distance in "epistemic" or "informational" space.
+This result differs from constant-force braking models. It implies that for a given velocity and evidence strength ($K$), the overshoot scales with the square root of the epistemic mass (precision).
 
-As an intuitive example, a person with a strong prior (high $\bar{\Lambda}_p$) who has been moving towards a conclusion/equilibrium (nonzero $\dot{\mu}$) doesn't simply stop when opposing evidence appears. Instead, they continue such that the cognitive momentum carries them beyond where the evidence alone would have lead them. Although this appears as confirmation bias, in our view it is actually belief inertia.
-
-This then leads to a quantitative prediction: the ratio of stopping distances for high-precision ($\Lambda_H$) versus low-precision ($\Lambda_L$) agents is
+\paragraph{Interpretation.}This provides a mechanical derivation for why high-precision priors ($M \approx \bar{\Lambda}_p$) lead to "stubbornness." A person with deep convictions (high $M$) moving through a line of reasoning possesses enormous epistemic momentum. When they encounter a contradiction (a force $K$), they do not stop immediately. Instead, they "coast" past the logical stopping point, requiring a larger counter-force or longer time to arrest their belief trajectory.This leads to a testable quantitative prediction: the ratio of overshoot distances for high-precision ($\Lambda_H$) versus low-precision ($\Lambda_L$) agents scales as the square root of their precisions:
 
 \begin{equation}
-\frac{d_H}{d_L} = \frac{\Lambda_H}{\Lambda_L}
+\frac{d_H}{d_L} = \sqrt{\frac{\Lambda_H}{\Lambda_L}}
 \end{equation}
 
-This implies that a person twice as confident takes twice as long to stop and overshoots twice as far as another.  In principle this can be tested by a clever experimentalist in order to falsify or validate the dynamical framework.
+While less dramatic than a linear scaling, this square-root relationship is a rigid constraint imposed by the harmonic geometry of Gaussian belief spaces.
 
 %------------------------------------------------------------------------------
 \subsection{Belief Oscillation and Overshooting}
