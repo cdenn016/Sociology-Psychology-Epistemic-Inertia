@@ -230,7 +230,7 @@ The complete variational free energy for a multi-agent system decomposes as
 F = \underbrace{\sum_i D_{\mathrm{KL}}(q_i \| p_i)}_{\text{complexity}} - \underbrace{\sum_i \mathbb{E}_{q_i}[\log p(o_i|c_i)]}_{\text{accuracy}} + \underbrace{\sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}[q_k])}_{\text{consensus}}
 \end{equation}
 
-where $q_i$ is agent $i$'s posterior belief, $p_i$ is agent $i$'s prior, $p(o_i|c_i)$ is the observation likelihood with hidden state $c_i$, $\Omega_{ik}[q_k]$ is neighbor $k$'s belief transported into agent $i$'s reference frame, and $\beta_{ik}$ is the attention-weighted coupling strength. The mass matrix is the Hessian of this free energy:
+where $q_i$ is agent $i$'s posterior belief, $p_i$ is agent $i$'s prior, $p(o_i|c_i)$ is the observation likelihood with hidden state $c_i$, $\Omega_{ik}[q_k]$ is neighbor $k$'s belief transported into agent $i$'s reference frame, and $\beta_{ik}$ is the attention-weighted coupling strength. Denoting the full state vector $\xi = (\mu_1, \ldots, \mu_N, \Sigma_1, \ldots, \Sigma_N)$, the mass matrix is the Hessian of this free energy:
 \begin{equation}
 \mathbf{M} = \frac{\partial^2 F}{\partial\xi\partial\xi^\top}
 \end{equation}
