@@ -233,7 +233,7 @@ where $q_i$ is agent $i$'s posterior belief, $p_i$ is agent $i$'s prior, $p(o_i|
 \mathbf{M} = \frac{\partial^2 F}{\partial\xi\partial\xi^\top} = \mathcal{G}
 \end{equation}
 
-This Hessian is the Fisher-Rao information metric $\mathcal{G}$ on the statistical manifold. Each term in $F$ contributes independently to the total mass.
+This Hessian defines the effective mass matrix $\mathcal{G}$ for belief dynamics. Unlike the intrinsic Fisher-Rao metric (which depends only on the belief geometry), this Hessian mass matrix incorporates contributions from priors, observations, and social coupling. Each term in $F$ contributes independently to the total mass.
 
 \subsubsection{Contribution 1: Prior Precision}
 
@@ -1557,7 +1557,7 @@ where $\tilde{\mu}_i^{(j)} = \Omega_{ji}\mu_i$ is agent $i$'s mean transported i
 \subsection{Second Variations (Hessian = Mass Matrix)}
 %-----------------------------------------------------------------------
 
-The Fisher-Rao metric $\mathcal{G} = \partial^2\mathcal{F}/\partial\xi\partial\xi$ serves as the mass matrix.
+The Hessian $\mathcal{G} = \partial^2\mathcal{F}/\partial\xi\partial\xi$ serves as the mass matrix. This is distinct from the intrinsic Fisher-Rao metric on the statistical manifold; it is a ``Hessian mass matrix'' whose curvature depends on the full free energy landscape including priors, sensory evidence, and social coupling.
 
 \subsubsection{Mean Sector: $\partial^2\mathcal{F}/\partial\mu\partial\mu^T$}
 
@@ -1612,7 +1612,7 @@ The sensory term does not couple different agents. Therefore:
 \end{equation}
 
 
-The mass matrix is symmetric only when $\beta_{ik} = \beta_{ki}$ and $\Omega_{ik} = \Omega_{ki}^T$.
+By Schwarz's theorem, this Hessian is symmetric: one can verify that $[\mathbf{M}^\mu]_{ik} = ([\mathbf{M}^\mu]_{ki})^T$ holds for any $\beta_{ik}$ and $\Omega_{ik}$.
 
 
 %-----------------------------------------------------------------------
@@ -1744,7 +1744,7 @@ The sensory precision $\Lambda_{o_i}$ contributes to the mean-sector mass (Eq.~\
 T = \frac{1}{2}\dot{\mu}^T\mathbf{M}^\mu\dot{\mu} + \frac{1}{2}\mathrm{tr}\left[\mathbf{M}^\Sigma[\dot{\Sigma}, \dot{\Sigma}]\right]
 \end{equation}
 
-The first term gives standard ``particle'' kinetic energy with precision-mass. The second gives ``shape'' kinetic energy on the SPD manifold.
+The first term gives standard ``particle'' kinetic energy with precision-mass. The second gives ``shape'' kinetic energy on the SPD manifold; the metric $(\Lambda \otimes \Lambda)$ corresponds to the affine-invariant metric on the cone of symmetric positive-definite matrices.
 
 %-----------------------------------------------------------------------
 \subsection{The Hamiltonian}
