@@ -1112,18 +1112,6 @@ Standard Bayesian updating and its neural implementations (predictive coding, ac
 
 The DeGroot model of social learning \citet{degroot1974} and its extensions assume instantaneous opinion averaging without momentum. Our framework predicts that strongly-held beliefs (high $\Lambda$) should resist social influence and potentially induce oscillatory collective dynamics in networks with strong coupling.  These phenomena are absent from standard consensus models but consistent with observed polarization dynamics.
 
-\subsection{Connection to Transformer Attention}
-
-Elsewhere, we have shown that the attention weights $\beta_{ij}$ (Eq.~\ref{eq:attention_weights}) are not merely analogous to transformer self-attention but rather they \emph{are} attention, derived from first principles (Dennis, in preparation). Standard transformers compute $\beta_{ij} = \mathrm{softmax}(q_i^\top W_Q W_K^\top k_j / \sqrt{d})$ using learned projection matrices $W_Q, W_K$ that parameterize an implicit similarity metric. Our framework reveals that this metric is actually the KL divergence on the statistical manifold.
-
-\begin{equation}
-\beta_{ij} = \frac{\exp(-D_{\mathrm{KL}}(q_i \| \Omega_{ij}\cdot q_j)/\tau)}{\sum_k \exp(-D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k)/\tau)}
-\end{equation}
-
-The gauge transport operators $\Omega_{ij}$ generalize to the role that positional 
-encoding and learned projections play in standard architectures. 
-
-
 \subsection{Hierarchical Extensions}
 
 The microscopic dynamics developed here (belief equilibration timescales $\tau = M/\gamma$, conditions for oscillatory versus monotonic convergence, momentum transfer through attention networks) provide the foundation for multi-scale theories of collective belief. In forthcoming work, we show that agents achieving sufficient consensus undergo dynamical renormalization-like coarse-graining, yielding emergent informational meta-agents (e.g. institutions, economies, societies) with their own shared beliefs, precisions, and gauge frames. The present framework supplies the dynamics underlying such emergence.  The conditions under which individual beliefs synchronize, the timescales of collective equilibration, and the momentum currents that drive or resist consensus formation lead to emergent informational hierarchies.
@@ -1134,24 +1122,23 @@ Critically, our theory makes no distinction between "physical" and "abstract" in
 
 Several simplifying assumptions warrant future relaxation.
 
-\textbf{Gaussian beliefs.} While analytically tractable, Gaussian distributions cannot capture the multi-modal posteriors characteristic of hypothesis competition, cognitive dissonance, or attitude ambivalence. Extension to exponential families is straightforward however, extension to arbitrary distributions requires numerical methods or variational approximations.
+\textbf{Gaussian beliefs.} While analytically tractable, Gaussian distributions cannot capture the multi-modal posteriors characteristic of hypothesis competition, cognitive dissonance, or attitude ambivalence. Extension to exponential families is developed in Appendix~\ref{app:exponential_family}; extension to arbitrary distributions requires numerical methods or variational approximations.
 
+\textbf{Quasi-static precision.} We have treated precision $\Lambda$ as slowly-varying relative to the mean $\mu$ for demonstrative purposes. The complete theory couples mean and precision dynamics on $\mathbb{R}^d \times \mathrm{SPD}(d)$, allowing precision itself to oscillate or exhibit inertia.
 
-\textbf{Quasi-static precision.} We have treated precision $\Lambda$ as slowly-varying relative to the mean $\mu$ for demonstrative purposes. The complete theory couples mean and precision dynamics on $\mathbb{R}^d \times \mathrm{SPD}(d)$, allowing precision itself to oscillate or exhibit inertia. The codebase we have built, found in the repository (below),  supports the full dynamics as well as hierarchical emergence and more. The full details are too rich to confine to a single article.
-
-\textbf{Empirical validation.} Our primary empirical test involved a task designed to elicit overdamped dynamics. Direct observation of underdamped belief oscillation, precision-scaled relaxation, or resonant persuasion remains for future experimental work. The Kaplowitz-Fink results \citet{kaplowitz1983, fink2002} provide suggestive evidence, but replication with publicly available datasets utilizing the present framework's predictions would strengthen the empirical case.
+\textbf{Empirical validation.} Direct observation of underdamped belief oscillation, precision-scaled relaxation, or resonant persuasion remains for future experimental work. The Kaplowitz-Fink results \citet{kaplowitz1983, fink2002} provide suggestive evidence, but replication with controlled experiments utilizing the present framework's predictions would strengthen the empirical case.
 
 
 
 \section{Conclusion}
 
-We have shown that beliefs naturally possess inertia in relation to prior precision. The straightforward identification that epistemic mass equals statistical precision transforms our understanding of belief dynamics provides new tools that extend beyond dissipative gradient flow and into rich Hamiltonian dynamics.
+We have proposed that beliefs naturally possess inertia proportional to their precision. The identification of epistemic mass with statistical precision transforms our understanding of belief dynamics and provides new tools that extend beyond dissipative gradient flow into Hamiltonian dynamics.
 
-Our theory predicts oscillations, over-shooting, resistance, decay, and resonances in belief dynamics. More fundamentally, it re-frames cognitive biases not as irrationality but instead as unavoidable consequences of belief inertia. Just as physical mass resists acceleration, cognitive precision resists belief change. 
+Our framework predicts oscillations, overshooting, resistance, decay, and resonances in belief dynamics. More fundamentally, it reframes cognitive biases not as irrationality but as consequences of belief inertia. Just as physical mass resists acceleration, cognitive precision resists belief change.
 
-This shift in perspective offers researchers new tools and methods for understanding persuasion, education, therapy, negotiation, and social dynamics. By recognizing that confident beliefs are massive and uncertain beliefs are light, we chart new frontiers in research and socio-psychological understanding.
+This shift in perspective offers researchers new tools for understanding persuasion, education, therapy, negotiation, and social dynamics. By recognizing that confident beliefs are massive and uncertain beliefs are light, we open new directions for research in socio-psychological dynamics.
 
-The mathematics has been hiding in plain sight for decades due to lack of transitive communication between far-flung fields of differential geometry, physics, and informational geometry.  The Fisher information metric has been whispering this entire time that it is actually an inertia tensor for the dynamics of thought.
+The mathematics has been hiding in plain sight for decades, obscured by disciplinary boundaries between differential geometry, physics, and information theory. The Fisher information metric may serve as an inertia tensor for the dynamics of thought.
 
 \subsection*{Data Availability}
 All code and data will be made publicly available upon publication at \\ 
