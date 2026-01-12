@@ -94,33 +94,29 @@ D_{\mathrm{KL}}(q \| p) = \int q(x) \log \frac{q(x)}{p(x)} dx
 
 \subsection{Multi-Agent Belief Geometry}
 
-We extend our single-agent framework to networks of interacting cognitive agents via attention. The geometric setting is a principal $G$-bundle $\pi: P \to \mathcal{C}$ where the base manifold $\mathcal{C}$ encodes agent positions and social network topology, and the gauge group $G = \mathrm{SO}(d)$ consists of rotations in belief space (see Appendix~\ref{app:gauge} for the complete geometric treatment). Each agent $i$ maintains beliefs $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ anchored to a prior $p_i = \mathcal{N}(\bar{\mu}_i, \bar{\Sigma}_i)$, along with an internal reference frame $\phi_i \in \mathfrak{so}(d)$ (the Lie algebra of $\mathrm{SO}(d)$) that determines how they interpret information.
+We extend our single-agent framework to networks of interacting cognitive agents via attention. The geometric setting is a principal $G$-bundle $\pi: P \to \mathcal{C}$ where the base manifold $\mathcal{C}$ encodes agent positions and social network topology, and the gauge group $G$ acts on belief space (see Appendix~\ref{app:gauge} for the complete geometric treatment). Each agent $i$ maintains beliefs $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ anchored to a prior $p_i = \mathcal{N}(\bar{\mu}_i, \bar{\Sigma}_i)$, along with an internal reference frame $\phi_i$ that determines how they encode information.
 
-Importantly, agents cannot directly compare beliefs---they inhabit different fibers of the bundle. Instead, they must first align their gauge frames via \textbf{parallel transport operators}:
+To compare beliefs across agents, we introduce \textbf{parallel transport operators}:
 
 \begin{equation}
-\Omega_{ij} = e^{\phi_i}e^{-\phi_j} \in \mathrm{SO}(d)
+\Omega_{ij} = e^{\phi_i}e^{-\phi_j} \in G
 \end{equation}
 
- 
-
-This operator transforms agent $j$'s beliefs into agent $i$'s gauge frame of reference. This gauge structure formalizes the fundamental psychological reality that agents cannot directly share beliefs but must translate them through their respective internal interpretive perspectives. Importantly, flat gauge reproduces standard consensus models.
-
-This operator acts by right action as
+This operator transforms agent $j$'s beliefs into agent $i$'s reference frame, acting as:
 
 \begin{equation}
 q_j \to \Omega_{ij} \cdot q_j = \mathcal{N}(\Omega_{ij}\mu_j, \Omega_{ij}\Sigma_j\Omega_{ij}^T)
-\end{equation} 
+\end{equation}
 
-For concreteness, consider $d = 3$ so that $\Omega_{ij} \in \mathrm{SO}(3)$ represents rotations; then $\phi_i \in \mathfrak{so}(3)$ is an antisymmetric matrix encoding the agent's interpretive orientation.
-
-The transformed belief can then be compared with agent $i$'s own beliefs via KL divergence
+The transformed belief can then be compared with agent $i$'s own beliefs via KL divergence:
 
 \begin{equation}
 D_{ij} = D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)
 \end{equation}
 
-Importantly this transport is, in general, asymmetric.
+\paragraph{Choice of gauge group.} The gauge group $G$ could in principle be any Lie group acting on belief space: $\mathrm{SO}(d)$ (rotations), $\mathrm{GL}(d)$ (general linear), affine transformations, or more exotic choices. Different groups encode different assumptions about how agents' reference frames can differ. For tractability, we work with $G = \mathrm{SO}(d)$, which preserves the metric structure---agents agree on \emph{how different} two beliefs are, even if they disagree on \emph{what} the beliefs mean.
+
+Crucially, \textbf{flat gauge} ($\Omega_{ij} = I$ for all agent pairs) recovers standard consensus models where all agents share a common reference frame. All derivations in this paper---the mass formula, classical model limits, and dynamical predictions---hold in the flat gauge limit. The general gauge structure is mathematical scaffolding that could accommodate reference frame heterogeneity (e.g., cultural or linguistic translation effects) but is not empirically motivated here. We retain it for generality while emphasizing that the core results do not depend on non-trivial gauge.
 
 \subsection{Multi-Agent Free Energy}
 
