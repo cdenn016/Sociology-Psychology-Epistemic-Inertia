@@ -380,7 +380,7 @@ Another prediction of our Hamiltonian epistemic dynamics is oscillation phenomen
 
 \subsubsection{The Damped Epistemic Oscillator}
 
-By including dissipation (for example, attention deficits, fatigue, etc), the equation of motion becomes
+The damping coefficient $\gamma$ represents the rate of gradient-based updating—equivalently, the inverse learning rate in standard formulations. In the overdamped limit $\gamma \gg 2\sqrt{KM}$, dynamics reduce to the familiar $\dot{\mu} = -\gamma^{-1}\nabla F$, recovering standard variational inference.
 
 \begin{equation}
 M_i\ddot{\mu}_i + \gamma_i\dot{\mu}_i + \nabla_{\mu_i}F = 0
@@ -577,17 +577,19 @@ Our epistemic momentum framework unifies seemingly disparate phenomena such as c
 \label{sec:classical_limits}
 %==============================================================================
 
-We now demonstrate that several classical models from sociology and network science emerge from the overdamped limit of our framework. These derivations do \emph{not} depend on the inertial ansatz---they follow rigorously from gradient flow on the statistical manifold.
+We now demonstrate that several classical models from sociology and network science emerge from the overdamped limit of our framework. These derivations do \emph{not} depend on the inertial ansatz. We assume the overdamped dynamics follow Riemannian Gradient Flow (Natural Gradient Descent), where the metric tensor determines the path of steepest descent. 
 
 \subsection{DeGroot Social Learning}
 
 \subsubsection{Classical Formulation}
 
-DeGroot's model (1974) describes social learning as iterative averaging of neighbors' beliefs:
+DeGroot's model (1974) describes social learning as iterative averaging of neighbors' beliefs
+
 \begin{equation}
 \mu_i(t+1) = \sum_j w_{ij} \mu_j(t)
 \label{eq:degroot_classical}
 \end{equation}
+
 where $W = [w_{ij}]$ is a row-stochastic matrix ($\sum_j w_{ij} = 1$) representing social influence weights. Under mild conditions, beliefs converge to a consensus determined by the network structure.
 
 \subsubsection{Sociological Context}
@@ -597,7 +599,8 @@ DeGroot's model captures the fundamental sociological insight that individuals u
 \subsubsection{Derivation from VFE Framework}
 
 \begin{proposition}[DeGroot as VFE Limit]
-The DeGroot update rule \eqref{eq:degroot_classical} emerges from gradient flow on the VFE under:
+The DeGroot update rule \eqref{eq:degroot_classical} emerges from gradient flow on the VFE under
+
 \begin{enumerate}[label=(\roman*)]
 \item Overdamped dynamics: $\gamma \to \infty$
 \item Low uncertainty: $\Sigma_i \to \sigma^2 I$ with $\sigma^2$ small
@@ -611,6 +614,7 @@ The DeGroot update rule \eqref{eq:degroot_classical} emerges from gradient flow 
 \begin{proof}
 \textbf{Step 1: Simplify VFE.}
 Under these conditions, the free energy reduces to:
+
 \begin{equation}
 F[\mu] = \frac{\lambda_\beta}{2\sigma^2} \sum_{i,j} w_{ij} \|\mu_i - \mu_j\|^2
 \end{equation}
@@ -698,62 +702,102 @@ Define the \emph{emergent stubbornness}:
 \label{eq:emergent_stubbornness}
 \end{equation}
 
-Then $\mu_i^* = \alpha_i' \mu_i(0) + (1-\alpha_i')\sum_j w_{ij}\mu_j^*$, matching \eqref{eq:fj_classical}. \qed
+Then $\mu_i^* = \alpha_i' \mu_i(0) + (1-\alpha_i')\sum_j w_{ij}\mu_j^*$, matching \eqref{eq:fj_classical}.
 \end{proof}
 
 \subsubsection{Mechanistic Stubbornness}
 
-The key sociological insight is that stubbornness $\alpha_i'$ in \eqref{eq:emergent_stubbornness} is \emph{not} a fixed personality trait but emerges from two sources:
+This demonstrates that stubbornness $\alpha_i'$ in \eqref{eq:emergent_stubbornness} is not a fixed personality trait but emerges from two sources:
 
 \paragraph{Prior precision $\Sigma_p^{-1}$.} Agents with strong initial convictions (low $\Sigma_p$) exhibit high stubbornness. This captures ideological commitment or expertise: a climate scientist has high prior precision about global warming, making them resistant to contrarian social influence.
 
-\paragraph{Social coupling strength $\lambda_\beta \sum_j w_{ij}$.} Agents experiencing intense social pressure (many influential neighbors) become \emph{less} stubborn in equilibrium. However, this same pressure increases their \emph{inertial mass}, slowing their rate of approach to equilibrium---a subtle but important distinction.
+\paragraph{Social coupling strength $\lambda_\beta \sum_j w_{ij}$.} Agents experiencing intense social pressure (many influential neighbors) become less stubborn in equilibrium. However, this same pressure increases their epistemic inertia, slowing their rate of approach to equilibrium demonstrating a subtle but important distinction.
 
-The framework predicts that the same individual should exhibit different degrees of stubbornness across different social contexts---contradicting trait-based theories that treat resistance to influence as a stable personality characteristic.
+The framework predicts that the same individual should exhibit different degrees of stubbornness across different social contexts thereby contradicting trait-based theories that treat resistance to influence as a stable personality characteristic.
 
 \subsection{Echo Chambers and Polarization}
 
 \subsubsection{Phenomenon}
 
-Echo chambers constitute a self-reinforcing dynamical process: individuals preferentially attend to similar others (homophily), causing in-group beliefs to converge while out-group beliefs diverge, culminating in isolation as cross-group communication declines.
+Echo chambers constitute a self-reinforcing dynamical process: individuals 
+preferentially attend to similar others (homophily), causing in-group beliefs 
+to converge while out-group beliefs diverge, culminating in isolation as 
+cross-group communication declines.
 
 \subsubsection{Derivation from VFE Framework}
 
 \begin{proposition}[Emergent Homophily and Polarization]
-Softmax attention automatically creates homophilic coupling. When initial belief distributions are multimodal, this leads to stable polarized states with within-group consensus and cross-group divergence.
+Softmax attention automatically creates homophilic coupling. When initial belief 
+distributions are bimodal, this leads to stable polarized equilibria with 
+within-group consensus and cross-group divergence.
 \end{proposition}
 
-\begin{proof}[Proof Sketch]
+\begin{proof}
 \textbf{Step 1: Softmax creates homophily.}
-For Gaussian beliefs with common covariance:
+For Gaussian beliefs with common covariance $\sigma^2 I$:
 \begin{equation}
-\beta_{ij} = \frac{\exp(-\|\mu_i - \mu_j\|^2 / (2\sigma^2 \kappa))}{\sum_k \exp(-\|\mu_i - \mu_k\|^2 / (2\sigma^2 \kappa))}
+\beta_{ij} = \frac{\exp(-\|\mu_i - \mu_j\|^2 / (2\sigma^2 \kappa))}
+{\sum_k \exp(-\|\mu_i - \mu_k\|^2 / (2\sigma^2 \kappa))}
 \end{equation}
-Similar beliefs (small $\|\mu_i - \mu_j\|$) yield high $\beta_{ij}$; dissimilar beliefs yield low $\beta_{ij}$.
+Similar beliefs yield high $\beta_{ij}$; dissimilar beliefs yield exponentially 
+suppressed attention.
 
-\textbf{Step 2: Positive feedback loop.}
-The gradient flow is $d\mu_i/d\tau \propto \sum_j \beta_{ij}(\mu_j - \mu_i)$.
+\textbf{Step 2: Polarized equilibrium structure.}
+Consider $N$ agents divided into two groups $A$ and $B$ of equal size $N/2$, 
+with group means $\mu_A$ and $\mu_B$ separated by distance 
+$d = \|\mu_A - \mu_B\|$. At equilibrium, all agents within a group share the 
+group mean.
 
-This creates positive feedback: similar beliefs $\to$ high attention $\to$ further convergence $\to$ higher attention $\to$ cross-group attention vanishes.
+For agent $i \in A$, define $x = \exp(-d^2/(2\sigma^2\kappa))$. Define the total attention weight allocated to the in-group and out-group as $\beta_{\text{in-group}}$ and $\beta_{\text{out-group}}$. The attention 
+weights are:
+
+\begin{align}
+\beta_{\text{in-group}} &= \frac{N/2 - 1}{(N/2 - 1) + (N/2)x} \\
+\beta_{\text{out-group}} &= \frac{(N/2)x}{(N/2 - 1) + (N/2)x}
+\end{align}
 
 \textbf{Step 3: Stability condition.}
-For two groups $A$ and $B$, the polarized state is stable when:
+The gradient flow pulls each agent toward the attention-weighted mean of all 
+others. For the polarized state to be stable, out-group pull must be negligible.
+
+Requiring $\beta_{\text{out-group}} < 1/N$ (out-group attention vanishes as 
+$N \to \infty$):
 \begin{equation}
-\|\mu_A - \mu_B\|^2 > 2\sigma^2 \kappa \log N
-\label{eq:polarization_threshold}
+\frac{(N/2)x}{(N/2) + (N/2)x} < \frac{1}{N}
 \end{equation}
-where $N$ is the number of agents. \qed
+
+For large $N$ with $x \ll 1$, this simplifies to $x < 2/N$, yielding:
+\begin{equation}
+\exp\left(-\frac{d^2}{2\sigma^2\kappa}\right) < \frac{2}{N}
+\end{equation}
+
+Taking logarithms:
+\begin{equation}
+\boxed{\|\mu_A - \mu_B\|^2 > 2\sigma^2 \kappa \log(N/2) \approx 2\sigma^2 \kappa \log N}
+\end{equation}
+
+This is the polarization threshold: groups separated by more than 
+$\sqrt{2\sigma^2\kappa\log N}$ in belief space maintain stable segregation. 
 \end{proof}
+
+\subsubsection{Interpretation}
+
+The $\log N$ factor has an intuitive meaning: larger populations require 
+greater belief separation to maintain polarization, because each agent 
+has more potential out-group contacts. However, the dependence is only 
+logarithmic; doubling the population requires only a modest increase in 
+separation.
 
 \subsubsection{Phase Transition in Polarization}
 
-The stability condition \eqref{eq:polarization_threshold} reveals a \emph{phase transition} in the temperature parameter $\kappa$:
+The stability condition reveals a phase transition in the temperature parameter $\kappa$:
 
 \paragraph{High temperature ($\kappa$ large):} Attention is diffuse, cross-group communication persists, system converges to global consensus.
 
 \paragraph{Low temperature ($\kappa$ small):} Attention is sharp, cross-group communication collapses, system locks into polarized state.
 
-The critical temperature scales with initial belief separation:
+The critical temperature scales with initial belief separation
+
 \begin{equation}
 \kappa^{\text{crit}} \sim \frac{\|\mu_A(0) - \mu_B(0)\|^2}{2\sigma^2 \log N}
 \end{equation}
@@ -762,107 +806,151 @@ The critical temperature scales with initial belief separation:
 
 Social media platforms that use engagement-based ranking effectively lower $\kappa$ (sharpen attention toward similar content). The VFE framework predicts this design choice should increase polarization, consistent with empirical observations. Interventions to reduce polarization should target $\kappa$: increasing exposure diversity (raising temperature) or increasing epistemic humility (raising uncertainty $\sigma^2$) can prevent the polarization phase transition.
 
+
 \subsection{Bounded Confidence Models}
 
 \subsubsection{Classical Formulation}
 
-Hegselmann-Krause (2002) and Deffuant et al. (2000) introduced bounded confidence: agents only interact with others within a threshold distance $\epsilon$:
+Hegselmann-Krause (2002) and Deffuant et al.\ (2000) introduced bounded confidence: 
+agents only interact with others within a threshold distance $\epsilon$:
 \begin{equation}
 \mu_i(t+1) = \frac{1}{|N_i(\epsilon)|}\sum_{j \in N_i(\epsilon)} \mu_j(t)
 \end{equation}
-where $N_i(\epsilon) = \{j : |\mu_j - \mu_i| < \epsilon\}$.
+where $N_i(\epsilon) = \{j : |\mu_j - \mu_i| < \epsilon\}$. This hard threshold 
+captures the intuition that people ignore opinions too distant from their own.
 
-\subsubsection{Correspondence with VFE Framework}
+\subsubsection{Derivation from VFE Framework}
 
 \begin{proposition}[Bounded Confidence as Low-Temperature Limit]
-The bounded confidence dynamics approximate the VFE framework in the low-temperature regime $\kappa \to 0$, with effective threshold:
+The bounded confidence dynamics emerge from the VFE framework as the attention 
+temperature $\kappa \to 0$.
+\end{proposition}
+
+\begin{proof}
+\textbf{Step 1: Softmax sharpening.}
+The attention weight from $i$ to $j$ is:
 \begin{equation}
-\epsilon_{\text{eff}} \approx \sigma\sqrt{2\kappa \log N}
+\beta_{ij} = \frac{\exp(-\|\mu_i - \mu_j\|^2 / (2\sigma^2 \kappa))}
+{\sum_k \exp(-\|\mu_i - \mu_k\|^2 / (2\sigma^2 \kappa))}
 \end{equation}
-\end{proposition}
+As $\kappa \to 0$, this concentrates on the nearest neighbors.
 
-As $\kappa \to 0$, the softmax becomes increasingly sharp. Agents within the effective radius receive substantial attention; those outside receive exponentially suppressed attention.
+\textbf{Step 2: Effective threshold.}
+An agent at distance $d$ receives attention proportional to 
+$\exp(-d^2/(2\sigma^2\kappa))$. Following the echo chamber analysis, attention 
+becomes negligible ($< 1/N$) when:
+\begin{equation}
+d^2 > 2\sigma^2\kappa\log N
+\end{equation}
 
-\subsubsection{Key Difference: Soft vs. Hard Threshold}
+Thus the \emph{effective confidence bound} is:
+\begin{equation}
+\boxed{\epsilon_{\text{eff}} = \sigma\sqrt{2\kappa \log N}}
+\end{equation}
 
-The VFE framework produces a \emph{soft} threshold (smooth exponential decay) rather than the classical hard cutoff. This is more psychologically realistic---people don't entirely ignore slightly-too-distant opinions but attend to them with diminishing weight. The soft threshold is also mathematically tractable (differentiable everywhere) and parameterized by $\kappa$, allowing interpolation between regimes.
+\textbf{Step 3: Dynamics correspondence.}
+The VFE gradient flow is $\dot{\mu}_i \propto \sum_j \beta_{ij}(\mu_j - \mu_i)$.
+When $\kappa$ is small, attention concentrates on agents within $\epsilon_{\text{eff}}$:
+\begin{equation}
+\dot{\mu}_i \approx \frac{1}{|N_i(\epsilon_{\text{eff}})|}\sum_{j \in N_i(\epsilon_{\text{eff}})} (\mu_j - \mu_i)
+\end{equation}
+Discretizing with unit time step yields the bounded confidence update. \qed
+\end{proof}
 
-\subsubsection{Adaptive Threshold}
+\subsubsection{Key Differences from Classical Models}
 
-Unlike fixed-$\epsilon$ models, the effective threshold depends dynamically on parameters: $\epsilon_{\text{eff}} = f(\sigma, \kappa, N)$. Higher epistemic uncertainty $\sigma$ increases tolerance for distant opinions, consistent with findings that epistemic humility reduces polarization.
+\paragraph{Soft vs.\ hard threshold.} The VFE framework produces smooth exponential 
+decay rather than a hard cutoff. This is more psychologically realistic as people 
+don't entirely ignore slightly-too-distant opinions but attend to them with 
+diminishing weight.
 
-\subsection{Confirmation Bias from Epistemic Mass}
+\paragraph{Adaptive threshold.} Unlike fixed-$\epsilon$ models, the effective 
+threshold $\epsilon_{\text{eff}} = \sigma\sqrt{2\kappa\log N}$ depends on uncertainty $\sigma$ (uncertain agents tolerate more distant opinions), 
+temperature $\kappa$ (higher temperature broadens the acceptance window), and
+population size $N$ (larger populations have slightly wider effective thresholds).
 
-Even in the overdamped regime, the mass matrix affects dynamics.
 
-\begin{proposition}[Confirmation Bias from Epistemic Mass]
-Agents with high prior precision or many followers update more slowly in response to the same evidence gradient, without requiring any non-Bayesian mechanisms.
-\end{proposition}
+This predicts that high uncertainty reduces polarization by expanding the range of opinions an agent will engage with.
 
-\begin{proof}[Proof Sketch]
-The gradient flow dynamics are:
+\subsection{Confirmation Bias}
+
+\subsubsection{Natural Gradient Interpretation}
+
+In natural gradient descent, the mass matrix $M_i = \partial^2 F/\partial\mu_i^2$ 
+serves as a metric tensor determining the direction of steepest descent
+
 \begin{equation}
 \frac{d\mu_i}{d\tau} = -M_i^{-1} \nabla_{\mu_i} F
 \end{equation}
 
-Update magnitude:
+This is the same object that plays the role of inertial mass in the Hamiltonian 
+formulation. However, interpreting it as a metric rather than a mass 
+requires only that we accept natural gradient descent as the appropriate dynamics 
+on statistical manifolds. This is a standard assumption in information geometry 
+\citep{Amari2016} such that here we need not the full inertial ansatz.
+
+\subsubsection{Mechanism}
+
+Agents with large $M_i$ update more slowly for the same gradient
+
 \begin{equation}
 \|d\mu_i\| \propto M_i^{-1} \|\nabla_{\mu_i} F\|
 \end{equation}
 
-Agents with large $M_i$ (high precision, many followers) update more slowly for the same gradient. \qed
-\end{proof}
+Since $M_i = \bar{\Lambda}_{p_i} + \Lambda_{o_i} + \sum_k\beta_{ik}\tilde{\Lambda}_{q_k} + \sum_j\beta_{ji}\Lambda_{q_i}$, high mass (slow updating) arises from strong priors, precise observations, confident neighbors, or many followers.
 
-\paragraph{The outgoing attention term.} The term $\sum_j \beta_{ji}\Lambda_{q,i}$ represents ``mass from being attended to.'' Agents with many followers accumulate epistemic mass, becoming more resistant to change. This provides a geometric mechanism for the observation that influence and flexibility are in tension. Henry Adams observed that ``power is poison''---our framework provides a geometric mechanism for this tragedy.
+This is confirmation bias whereby high-precision agents respond 
+less to the same evidence because they sit in steep-walled free energy wells.
 
 \subsection{Social Impact Theory}
 
 \subsubsection{Classical Formulation}
 
-Latan\'e's Social Impact Theory (1981) posits that social influence is a multiplicative function of three factors:
+Latané's Social Impact Theory (1981) posits that social influence on a target 
+is a multiplicative function of source properties:
 \begin{equation}
 \text{Impact} = f(\text{Strength} \times \text{Immediacy} \times \text{Number})
 \end{equation}
 
-\subsubsection{Mapping to VFE Framework}
+\subsubsection{Correspondence with VFE Framework}
 
-The mass matrix provides a natural quantitative interpretation:
+The social force term in our framework provides a quantitative interpretation. 
+The force on agent $i$ from neighbor $j$ is
 
-\paragraph{Strength $\leftrightarrow$ $\Sigma_{q,j}^{-1}$.} Source precision (confidence/expertise) contributes directly to the mass experienced by the target.
+\begin{equation}
+F_{j \to i} = \beta_{ij} \Lambda_{q_j} (\mu_j - \mu_i)
+\end{equation}
 
-\paragraph{Immediacy $\leftrightarrow$ Transport penalty $\|\Omega_{ij} - I\|$.} Agents who are ``close'' have aligned frames ($\Omega_{ij} \approx I$), receiving high attention. Distant agents incur large KL penalties and receive low attention.
+\paragraph{Strength $\leftrightarrow$ $\Lambda_{q_j}$.} Source precision (confidence) amplifies the force exerted on the target.
 
-\paragraph{Number $\leftrightarrow$ $\sum_j$.} More sources yield more terms in the social mass sum.
+\paragraph{Immediacy $\leftrightarrow$ $\beta_{ij}$.} Attention weights decay with 
+belief dissimilarity, providing an analog of social/epistemic proximity.
 
-\subsubsection{What the VFE Framework Adds}
-
-\paragraph{Exact quantitative formula.} Latan\'e's principle is qualitative; the VFE framework gives precise predictions.
-
-\paragraph{Time-varying impact.} As beliefs and attention evolve, mass changes dynamically.
-
-\paragraph{Asymmetry.} Social impact is not reciprocal: $\Delta M_i^{(j)} \neq \Delta M_j^{(i)}$.
+\paragraph{Number $\leftrightarrow$ $\sum_j$.} Total social force sums over all sources.
 
 \subsubsection{Caveat}
 
-This is an \emph{interpretive correspondence}, not a formal equivalence. The VFE framework provides one specific quantitative instantiation of Latan\'e's qualitative principle.
+This is an interpretive correspondence, not a formal derivation. Latané's 
+immediacy referred to physical proximity; our $\beta_{ij}$ captures epistemic 
+proximity (belief similarity). The VFE framework provides one quantitative 
+instantiation of SIT's qualitative principle.
 
-\subsection{Diffusion of Innovations}
+\subsection{Attention Gradients}
 
-\subsubsection{Classical Formulation}
+\paragraph{Attention gradient effects.}
 
-Rogers (1962) identified a characteristic S-curve pattern in innovation adoption, with distinct adopter categories: innovators (2.5\%), early adopters (13.5\%), early majority (34\%), late majority (34\%), and laggards (16\%).
+When attention weights are dynamic, the gradient includes an additional term
 
-\subsubsection{Correspondence with VFE Framework}
+\begin{equation}
+\nabla_{\mu_i} F_{social} = \sum_j \beta_{ij} \nabla_{\mu_i} D_{KL_{ij}} + \sum_j D_{KL_{ij}} \nabla_{\mu_i} \beta_{ij}
+\end{equation}
 
-\begin{proposition}[S-Curve from Attention Dynamics]
-The logistic adoption curve emerges when agents decide between adopt/reject based on social attention from prior adopters, with heterogeneous prior precisions determining adoption order.
-\end{proposition}
+The second term represents attention reallocation: agents are pulled toward 
+neighbors whose attention would increase most upon approach. This amplifies 
+homophily beyond the direct KL force, accelerating polarization when attention 
+is sharply selective (low $\kappa$). Most derivations in this section assume 
+fixed attention, neglecting this effect.
 
-The Rogers categories emerge naturally from the distribution of epistemic mass $M_i$: \textbf{Innovators} have low mass due to uncertain priors and few anchoring connections; \textbf{early adopters} have moderate mass with network positions exposing them to innovators; the \textbf{early and late majority} have moderate-to-high mass and require substantial adopter signal; and \textbf{laggards} have the highest mass due to extreme prior certainty or isolation.
-
-\paragraph{Commitment trap.} Early adopters who influence others accumulate social mass from those attention connections, becoming resistant to abandoning the innovation even if problems emerge. This explains why early advocates are often the last to admit failure.
-
-\subsection{Summary of Derivations}
 
 \begin{table}[h]
 \centering
@@ -876,7 +964,6 @@ Echo Chambers & Derived & No & Softmax attention \\
 Bounded Confidence & Approximate & No & Low-$\kappa$ limit \\
 Confirmation Bias & Geometric & Partially & Mass matrix interpretation \\
 Social Impact Theory & Interpretive & No & Qualitative correspondence \\
-Diffusion of Innovations & Approximate & No & S-curve from heterogeneous mass \\
 \bottomrule
 \end{tabular}
 \caption{Quality assessment of derivations. Core results depend only on gradient flow, not the inertial ansatz.}
@@ -890,15 +977,23 @@ Diffusion of Innovations & Approximate & No & S-curve from heterogeneous mass \\
 
 For decades, researchers across psychology, neuroscience, and opinion dynamics have empirically modeled belief change using spring-mass metaphors without theoretical justification. Kaplowitz and Fink's damped oscillator model of attitude change \citet{kaplowitz1983, kaplowitz1992}, which successfully predicted oscillation and overshoot in response to persuasive messages \citet{fink2002}, treated mass and damping as free parameters which they fit to data. Similarly, bounded confidence models in opinion dynamics \citet{hegselmann2002, deffuant2000}, momentum effects in economic expectations \citet{coibion2015}, and overshoot phenomena in perceptual adaptation \citet{webster2015} all invoke inertial dynamics without explaining their origin.
 
-Our central contribution is showing that these are not mere analogies but instead consequences of variational inference on curved statistical manifolds. The Fisher information metric \textit{is} the inertial mass tensor for epistemic dynamics; damping emerges from dissipative terms in the variational principle where the restoring force is the gradient of the variational free energy. This provides a principled basis for parameter values previously treated as phenomenological: \textbf{mass} equals $\Lambda_{\text{prior}} + \Lambda_{\text{observation}} + \Lambda_{\text{social}}$, the total precision of an agent's belief; \textbf{damping} $\gamma$ arises from dissipation due to attention, metabolic costs, or environmental noise; and the \textbf{spring constant} $K$ corresponds to the curvature of the free energy landscape at equilibrium. The framework thus unifies disparate empirical observations under a single geometric principle: beliefs are points on a Riemannian manifold, and their dynamics are geodesic motion with friction.
+Our central contribution is showing that these are not mere analogies but instead consequences of variational inference on curved statistical manifolds. The Fisher information metric acts as an inertial mass tensor for epistemic dynamics; damping emerges from dissipative terms in the variational principle where the restoring force is the gradient of the variational free energy. This provides a principled basis for parameter values previously treated as phenomenological: epistemic inertia equals $\Lambda_{\text{prior}} + \Lambda_{\text{observation}} + \Lambda_{\text{social}}$, the total precision of an agent's belief; damping $\gamma$ arises from dissipation due to attention, metabolic costs, or environmental noise; and $K$ corresponds to the curvature of the free energy landscape at equilibrium. The framework thus unifies disparate empirical observations under a single geometric principle: beliefs are points on a Riemannian manifold, and their dynamics are geodesic motion with friction.
 
-\subsection{Empirical Validation}
+\subsection{Parameter Regimes and Existing Evidence}
 
-We validated the framework on the helicopter task \citet{mcguire2014, nassar2010, nassar2012}, where high observation noise ($\sigma_o^2$ large) and frequent environmental change (hazard rate $H \approx 0.1$) place observers in conditions which our theory predicts should produce overdamped dynamics. High noise reduces sensory precision $\Lambda_o$, decreasing effective mass whereas environmental volatility increases optimal damping. Together, these push dynamics toward the overdamped limit where $\gamma \gg 2\sqrt{KM}$.
+The framework predicts that oscillatory dynamics appear only when 
+$\gamma < 2\sqrt{KM}$ (underdamped). Most laboratory learning tasks—designed 
+with high noise and volatile environments—place observers in the overdamped 
+regime where standard gradient descent suffices. This explains why momentum 
+effects are rarely observed in perceptual learning paradigms.
 
-Indeed, the simple delta rule (the zero-momentum limit of our framework) provided adequate fit for 97\% of participants (31/32 by BIC). The fitted momentum parameter, while statistically non-zero ($\beta = 0.003 \pm 0.006$, $p = 0.01$), was practically negligible. This is not a failure of the theory but a successful prediction: the helicopter task was designed to study learning rate adaptation in volatile environments, not belief inertia. Its parameters place observers firmly in the overdamped regime where our framework reduces to standard models.
+In contrast, Kaplowitz and Fink \citep{kaplowitz1992} observed attitude 
+oscillation in persuasion studies where participants had strong prior 
+commitments confronting credible counter-evidence—precisely the high-$M$, 
+low-$\gamma$ conditions our framework predicts should produce underdamped 
+dynamics. Both phenomena emerge from the same equations in different 
+parameter regimes.
 
-This explains why gradient descent suffices here while oscillatory dynamics appear elsewhere. Kaplowitz and Fink \citet{kaplowitz1992} observed attitude oscillation in persuasion studies where participants had strong prior commitments (high $\Lambda_{\text{prior}}$) confronted with credible counter messages (high $\Lambda_{\text{observation}}$) which represent precisely the conditions our framework predicts should produce underdamped dynamics. Our present theory provides the missing bridge -  both phenomena emerge from the same equations in different parameter regimes.
 
 \subsection{Why Was This Overlooked?}
 
@@ -921,10 +1016,9 @@ A striking implication of our framework is that phenomena often attributed to "c
 
 \textbf{The continued influence effect}, whereby misinformation continues to affect reasoning even after correction \citet{Lewandowsky2012}, similarly reflects momentum decay rather than memory failure. Corrections apply a counter-force, but if the original misinformation was encoded with high precision such that the belief's momentum carries it past the corrected equilibrium before dissipation brings it to rest.
 
-\textbf{Confirmation bias}, the tendency to seek and weight evidence consistent with existing beliefs \citet{nickerson1998}, can be reinterpreted as a consequence of inertial dynamics. Beliefs with high momentum in a particular direction are less deflected by contradictory evidence than by confirmatory evidence. This is not a bias in the pejorative sense but a geometrical consequence of how informationally massive objects respond to epistemic forces.
+\textbf{Confirmation bias}, the tendency to seek and weight evidence consistent with existing beliefs \citet{nickerson1998}, can be reinterpreted as a consequence of inertial dynamics. Beliefs with high epistemic inertia are less deflected by contradictory evidence than by confirmatory evidence. This is not a bias in the pejorative sense but a geometrical consequence of how informationally massive objects respond to epistemic forces.
 
 \textbf{The rigidity of influence.} Perhaps most striking is the prediction that influence itself accumulates as inertial mass. The outgoing social term $\sum_j \beta_{ji}\Lambda_{q_i}$ in the mass formula means that agents whose beliefs are attended to by many others become progressively more rigid. This provides a geometric mechanism for observations that leaders, experts, and public figures often exhibit reduced sensitivity to feedback; what Adams called "poison" and which Solzhenitsyn poetically described as "power is a poison well known for thousands of years... for those who are unaware of any higher sphere, it is a deadly poison. For them there is no antidote" \citet{adams1918education, solzhenitsyn1973gulag}. The phenomenon is not necessarily a moral failure but mathematical inevitability. When many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. Empathy, the capacity to update one's model of others, requires precisely the flexibility that influence consumes. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below, and suggests that the "isolation of power" documented by historians and political scientists emerges from the same geometric principles governing individual belief dynamics.
-
 
 This reframing provides a mechanistic basis for intervention. If belief perseverance stems from high precision rather than stubbornness, then interventions targeting uncertainty (increasing $\gamma/M$) may be more effective than those targeting content. Similarly, if the rigidity of leadership emerges from accumulated social attention, then institutional designs that distribute attention more evenly may preserve epistemic flexibility at the top.
 
