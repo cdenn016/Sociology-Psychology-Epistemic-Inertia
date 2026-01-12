@@ -1114,7 +1114,7 @@ The DeGroot model of social learning \citet{degroot1974} and its extensions assu
 
 \subsection{Connection to Transformer Attention}
 
-Elsewhere, we have shown that the attention weights $\beta_{ij}$ (Eq.~\ref{eq:attention_weights}) are not merely analogous to transformer self-attention but rather they \emph{are} attention, derived from first principles \citet{Dennis2025, Dennis2025b}. Standard transformers compute $\beta_{ij} = \mathrm{softmax}(q_i^\top W_Q W_K^\top k_j / \sqrt{d})$ using learned projection matrices $W_Q, W_K$ that parameterize an implicit similarity metric. Our framework reveals that this metric is actually the KL divergence on the statistical manifold.
+Elsewhere, we have shown that the attention weights $\beta_{ij}$ (Eq.~\ref{eq:attention_weights}) are not merely analogous to transformer self-attention but rather they \emph{are} attention, derived from first principles (Dennis, in preparation). Standard transformers compute $\beta_{ij} = \mathrm{softmax}(q_i^\top W_Q W_K^\top k_j / \sqrt{d})$ using learned projection matrices $W_Q, W_K$ that parameterize an implicit similarity metric. Our framework reveals that this metric is actually the KL divergence on the statistical manifold.
 
 \begin{equation}
 \beta_{ij} = \frac{\exp(-D_{\mathrm{KL}}(q_i \| \Omega_{ij}\cdot q_j)/\tau)}{\sum_k \exp(-D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k)/\tau)}
@@ -1126,7 +1126,7 @@ encoding and learned projections play in standard architectures.
 
 \subsection{Hierarchical Extensions}
 
-The microscopic dynamics developed here (belief equilibration timescales $\tau = M/\gamma$, conditions for oscillatory versus monotonic convergence, momentum transfer through attention networks) provide the foundation for multi-scale theories of collective belief. Elsewhere \citet{Dennis2025b}, we show that agents achieving sufficient consensus undergo dynamical renormalization-like coarse-graining, yielding emergent informational meta-agents (e.g. institutions, economies, societies) with their own shared beliefs, precisions, and gauge frames. The present framework supplies the dynamics underlying such emergence.  The conditions under which individual beliefs synchronize, the timescales of collective equilibration, and the momentum currents that drive or resist consensus formation lead to emergent informational hierarchies.
+The microscopic dynamics developed here (belief equilibration timescales $\tau = M/\gamma$, conditions for oscillatory versus monotonic convergence, momentum transfer through attention networks) provide the foundation for multi-scale theories of collective belief. In forthcoming work, we show that agents achieving sufficient consensus undergo dynamical renormalization-like coarse-graining, yielding emergent informational meta-agents (e.g. institutions, economies, societies) with their own shared beliefs, precisions, and gauge frames. The present framework supplies the dynamics underlying such emergence.  The conditions under which individual beliefs synchronize, the timescales of collective equilibration, and the momentum currents that drive or resist consensus formation lead to emergent informational hierarchies.
 
 Critically, our theory makes no distinction between "physical" and "abstract" informational systems. The same equations governing individual belief dynamics may similarly apply to institutional beliefs (corporate strategy, scientific consensus, market expectations), with appropriate identification of the relevant state spaces and attention structures.
 
