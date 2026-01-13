@@ -8,7 +8,7 @@
 \usepackage{array}
 \usepackage{tcolorbox}
 \usepackage{enumitem}
-\usepackage{subcaption}
+ \usepackage{subcaption} 
 \geometry{margin=1in}
 \newcommand{\KL}{\mathrm{KL}}
 \newcommand{\tr}{\mathrm{tr}}
@@ -47,13 +47,8 @@ information geometry: the Fisher metric is the unique Riemannian metric on proba
 how long belief updates take which depends on agent precision and social 
 interactions encoded via gauge-covariant attention.
 
-In the overdamped limit (which does not depend on this ansatz) we derive several classical sociological models as exact or approximate limiting cases: DeGroot,
-Friedkin-Johnsen, bounded confidence, echo chambers, and Social Impact Theory. In underdamped regimes, the ansatz predicts 
-oscillation, overshooting, and resonance consistent with attitude change 
-research. This framework reframes confirmation bias, belief perseverance, 
-and polarization as geometric consequences of epistemic inertia rather than 
-irrationality, unifying multiple sociological and psychological models under 
-a single information-geometric principle.
+In the overdamped limit (which does not depend on this ansatz) we derive several classical sociological models as exact or approximate limiting cases: DeGroot, 
+Friedkin-Johnsen, bounded confidence, echo chambers and Social Impact Theory. In underdamped regimes, the ansatz predicts oscillation, overshooting, and resonance consistent with attitude change research. This framework reframes confirmation bias, belief perseverance, and polarization as geometric consequences of epistemic inertia rather than irrationality, unifying multiple sociological and psychological models under a single information-geometric principle.
 \end{abstract}
 
 
@@ -73,7 +68,7 @@ In this article we provide three primary contributions to the field:
 
 First, we derive a second-order belief dynamics from a first-principles model, showing that the Fisher metric provides a natural inertial mass tensor $M = \Lambda_{\text{prior}} + \Lambda_{\text{observation}} + \Lambda_{\text{social}}^{\text{in}} + \Lambda_{\text{social}}^{\text{out}}$ combining prior conviction, sensory data, and social interactions (both incoming influence and outgoing recoil). Via pullback geometry on statistical manifolds \citep{Amari2016,nielsen2020elementary}, we extend the variational free energy to multi-agent systems where social coupling takes the form $D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)$, penalizing disagreement with neighbors after gauge transport into a common frame.
 
-Second, we demonstrate that several foundational models from sociology and opinion dynamics emerge as limiting cases of our unified framework. DeGroot social learning \citep{degroot1974}, Friedkin-Johnsen opinion dynamics \citep{friedkin1990}, bounded confidence models \citep{hegselmann2002opinion,deffuant2000}, echo chamber formation, and Social Impact Theory \citep{latane1981psychology} all arise from appropriate parameter regimes and approximations of the same variational free energy functional. This unification reveals that phenomena previously requiring separate theoretical apparatuses---consensus formation, polarization, and bounded confidence---are manifestations of a single geometric principle operating under different boundary conditions.
+Second, we demonstrate that several foundational models from sociology and opinion dynamics emerge as limiting cases of our unified framework. DeGroot social learning \citep{degroot1974}, Friedkin-Johnsen opinion dynamics \citep{friedkin1990}, bounded confidence models \citep{hegselmann2002opinion,deffuant2000}, echo chamber formation, and Social Impact Theory \citep{latane1981psychology} all arise from appropriate parameter regimes and approximations of the same variational free energy functional. This unification reveals that phenomena previously requiring separate theoretical apparatuses, such as consensus formation, polarization, and bounded confidence are manifestations of a single geometric principle operating under different boundary conditions.
 
 Third, we unify documented but theoretically distinct psychological phenomena such as attitude oscillation in persuasion \citet{kaplowitz1992,fink2002}, perceptual overshoot \citet{burge2010,webster2015}, and momentum in expectations \citet{coibion2015} as well as cognitive biases such as confirmation bias \citet{nickerson1998confirmation} and belief perseverance \citet{anderson1980perseverance}, as natural consequences of epistemic inertia operating in different parameter regimes. These effects, absent in first-order, purely dissipative, treatments \citet{parr2022active}, emerge from second-order dynamics and yield testable predictions (such as precision-scaled relaxation times, resonance frequencies, and stopping distances) that distinguish our framework from purely dissipative models.
 
@@ -358,7 +353,7 @@ Solving for the overshoot distance:
 
 This result differs from constant-force braking models. It implies that for a given velocity and evidence strength ($K$), the overshoot scales with the square root of the epistemic mass (precision).
 
-This provides a geometric derivation for why high-precision priors ($M \approx \bar{\Lambda}_p$) lead to "stubbornness." A person with deep convictions (high $M$) moving through a line of reasoning possesses enormous epistemic momentum. When they encounter a contradiction (a force $K$), they do not stop immediately. Instead, they "coast" past the logical stopping point, requiring a larger counter-force or longer time to arrest their belief trajectory. This leads to a testable quantitative prediction: the ratio of overshoot distances for high-precision ($\Lambda_H$) versus low-precision ($\Lambda_L$) agents scales as the square root of their precisions:
+This provides a geometric derivation for why high-precision priors ($M \approx \bar{\Lambda}_p$) lead to "stubbornness." A person with deep convictions (high $M$) moving through a line of reasoning possesses enormous epistemic momentum. When they encounter a contradiction (a force $K$), they do not stop immediately. Instead, they "coast" past the logical stopping point, requiring a larger counter-force or longer time to arrest their belief trajectory.This leads to a testable quantitative prediction: the ratio of overshoot distances for high-precision ($\Lambda_H$) versus low-precision ($\Lambda_L$) agents scales as the square root of their precisions:
 
 \begin{equation}
 \frac{d_H}{d_L} = \sqrt{\frac{\Lambda_H}{\Lambda_L}}
