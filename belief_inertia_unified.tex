@@ -47,9 +47,7 @@ information geometry: the Fisher metric is the unique Riemannian metric on proba
 how long belief updates take which depends on agent precision and social 
 interactions encoded via gauge-covariant attention.
 
-We adopt a Hamiltonian formulation as a fruitful ansatz. In the overdamped 
-limit (which does not depend on this ansatz) we derive several classical 
-sociological models as exact or approximate limiting cases: DeGroot, 
+In the overdamped limit (which does not depend on this ansatz) we derive several classical sociological models as exact or approximate limiting cases: DeGroot, 
 Friedkin-Johnsen, bounded confidence, echo chambers, Social Impact Theory, 
 and diffusion of innovations. In underdamped regimes, the ansatz predicts 
 oscillation, overshooting, and resonance consistent with attitude change 
@@ -111,13 +109,15 @@ D_{\mathrm{KL}}(q \| p) = \int q(x) \log \frac{q(x)}{p(x)} dx
 
 We extend our single-agent framework to networks of interacting cognitive agents via attention. The geometric setting is a principal $G$-bundle $\pi: P \to \mathcal{C}$ where the base manifold $\mathcal{C}$ encodes agent positions and social network topology, and the gauge group $G$ acts on belief space (see Appendix~\ref{app:gauge} for the complete geometric treatment). Each agent $i$ maintains beliefs $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ anchored to a prior $p_i = \mathcal{N}(\bar{\mu}_i, \bar{\Sigma}_i)$, along with an internal reference frame $\phi_i$ that determines how they encode information.
 
-To compare beliefs across agents, we introduce \textbf{parallel transport operators}:
+To compare beliefs across agents, we introduce parallel transport operators as
 
 \begin{equation}
 \Omega_{ij} = e^{\phi_i}e^{-\phi_j} \in G
 \end{equation}
 
-This operator transforms agent $j$'s beliefs into agent $i$'s reference frame, acting as:
+where $\phi_i, \phi_j \in \mathfrak{g}$, the Lie algebra of $G$.
+
+This operator transforms agent $j$'s beliefs into agent $i$'s reference frame as
 
 \begin{equation}
 q_j \to \Omega_{ij} \cdot q_j = \mathcal{N}(\Omega_{ij}\mu_j, \Omega_{ij}\Sigma_j\Omega_{ij}^T)
@@ -129,9 +129,9 @@ The transformed belief can then be compared with agent $i$'s own beliefs via KL 
 D_{ij} = D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)
 \end{equation}
 
-\paragraph{Choice of gauge group.} The gauge group $G$ could in principle be any Lie group acting on belief space: $\mathrm{SO}(d)$ (rotations), $\mathrm{GL}(d)$ (general linear), affine transformations, or more exotic choices. Different groups encode different assumptions about how agents' reference frames can differ. For tractability, we work with $G = \mathrm{SO}(d)$, which preserves the metric structure---agents agree on \emph{how different} two beliefs are, even if they disagree on \emph{what} the beliefs mean.
+\paragraph{Choice of gauge group.} The gauge group $G$ could, in principle, be any Lie group acting on the statistical manifold such as $\mathrm{SO}(d)$ (rotations), $\mathrm{GL}(d)$ (general linear transformations), affine transformations, or more exotic choices. Different groups encode different assumptions about how agents' reference frames can differ. For simplicity, we work with $G = \mathrm{SO}(d)$, which preserves the metric structure such that agents agree on how different two beliefs are, even if they disagree on 'what' the beliefs may mean.
 
-Crucially, \textbf{flat gauge} ($\Omega_{ij} = I$ for all agent pairs) recovers standard consensus models where all agents share a common reference frame. All derivations in this paper, such as the mass formula, classical model limits, and dynamical predictions, hold in the flat gauge limit. The general gauge structure is mathematical scaffolding that could accommodate reference frame heterogeneity (e.g., cultural or linguistic translation effects) but is not empirically motivated in the present article. We retain it for full generality while emphasizing that the core results do not depend on non-trivial gauge.
+As we show later, the flat gauge ($\Omega_{ij} = I$ for all agent pairs) recovers standard consensus models where all agents share a common reference frame. All derivations in this paper, such as the mass formula, classical model limits, and dynamical predictions, hold in the flat gauge limit. The general gauge structure is mathematical scaffolding that could, generally, accommodate reference frame heterogeneity (e.g., cultural or linguistic translation effects) but is not empirically motivated in the present article. We retain it for full generality while emphasizing that the core results do not depend on non-trivial gauge choices.
 
 \subsection{Multi-Agent Free Energy}
 
