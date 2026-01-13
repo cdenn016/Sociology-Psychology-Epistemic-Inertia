@@ -2127,14 +2127,6 @@ The Hessian of this with respect to $\theta_q$ yields:
 
 Thus the mass-as-Fisher-information identification holds for all exponential families.
 
-\subsubsection{Examples}
-
-\paragraph{Categorical/Multinomial.} For beliefs over discrete hypotheses $p(x = k) = \pi_k$, the Fisher information is $\mathcal{I}_{jk} = \delta_{jk}/\pi_j - 1$. Mass concentrates on rare hypotheses: an agent highly confident in hypothesis $k$ (large $\pi_k$) has low mass in that direction, while low-probability alternatives carry high inertia. This captures the intuition that updating away from a confident prediction is easy, but reviving a dismissed hypothesis is hard.
-
-\paragraph{Poisson.} For rate beliefs $q = \mathrm{Poisson}(\lambda)$, the Fisher information is $\mathcal{I} = 1/\lambda$. Low-rate beliefs have high inertia; high-rate beliefs are more flexible. This applies to beliefs about event frequencies.
-
-\paragraph{Von Mises-Fisher.} For directional beliefs on the sphere (e.g., heading direction, preferred orientation), the Fisher information depends on concentration $\kappa$. High concentration yields high inertia, generalizing precision to circular/spherical domains.
-
 \subsection{Multi-Modal Beliefs: Mixture Models}
 
 Real beliefs are often multi-modal, representing hypothesis competition or attitude ambivalence. Gaussian mixtures provide a tractable extension:
@@ -2160,16 +2152,6 @@ The weight-weight block takes the form:
 
 This integral generally requires numerical evaluation but captures the intuition that weight-inertia depends on component overlap: well-separated modes have nearly independent weight dynamics.
 
-\subsubsection{Phenomenology of Mixture Dynamics}
-
-Under the Hamiltonian ansatz, mixture beliefs exhibit richer dynamics:
-
-\paragraph{Mode competition.} When two components have similar weights, small perturbations can cause oscillatory weight transfer as the belief hesitates between hypotheses.
-
-\paragraph{Mode collapse.} High damping drives mixtures toward single modes, recovering effective Gaussian dynamics.
-
-\paragraph{Mode creation.} Under strong bimodal evidence, a unimodal belief can split. This corresponds to crossing a bifurcation in the free energy landscape.
-
 \subsection{Fully General Distributions}
 
 For arbitrary distributions $q(x)$ without parametric form, the state space becomes infinite-dimensional (a functional space). The Fisher-Rao metric generalizes to:
@@ -2179,25 +2161,16 @@ For arbitrary distributions $q(x)$ without parametric form, the state space beco
 
 This defines a Riemannian metric on the space of probability densities. Gradient flow with respect to this metric yields the natural gradient dynamics studied in information geometry \citep{Amari2016}.
 
-\subsubsection{Computational Approaches}
-
-Practical implementation for general distributions requires approximation:
-
-\paragraph{Particle methods.} Represent $q$ as an empirical distribution over samples. The Fisher metric induces a kernel on particle positions; Stein variational gradient descent provides a practical algorithm.
-
-\paragraph{Normalizing flows.} Parameterize $q$ as a pushforward of a base distribution through a neural network. The Fisher information of flow parameters defines the mass matrix.
-
-\paragraph{Variational truncation.} Project general distributions onto a tractable family (Gaussian, mixture, exponential family) and apply the finite-dimensional theory.
 
 \subsection{Gauge Structure for Non-Gaussian Beliefs}
 
-The gauge transport operators $\Omega_{ij}$ generalize beyond rotations when beliefs are non-Gaussian:
+The gauge transport operators $\Omega_{ij}$ generalize beyond rotations when beliefs are non-Gaussian.
 
-\paragraph{Exponential families.} Transport acts on natural parameters: $\theta \mapsto \Omega \cdot \theta$ where $\Omega$ preserves the parameter space structure.
+For exponential families transport acts on natural parameters: $\theta \mapsto \Omega \cdot \theta$ where $\Omega$ preserves the parameter space structure.
 
-\paragraph{Mixtures.} Transport can permute components, rotate within-component means, and transform covariances.
+In the case of mixtures transport can permute components, rotate within-component means, and transform covariances.
 
-\paragraph{General distributions.} Transport becomes a diffeomorphism of the sample space: $q(x) \mapsto q(\Omega^{-1}(x)) |\det D\Omega^{-1}|$.
+For general distributions transport becomes a diffeomorphism of the sample space such that $q(x) \mapsto q(\Omega^{-1}(x)) |\det D\Omega^{-1}|$.
 
 The gauge group expands from $\mathrm{SO}(d)$ to the group of measure-preserving diffeomorphisms, with corresponding enlargement of the connection structure.
 
