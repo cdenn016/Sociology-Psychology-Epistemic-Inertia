@@ -183,8 +183,7 @@ For a trajectory $\mu(t)$ parameterized by some external parameter $t$, the tota
 \tau = \int \sqrt{\dot{\mu}^T \Sigma^{-1} \dot{\mu}} \, dt
 \end{equation}
 
-This is analogous to proper time in special relativity, where different observers (agents) experience time differently depending on their state. Here, the velocity through belief space determines how quickly proper time accumulates, with high-precision agents experiencing faster proper time for identical parametric motion.
-
+This is analogous to proper time in special relativity, where different observers (agents) experience time differently depending on their state. Here, the velocity through belief space determines how quickly proper time accumulates, with high-precision agents experiencing faster proper time for identical parametric motion. 
 
 %==============================================================================
 \subsection{Hamiltonian Formulation of Belief Dynamics}
@@ -269,15 +268,13 @@ This four-part structure has transparent intuitive meaning. The term $\bar{\Lamb
 
 \subsubsection{Interpretation}
 
-The identification of mass with total Fisher information yields several insights:
+The identification of mass with total Fisher information reveals several intuitive phenomena and grounds them geometrically and quantitatively:
 
 \paragraph{Sensory anchoring.} Agents with precise observations ($\Lambda_o$ large) have greater belief inertia. This seems counterintuitive; shouldn't better data make beliefs more flexible? The resolution is that precise observations provide strong evidence for the current state. An agent with low-noise sensors has high Fisher information, meaning small belief changes would dramatically worsen the likelihood fit. The agent is anchored by its own sensory precision. This predicts that experts with reliable instrumentation become harder to move than novices relying on noisy signals; not because the expert is stubborn, but because their high-fidelity observations geometrically constrain the belief manifold. The very precision that makes expertise valuable simultaneously makes it rigid.
 
  
-
 \paragraph{Social amplification.} The social terms show that an agent's inertia is collective. An agent coupled to confident neighbors inherits their precision as mass via the incoming term $\sum_k \beta_{ik}\tilde{\Lambda}_{q_k}$. A population of high-precision agents becomes collectively rigid, while uncertain agents readily reach consensus. This predicts that expertise clusters resist external perturbation: a group of confident specialists, each attending to the others, forms a mutually reinforcing mass that deflects outside information. Conversely, low-confidence agents coalesce readily around any confident neighbor, explaining how charismatic leaders can rapidly consolidate uncertain populations. The dynamics are asymmetric: confident clusters repel, uncertain populations attract.
 
- 
 \paragraph{Reciprocal costs.} The outgoing term $\sum_j \beta_{ji}\Lambda_{q_i}$ reveals that influencing others costs flexibility. An agent that strongly affects its neighbors accumulates inertia from those interactions, becoming less responsive itself. Influence is not free but instead is paid for in epistemic rigidity. The more others attend to your beliefs, the more those beliefs resist change. This has profound implications: leaders become trapped by their followers, gurus ossify under the weight of their disciples' attention, and public figures grow deaf to feedback as their audience grows. Henry Adams observed that "power is poison. Its effect on Presidents has always been tragic" \citet{adams1918education}. Our framework provides a geometric mechanism for this tragedy. The very act of projecting influence onto others accumulates as inertial mass, progressively consuming the capacity for empathy and update. The powerful become rigid not through moral failure but through the geometry of attention: when many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below.
 
 \begin{tcolorbox}[colback=yellow!5,colframe=orange!75,title=Important Caveat: The Hamiltonian as Ansatz]
@@ -362,7 +359,7 @@ Solving for the overshoot distance:
 
 This result differs from constant-force braking models. It implies that for a given velocity and evidence strength ($K$), the overshoot scales with the square root of the epistemic mass (precision).
 
-\paragraph{Interpretation.}This provides a mechanical derivation for why high-precision priors ($M \approx \bar{\Lambda}_p$) lead to "stubbornness." A person with deep convictions (high $M$) moving through a line of reasoning possesses enormous epistemic momentum. When they encounter a contradiction (a force $K$), they do not stop immediately. Instead, they "coast" past the logical stopping point, requiring a larger counter-force or longer time to arrest their belief trajectory.This leads to a testable quantitative prediction: the ratio of overshoot distances for high-precision ($\Lambda_H$) versus low-precision ($\Lambda_L$) agents scales as the square root of their precisions:
+This provides a geometric derivation for why high-precision priors ($M \approx \bar{\Lambda}_p$) lead to "stubbornness." A person with deep convictions (high $M$) moving through a line of reasoning possesses enormous epistemic momentum. When they encounter a contradiction (a force $K$), they do not stop immediately. Instead, they "coast" past the logical stopping point, requiring a larger counter-force or longer time to arrest their belief trajectory.This leads to a testable quantitative prediction: the ratio of overshoot distances for high-precision ($\Lambda_H$) versus low-precision ($\Lambda_L$) agents scales as the square root of their precisions:
 
 \begin{equation}
 \frac{d_H}{d_L} = \sqrt{\frac{\Lambda_H}{\Lambda_L}}
@@ -960,8 +957,6 @@ instantiation of SIT's qualitative principle.
 
 \subsection{Attention Gradients}
 
-\paragraph{Attention gradient effects.}
-
 When attention weights are dynamic, the gradient includes an additional term
 
 \begin{equation}
@@ -972,7 +967,7 @@ The second term represents attention reallocation: agents are pulled toward
 neighbors whose attention would increase most upon approach. This amplifies 
 homophily beyond the direct KL force, accelerating polarization when attention 
 is sharply selective (low $\kappa$). Most derivations in this section assume 
-fixed attention, neglecting this effect.
+fixed attention, neglecting this effect however the product rule becomes important in learning and language modeling applications where the gradient of attention imparts a non-linear activation in a manner such as ReLU/GELU in standard machine learning.
 
 
 \begin{table}[h]
@@ -1035,68 +1030,66 @@ Sociology has developed sophisticated models of opinion dynamics, social influen
 
 A striking implication of our framework is that phenomena often attributed to cognitive biases emerge naturally from epistemic inertia rather than requiring separate psychological mechanisms.
 
-\textbf{Belief perseverance} is the tendency for beliefs to persist even after their evidential basis has been discredited \citet{anderson1980, ross1975} follows directly from epistemic mass. High-precision beliefs have large $M = \Lambda$ and thus long relaxation times $\tau = M/\gamma$. They resist change not due to irrationality but because mass resists acceleration. The debriefing paradigm, which demonstrates that beliefs persist after subjects learn the initial evidence was fabricated, is explained by inertia. 
+Belief perseverance is the tendency for beliefs to persist even after their evidential basis has been discredited \citet{anderson1980, ross1975} follows directly from epistemic mass. High-precision beliefs have large $M = \Lambda$ and thus long relaxation times $\tau = M/\gamma$. They resist change not due to irrationality but because mass resists acceleration. The debriefing paradigm, which demonstrates that beliefs persist after subjects learn the initial evidence was fabricated, is explained by inertia. 
 
-\textbf{The continued influence effect}, whereby misinformation continues to affect reasoning even after correction \citet{Lewandowsky2012}, similarly reflects momentum decay rather than memory failure. Corrections apply a counter-force, but if the original misinformation was encoded with high precision such that the belief's momentum carries it past the corrected equilibrium before dissipation brings it to rest.
+The continued influence effect, whereby misinformation continues to affect reasoning even after correction \citet{Lewandowsky2012}, similarly reflects momentum decay rather than memory failure. Corrections apply a counter-force, but if the original misinformation was encoded with high precision such that the belief's momentum carries it past the corrected equilibrium before dissipation brings it to rest.
 
-\textbf{Confirmation bias}, the tendency to seek and weight evidence consistent with existing beliefs \citet{nickerson1998}, can be reinterpreted as a consequence of inertial dynamics. Beliefs with high epistemic inertia are less deflected by contradictory evidence than by confirmatory evidence. This is not a bias in the pejorative sense but a geometrical consequence of how informationally massive objects respond to epistemic forces.
+Confirmation bias, the tendency to seek and weight evidence consistent with existing beliefs \citet{nickerson1998}, can be reinterpreted as a consequence of inertial dynamics. Beliefs with high epistemic inertia are less deflected by contradictory evidence than by confirmatory evidence. This is not a bias in the pejorative sense but a geometrical consequence of how informationally massive objects respond to epistemic forces.
 
-\textbf{The rigidity of influence.} Perhaps most striking is the prediction that influence itself accumulates as inertial mass. The outgoing social term $\sum_j \beta_{ji}\Lambda_{q_i}$ in the mass formula means that agents whose beliefs are attended to by many others become progressively more rigid. This provides a geometric mechanism for observations that leaders, experts, and public figures often exhibit reduced sensitivity to feedback; what Adams called "poison" and which Solzhenitsyn poetically described as "power is a poison well known for thousands of years... for those who are unaware of any higher sphere, it is a deadly poison. For them there is no antidote" \citet{adams1918education, solzhenitsyn1973gulag}. The phenomenon is not necessarily a moral failure but mathematical inevitability. When many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. Empathy, the capacity to update one's model of others, requires precisely the flexibility that influence consumes. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below, and suggests that the "isolation of power" documented by historians and political scientists emerges from the same geometric principles governing individual belief dynamics.
+Perhaps most striking is the prediction that influence itself accumulates as inertial mass. The outgoing social term $\sum_j \beta_{ji}\Lambda_{q_i}$ in the mass formula means that agents whose beliefs are attended to by many others become progressively more rigid. This provides a geometric mechanism for observations that leaders, experts, and public figures often exhibit reduced sensitivity to feedback; what Adams called "poison" and which Solzhenitsyn poetically described as "power is a poison well known for thousands of years... for those who are unaware of any higher sphere, it is a deadly poison. For them there is no antidote" \citet{adams1918education, solzhenitsyn1973gulag}. The phenomenon is not necessarily a moral failure but mathematical inevitability. When many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. Empathy, the capacity to update one's model of others, requires precisely the flexibility that influence consumes. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below, and suggests that the "isolation of power" documented by historians and political scientists emerges from the same geometric principles governing individual belief dynamics.
 
 This reframing provides a mechanistic basis for intervention. If belief perseverance stems from high precision rather than stubbornness, then interventions targeting uncertainty (increasing $\gamma/M$) may be more effective than those targeting content. Similarly, if the rigidity of leadership emerges from accumulated social attention, then institutional designs that distribute attention more evenly may preserve epistemic flexibility at the top.
 
 \subsection{Proposed Experimental Tests}
 
-The predictions derived above distinguish the inertial framework from standard first-order Bayesian models. We outline experimental paradigms that could test these predictions. Detailed implementation is left for future work.
+The predictions derived above distinguish the inertial framework from standard first-order Bayesian models. We propose and outline several experiments which could test these predictions. The detailed implementation of these experiments is left for future work.
 
 \subsubsection{Belief Oscillation Under Strong Counter-Evidence}
 
-\textbf{Prediction:} High-confidence agents should overshoot equilibrium and exhibit non-monotonic belief trajectories when confronted with strong counter-evidence.
+\paragraph{Prediction:} High-confidence agents should overshoot equilibrium and exhibit non-monotonic belief trajectories when confronted with strong counter-evidence.
 
-\textbf{Design:} Measure participants' prior beliefs and confidence on contentious topics via incentivized elicitation. Present strong, credible counter-evidence and track belief trajectories via repeated measurements (e.g., slider scales at 1-minute intervals over 20 minutes). 
+\paragraph{Design:} Measure participants' prior beliefs and confidence on contentious topics via incentivized elicitation. Present strong, credible counter-evidence and track belief trajectories via repeated measurements (e.g., slider scales at 1-minute intervals over 20 minutes). 
 
-\textbf{Discrimination:} Standard Bayesian models predict monotonic convergence toward the posterior. The inertial framework predicts that high-confidence participants may transiently overshoot, briefly adopting positions more extreme than the evidence warrants before settling to equilibrium. Any observed non-monotonicity falsifies purely dissipative models.
+Standard Bayesian models predict monotonic convergence toward the posterior. The inertial framework predicts that high-confidence participants may transiently overshoot, briefly adopting positions more extreme than the evidence warrants before settling to equilibrium. Any observed non-monotonicity falsifies purely dissipative models.
 
 \subsubsection{Precision-Dependent Relaxation Times}
 
-\textbf{Prediction:} Belief relaxation time $\tau$ scales linearly with prior precision: $\tau = \Lambda/\gamma$.
+\paragraph{Prediction:} Belief relaxation time $\tau$ scales linearly with prior precision: $\tau = \Lambda/\gamma$.
 
-\textbf{Design:} Measure prior confidence via betting procedures or confidence intervals. Following exposure to counter-evidence, measure time to reach stable posterior beliefs across participants varying in initial confidence.
+\paragraph{Design:} Measure prior confidence via betting procedures or confidence intervals. Following exposure to counter-evidence, measure time to reach stable posterior beliefs across participants varying in initial confidence.
 
-\textbf{Discrimination:} The framework predicts that participants with twice the initial precision require twice the relaxation time, independent of the direction or magnitude of belief change. Standard models predict relaxation rates depend on evidence strength rather than prior confidence.
+The framework predicts that participants with twice the initial precision require twice the relaxation time, independent of the direction or magnitude of belief change. Standard models predict relaxation rates depend on evidence strength rather than prior confidence.
 
 \subsubsection{Resonant Persuasion}
 
-\textbf{Prediction:} Periodic messaging achieves maximum belief change amplitude at resonance frequency $\omega_{\text{res}} = \sqrt{K/M}$.
+\paragraph{Prediction:} Periodic messaging achieves maximum belief change amplitude at resonance frequency $\omega_{\text{res}} = \sqrt{K/M}$.
 
-\textbf{Design:} Deliver persuasive messages at varying intervals (e.g., every 30 seconds, 2 minutes, 5 minutes, 10 minutes) across conditions, holding total exposure constant. Measure final belief change amplitude.
+\paragraph{Design:} Deliver persuasive messages at varying intervals (e.g., every 30 seconds, 2 minutes, 5 minutes, 10 minutes) across conditions, holding total exposure constant. Measure final belief change amplitude.
 
-\textbf{Discrimination:} The framework predicts a non-monotonic relationship with a peak at intermediate frequency determined by participant confidence. Standard models predict monotonic effects of message frequency. Resonance is a signature of second-order dynamics.
+The framework predicts a non-monotonic relationship with a peak at intermediate frequency determined by participant confidence. Standard models predict monotonic effects of message frequency. Resonance is a signature of second-order dynamics.
 
 \subsubsection{Social Attention and Epistemic Rigidity}
 
  
 
-\textbf{Prediction:} Agents who receive sustained social attention accumulate epistemic mass, becoming more resistant to belief revision than equally confident but unattended individuals.
+\paragraph{Prediction:} Agents who receive sustained social attention accumulate epistemic mass, becoming more resistant to belief revision than equally confident but unattended individuals.
 
  
 
-\textbf{Design:} In a group deliberation paradigm, manipulate attention asymmetry: some participants are designated as "influencers" whose opinions are solicited and displayed to others, while "observers" hold equally strong priors but receive no social attention. After exposure to identical counter-evidence, measure belief change magnitude and relaxation dynamics across conditions.
+\paragraph{Design:} In a group deliberation paradigm, manipulate attention asymmetry: some participants are designated as "influencers" whose opinions are solicited and displayed to others, while "followers" hold equally strong priors but receive no social attention. After exposure to identical counter-evidence, measure belief change magnitude and relaxation dynamics across conditions.
 
 
-\textbf{Discrimination:} Standard models predict belief change depends on prior confidence and evidence strength, not social role. The inertial framework predicts that attended-to advisors exhibit smaller belief shifts and longer relaxation times than observers with matched initial confidence, due to the social attention term $\sum_j \beta_{ji} \Lambda_{q_i}$ contributing to effective mass.
+Standard models predict belief change depends on prior confidence and evidence strength, not social role. The inertial framework predicts that attended-to advisors exhibit smaller belief shifts and longer relaxation times than observers with matched initial confidence, due to the social attention term $\sum_j \beta_{ji} \Lambda_{q_i}$ contributing to effective mass.
  
-
 \subsubsection{Momentum in Economic Expectations}
 
 
-\textbf{Prediction:} Professional forecasters with high precision should exhibit overshooting when revising expectations following macroeconomic surprises.
+\paragraph{Prediction:} Professional forecasters with high precision should exhibit overshooting when revising expectations following macroeconomic surprises.
 
 
-\textbf{Design:} Analyze existing forecast revision data \citet{coibion2015} following large, unexpected economic announcements (e.g., surprise interest rate changes, employment shocks). Track individual forecaster trajectories over subsequent revision rounds, conditioning on pre-shock forecast confidence.
+\paragraph{Design:} Analyze existing forecast revision data \citet{coibion2015} following large, unexpected economic announcements (e.g., surprise interest rate changes, employment shocks). Track individual forecaster trajectories over subsequent revision rounds, conditioning on pre-shock forecast confidence.
 
- 
-\textbf{Discrimination:} Standard information models predict gradual, monotonic adjustment toward rational expectations. The inertial framework predicts that high-confidence forecasters may transiently overshoot, revising past the rational benchmark before settling, while low-confidence forecasters adjust monotonically. This pattern, if present in existing panel data, would distinguish momentum-based from friction-based accounts of expectation stickiness.
+Standard information models predict gradual, monotonic adjustment toward rational expectations. The inertial framework predicts that high-confidence forecasters may transiently overshoot, revising past the rational benchmark before settling, while low-confidence forecasters adjust monotonically. This pattern, if present in existing panel data, would distinguish momentum-based from friction-based accounts of expectation stickiness.
 
 
 \subsection{Relation to Existing Models}
@@ -1158,7 +1151,8 @@ The mathematics has been hiding in plain sight for decades, obscured by discipli
 
 \subsection*{Data Availability}
 All code and data will be made publicly available upon publication at \\ 
-https://github.com/cdenn016/Hamiltonian-VFE
+https://github.com/cdenn016/Sociology-Psychology-Epistemic-Inertia
+
 
 \subsection*{Acknowledgments}
 Claude Sonnet 4.5 was utilized for programming our variational free energy descent simulation suite.  All code was manually reviewed, corrected, and mathematically validated by the author.  Furthermore, Claude was utilized for typesetting figures, LaTeX equations, and general organizational and manuscript clarity advice. The author further declares no funding or conflicts of interest.
@@ -1437,28 +1431,6 @@ where $\xi_X$ is the vector field generated by $X$.
 
 Only horizontal components of velocities and momenta correspond to observables. Key gauge-invariant quantities include the \textbf{consensus divergence} $\|\mu_i - \tilde{\mu}_k\|_{\tilde{\Lambda}_{q_k}}^2 = (\mu_i - \tilde{\mu}_k)^T\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k)$, the \textbf{free energy} $F[\{q_i\}]$ which is gauge-invariant by construction, the \textbf{Hamiltonian} $H = \frac{1}{2}\langle\pi, \mathbf{M}^{-1}\pi\rangle + F$, and the \textbf{inter-agent KL divergence} $\mathrm{KL}(q_i \| \Omega_{ik}\cdot q_k)$.
 
-
-\subsubsection{Identity Gauge}
-
-Set $g_i = I$ for all agents. In this gauge, transport operators $\Omega_{ik}$ directly represent the frame transformations, all quantities take their ``bare'' form, and gauge redundancy is eliminated.
-
-\subsubsection{Consensus-Aligned Gauge}
-
-Choose gauges so that at equilibrium:
-\begin{equation}
-\Omega_{ik}^* = I \quad \text{(parallel frames at consensus)}
-\end{equation}
-
-This simplifies analysis near equilibrium since transported quantities equal untransported ones.
-
-\subsubsection{Principal Axis Gauge}
-
-For each agent, choose $g_i$ to diagonalize $\Sigma_i$:
-\begin{equation}
-\Sigma_i' = g_i\Sigma_i g_i^T = \mathrm{diag}(\lambda_1^{(i)}, \ldots, \lambda_d^{(i)})
-\end{equation}
-
-This separates dynamics along principal axes of uncertainty.
 
 %------------------------------------------------------------------------------
 \subsection{Summary: Gauge-Covariant Hamiltonian Mechanics}
@@ -2008,7 +1980,28 @@ In variational inference, the forward KL $D_{\mathrm{KL}}(q \| p)$ is the natura
 \section{Derivation of Social Coupling from Normalized Generative Model}
 \label{app:social_coupling}
 
-The social coupling term $\sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k)$ in our free energy is not an ad hoc regularizer but emerges naturally from a properly normalized generative model with auxiliary agreement variables. This appendix provides the derivation, establishing the coupling as a consequence of gauge-transported Gaussian consistency constraints.
+While it is possible to construct a fully general variational free energy involving hyper-priors, prior-prior agreement, and general bundle morphisms (e.g. $q$ and $p$ could, in principle live in entirely different statistical fibers) we focus only on the quasi-static limit whereby priors evolve much slower than beliefs.
+
+This construction leads to a generalized variational free energy given by
+
+
+\begin{equation}
+\begin{aligned}
+\mathcal{F}[\{q_i\}, \{s_i\}] &= 
+\underbrace{\sum_i D_{\mathrm{KL}}(q_i \| p_i)}_{\text{(1) Belief prior}} 
++ \underbrace{\sum_i D_{\mathrm{KL}}(s_i \| r_i)}_{\text{(2) Model prior}} \\
+&\quad+ \underbrace{\sum_{i,j} \beta_{ij} D_{\mathrm{KL}}(q_i \| \Omega_{ij} q_j)}_{\text{(3) Belief alignment}} \\
+&\quad+ \underbrace{\sum_{i,j} \gamma_{ij} D_{\mathrm{KL}}(s_i \| \tilde{\Omega}_{ij} s_j)}_{\text{(4) Model alignment}} \\
+&\quad- \underbrace{\mathbb{E}_q[\log p(o \mid \{k_i\}, \{m_i\})]}_{\text{(5) Observation likelihood}}
+\end{aligned}
+\label{eq:free_energy_decomposed}
+\end{equation}
+
+where $r_i$ is an agents hyper-prior, $\tilde\Omega_{ij}$ is a transport operator distinct from $\Omega_{ij}$ on the "model fiber" $\mathcal{B}_q$, $s_i$ is an agent's prior and $\gamma_{ij}$ is the model-fiber analogue to $\beta_{ij}$ ($k,m$ are latents). 
+
+In the limit where all agents share gauge-equivalent priors,  which do not vary substantially over time, then we can focus on the fast variables $q$ to consider the variational free energy given in the text.  All that remains is to explicitly show how the social/attention coupling term arises.
+
+The social coupling term $\sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k)$ in our free energy is not an ad hoc regularizer but emerges naturally from a properly normalized generative model with auxiliary agreement variables. This appendix provides the derivation, establishing the coupling as a consequence of gauge-transported Gaussian consistency constraints.  The generalized variational free energy, as given above, then emerges analogously.
 
 \subsection{Auxiliary Agreement Variables}
 
