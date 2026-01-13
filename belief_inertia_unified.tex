@@ -97,7 +97,7 @@ p &= \mathcal{N}(\mu_p, \Sigma_p)
 
 where $\mu_\nu$ represents the mean value and $\Sigma_\nu$ represents uncertainty.
 
-The Kullback-Leibler (KL) divergence measures the epistemic distance between an agent's belief $q$ and their prior model $p$
+The Kullback-Leibler (KL) divergence measures the distance between an agent's belief $q$ and their prior model $p$
 
 \begin{equation}
 D_{\mathrm{KL}}(q \| p) = \int q(x) \log \frac{q(x)}{p(x)} dx
@@ -281,7 +281,8 @@ The identification of mass with total Fisher information yields several insights
 \paragraph{Reciprocal costs.} The outgoing term $\sum_j \beta_{ji}\Lambda_{q_i}$ reveals that influencing others costs flexibility. An agent that strongly affects its neighbors accumulates inertia from those interactions, becoming less responsive itself. Influence is not free but instead is paid for in epistemic rigidity. The more others attend to your beliefs, the more those beliefs resist change. This has profound implications: leaders become trapped by their followers, gurus ossify under the weight of their disciples' attention, and public figures grow deaf to feedback as their audience grows. Henry Adams observed that "power is poison. Its effect on Presidents has always been tragic" \citet{adams1918education}. Our framework provides a geometric mechanism for this tragedy. The very act of projecting influence onto others accumulates as inertial mass, progressively consuming the capacity for empathy and update. The powerful become rigid not through moral failure but through the geometry of attention: when many minds attend to yours, the Fisher information contributed by those outgoing connections makes belief change increasingly costly. This predicts that influence hierarchies naturally produce epistemic stratification, with those at the top most resistant to information from below.
 
 \begin{tcolorbox}[colback=yellow!5,colframe=orange!75,title=Important Caveat: The Hamiltonian as Ansatz]
-The preceding development identifies the Fisher information metric with an inertial mass tensor. This identification is natural and geometrically principled---the Fisher metric is the unique (up to scaling) Riemannian metric on statistical manifolds. However, we emphasize that the \textbf{second-order (Hamiltonian) dynamics are an ansatz, not a derivation}.
+
+The preceding development identifies the Fisher information metric with an inertial mass tensor. This identification is natural and geometrically principled.  The Fisher metric is the unique (up to scaling) Riemannian metric on statistical manifolds. However, we emphasize that the second-order (Hamiltonian) dynamics are an ansatz, not a derivation.
 
 The Fisher metric provides geometry; a notion of distance and curvature on belief space. It does not by itself imply that beliefs evolve according to Hamiltonian mechanics with this metric as mass. We adopt this ansatz because it naturally identifies precision with inertial resistance to belief change; it predicts phenomena (oscillation, overshooting, resonance) observed empirically in attitude change research; it reduces to well-justified gradient flow in the overdamped limit $\gamma \to \infty$; and the derivations of classical sociological models (Section~\ref{sec:classical_limits}) rely \emph{only} on this overdamped limit, not on the full Hamiltonian structure.
 
@@ -666,7 +667,7 @@ This is exactly the DeGroot update \eqref{eq:degroot_classical}. \qed
 \end{equation}
 Agents pay more attention to similar others, creating homophily as an emergent property rather than assumption.
 
-\paragraph{Uncertainty dynamics.} Relaxing the uniform-$\Sigma$ assumption, beliefs become full distributions $q_i = \N(\mu_i, \Sigma_i)$. Uncertainty can increase or decrease over time, capturing phenomena like pluralistic ignorance or confidence polarization that mean-only models miss.
+\paragraph{Uncertainty dynamics.} Relaxing the uniform-$\Sigma$ assumption, beliefs become full distributions $q_i = \mathcal{N}(\mu_i, \Sigma_i)$. Uncertainty can increase or decrease over time, capturing phenomena like pluralistic ignorance or confidence polarization that mean-only models miss.
 
 \paragraph{Epistemic inertia.} When agents receive asymmetric attention (some have many followers), the outgoing social mass term becomes significant. High-attention agents develop higher mass, making their beliefs more resistant to change---a mechanistic explanation for rigidity in positions of authority.
 
@@ -674,11 +675,13 @@ Agents pay more attention to similar others, creating homophily as an emergent p
 
 \subsubsection{Classical Formulation}
 
-Friedkin and Johnsen (1990) extended DeGroot by introducing ``stubbornness''---attachment to initial opinions:
+Friedkin and Johnsen (1990) extended DeGroot by introducing "stubbornness" as attachment to initial opinions
+
 \begin{equation}
 \mu_i^* = \alpha_i \mu_i(0) + (1 - \alpha_i) \sum_j w_{ij} \mu_j^*
 \label{eq:fj_classical}
 \end{equation}
+
 where $\alpha_i \in [0,1]$ represents agent $i$'s resistance to social influence and $\mu^*$ denotes equilibrium. This model better captures polarization and persistent disagreement, as stubborn agents prevent full consensus.
 
 \subsubsection{Sociological Context}
@@ -688,11 +691,13 @@ The Friedkin-Johnsen model addresses a key empirical puzzle: social groups often
 \subsubsection{Derivation from VFE Framework}
 
 \begin{proposition}[Friedkin-Johnsen as VFE Equilibrium]
-The Friedkin-Johnsen equilibrium emerges from the VFE framework under DeGroot conditions plus:
+The Friedkin-Johnsen equilibrium emerges from the VFE framework under DeGroot conditions plus
+
 \begin{enumerate}[label=(\roman*), start=7]
 \item Non-zero self-coupling: $\alpha > 0$
-\item Fixed priors: $p_i = \N(\mu_i(0), \Sigma_p)$ (initial beliefs)
+\item Fixed priors: $p_i = \mathcal{N}(\mu_i(0), \Sigma_p)$ (initial beliefs)
 \end{enumerate}
+
 Moreover, the stubbornness parameter $\alpha_i$ emerges from prior precision and social context.
 \end{proposition}
 
@@ -1979,7 +1984,7 @@ A natural question arises: why use the forward KL divergence $D_{\mathrm{KL}}(q_
 
 \subsection{Intuitive Argument: Zero-Forcing vs.\ Mean-Seeking}
 
-The forward KL $D_{\mathrm{KL}}(q \| p)$ is ``mean-seeking'' or ``moment-matching'': it penalizes $q$ for placing mass where $p$ has little mass, encouraging $q$ to cover the support of $p$. The reverse KL $D_{\mathrm{KL}}(p \| q)$ is ``mode-seeking'' or ``zero-forcing'': it penalizes $q$ for failing to place mass where $p$ has mass, encouraging $q$ to concentrate on modes of $p$.
+The forward KL $D_{\mathrm{KL}}(q \| p)$ is called "mean-seeking" or "moment-matching" in that it penalizes $q$ for placing probability mass where $p$ has little probability mass, encouraging $q$ to cover the support of $p$. The reverse KL $D_{\mathrm{KL}}(p \| q)$ is called "mode-seeking" or "zero-forcing" in that it penalizes $q$ for failing to place probability mass where $p$ has probability mass, encouraging $q$ to concentrate on modes of $p$.
 
 For social influence, the forward direction is more natural. Agent $i$ should be penalized for holding beliefs that disagree with transported neighbor beliefs, regardless of how uncertain those neighbors are. The forward KL achieves this: if agent $i$ is certain about something that neighbor $k$ (in $i$'s frame) considers unlikely, $i$ pays a high cost.
 
@@ -2201,7 +2206,7 @@ The gauge group expands from $\mathrm{SO}(d)$ to the group of measure-preserving
 
 \subsection{Summary}
 
-The core insight---mass equals Fisher information---generalizes immediately to exponential families and, in principle, to arbitrary distributions. The Gaussian case developed in the main text is the simplest instance of a broader geometric framework. Extension to mixtures captures multi-modal beliefs at the cost of increased computational complexity. Fully general distributions require infinite-dimensional analysis or computational approximation, but the underlying geometric principle remains unchanged.
+The ansatz that mass equals Fisher information generalizes immediately to exponential families and, in principle, to arbitrary distributions. The Gaussian case developed in the main text is the simplest instance of a broader geometric framework. Extension to mixtures captures multi-modal beliefs at the cost of increased computational complexity. Fully general distributions require infinite-dimensional analysis or computational approximation, but the underlying geometric principle remains unchanged.
 
 \bibliographystyle{apalike}
 \bibliography{references}
