@@ -92,7 +92,7 @@ Our approach thereby opens powerful mathematical tools traditionally relegated t
 
 \subsection{Beliefs as Points on Statistical Manifolds}
 
-We model beliefs as probability distributions $q(\theta)$ parameterized by $\theta \in \mathbb{R}^n$ on a statistical manifold $\mathcal{M}$. 
+We model beliefs as probability distributions $q(\xi)$ parameterized by $\xi \in \mathbb{R}^n$ on a statistical manifold $\mathcal{B}$. 
 
 For the remainder of this article we shall consider multi-variate Gaussian (MVG) beliefs and priors for convenience.
 
@@ -136,9 +136,9 @@ The transformed belief can then be compared with agent $i$'s own beliefs via KL 
 D_{ij} = D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)
 \end{equation}
 
-\paragraph{Choice of gauge group.} The gauge group $G$ could, in principle, be any Lie group acting on the statistical manifold such as $\mathrm{SO}(d)$ (rotations), $\mathrm{GL}(d)$ (general linear transformations), affine transformations, or more exotic choices. Different groups encode different assumptions about how agents' reference frames can differ. For simplicity, we work with $G = \mathrm{SO}(d)$, which preserves the metric structure such that agents agree on how different two beliefs are, even if they disagree on 'what' the beliefs may mean.
+The gauge group $G$ could, in principle, be any Lie group acting on the statistical manifold such as $\mathrm{SO}(d)$ (rotations), $\mathrm{GL}(d)$ (general linear transformations), affine transformations, or more exotic choices. Different groups encode different assumptions about how agents' reference frames can differ. For simplicity, we work with $G = \mathrm{SO}(d)$, which preserves the metric structure such that agents agree on how different two beliefs are, even if they disagree on what the beliefs may mean.
 
-As we show later, the flat gauge ($\Omega_{ij} = I$ for all agent pairs) recovers standard consensus models where all agents share a common reference frame. All derivations in this paper, such as the mass formula, classical model limits, and dynamical predictions, hold in the flat gauge limit. The general gauge structure is mathematical scaffolding that could, generally, accommodate reference frame heterogeneity (e.g., cultural or linguistic translation effects) but is not empirically motivated in the present article. We retain it for full generality while emphasizing that the core results do not depend on non-trivial gauge choices.
+As we show later, the flat gauge ($\Omega_{ij} = I$ for all agent pairs) recovers standard consensus models where all agents share a common reference frame. All derivations in this paper, such as the mass formula, classical model limits, and dynamical predictions, hold in the flat gauge limit. The general gauge structure is mathematical scaffolding that could, generally, accommodate reference frame heterogeneity (e.g., cultural or linguistic translation effects) but is not empirically motivated in the present article. We retain it for full generality while emphasizing that the core results do not depend on non-trivial gauge choices but may be extended in suitable situations (see appendix).
 
 \subsection{Multi-Agent Free Energy}
 
@@ -300,7 +300,7 @@ The empirical adequacy of the underdamped regime remains to be established. The 
 \label{sec:cognitive-momentum}
 %==============================================================================
 
-The Hamiltonian formulation introduces a quantity absent from standard treatments of Bayesian belief updating: epistemic momentum. Just as physical momentum allows objects to flow past equilibrium, epistemic momentum allows beliefs to overshoot, oscillate, and resist change in ways that pure gradient descent fundamentally cannot capture. 
+The Hamiltonian formulation introduces a quantity absent from standard treatments of Bayesian belief updating we refer to as epistemic momentum. Just as physical momentum allows objects to flow past equilibrium, epistemic momentum allows beliefs to overshoot, oscillate, and resist change in ways that pure gradient descent fundamentally cannot capture. 
 
 
 \begin{definition}[Cognitive Momentum]
@@ -346,9 +346,9 @@ Recoil momentum & $\sum_j\beta_{ji}\Lambda_{q_i}\dot{\mu}_i$ & Inertia from infl
 
 \subsection{Belief Overshoot and Perseverance}\label{sec:overshoot}
 
-Presently, research treats belief perseverance---the tendency to maintain beliefs despite discrediting evidence---as a flaw in information processing. Epistemic momentum yields an alternative perspective: perseverance is the natural dynamical consequence of beliefs possessing inertia.
+Presently, research treats belief perseverance as a flaw in information processing. Epistemic momentum yields an alternative perspective: perseverance is the natural dynamical consequence of beliefs possessing inertia.
 
-Consider an agent moving toward a conclusion with velocity $\dot{\mu}$ who encounters a sudden shift in evidence (a new equilibrium). A massless agent would instantly reverse course. An inertial agent, however, possesses kinetic energy that must be converted into potential energy before they can stop and reverse.
+Consider an agent moving toward a conclusion with velocity $\dot{\mu}$ who encounters a sudden shift in evidence (a new equilibrium). An agent lacking inertia would instantly reverse course whereas an inertial agent possesses a "kinetic energy" that must be converted into "potential energy" before they can stop and reverse.
 
 In the low-damping limit, energy conservation on the quadratic free energy landscape dictates that the initial kinetic energy converts to potential energy at the point of maximum overshoot:
 
@@ -434,9 +434,9 @@ In the sub-critical ($\gamma_i < 2\sqrt{K_i M_i}$) regime, beliefs will oscillat
 
 \subsubsection{Three Dynamical Regimes}
 
-As the standard physics of oscillators show, the discriminant $\Delta = \gamma_i^2 - 4K_iM_i$ manifestly determines different behaviors. In the \textbf{over-damped} regime ($\Delta > 0$), beliefs decay to equilibrium monotonically without oscillation, resembling standard Bayesian updating in the literature. In the \textbf{critically damped} regime ($\Delta = 0$), the system exhibits the fastest approach to equilibrium without oscillation, suggesting this may be optimal for rapid learning. In the \textbf{under-damped} regime ($\Delta < 0$), beliefs oscillate around the equilibrium value, overshooting periodically before equilibrating, producing distinctly non-standard Bayesian dynamics.
+As the standard physics of oscillators show, the discriminant $\Delta = \gamma_i^2 - 4K_iM_i$ manifestly determines different behaviors. In the over-damped regime ($\Delta > 0$), beliefs decay to equilibrium monotonically without oscillation, resembling standard Bayesian updating in the literature. In the critically damped regime ($\Delta = 0$), the system exhibits the fastest approach to equilibrium without oscillation, suggesting this may be optimal for rapid learning. In the under-damped regime ($\Delta < 0$), beliefs oscillate around the equilibrium value, overshooting periodically before equilibrating, producing distinctly non-standard Bayesian dynamics.
 
-As an intuitive and timely example, consider an agent with strong prior beliefs and low receptivity to counter-evidence. When confronted with strong contradictory evidence, the agent will generally exhibit \textbf{initial resistance} as the high mass $M = \Lambda$ resists the force of evidence, followed by \textbf{acceleration} as persistent evidence eventually accelerates belief change, then \textbf{overshoot} as momentum carries belief past the truth, then \textbf{oscillation} as belief swings between acceptance and rejection, and finally \textbf{settling} as damping eventually brings convergence to equilibrium.
+As an intuitive example, consider an agent with strong prior beliefs and low receptivity to counter-evidence. When confronted with strong contradictory evidence, the agent will generally exhibit initial resistance as the high mass $M = \Lambda$ resists the force of evidence, followed by acceleration as persistent evidence eventually accelerates belief change, then overshoot as momentum carries belief past the truth, then oscillation as belief swings between acceptance and rejection, and finally settling as damping eventually brings convergence to equilibrium.
 
 This pattern (resist, over-correct, oscillate) is consistent with phenomena documented in attitude change and belief correction research \citet{Eagly1993, Lewandowsky2012} but remains unexplained by standard Bayesian models. Here we find a natural and intuitive account.
 
@@ -524,6 +524,15 @@ Then this can be written as
 \begin{equation}
 \boxed{\underbrace{M_i\ddot{\mu}_i}_{\text{Inertia}} = -\underbrace{\gamma_i\dot{\mu}_i}_{\text{Damping}} - \underbrace{\nabla_{\mu_i}F_{\text{prior}}}_{\text{Prior force}} - \underbrace{\nabla_{\mu_i}F_{\text{consensus}}}_{\text{Social force}}}
 \end{equation}
+
+\paragraph{Dynamic attention.} The expansion above assumes fixed attention weights $\beta_{ij}$. When attention is dynamic, the gradient includes an additional term from the product rule:
+
+\begin{equation}
+\nabla_{\mu_i} F_{\text{social}} = \sum_j \beta_{ij} \nabla_{\mu_i} D_{\mathrm{KL}_{ij}} + \sum_j D_{\mathrm{KL}_{ij}} \nabla_{\mu_i} \beta_{ij}
+\end{equation}
+
+The second term represents attention reallocation: agents are pulled toward neighbors whose attention would increase most upon approach. This amplifies homophily beyond the direct KL force, accelerating polarization when attention is sharply selective (low $\kappa$). Most derivations in this paper assume fixed attention, neglecting this effect. The full product rule becomes significant when modeling adaptive attention such as in active learning, persuasion dynamics, or computational implementations where attention weights are optimized. We reserve these terms to future investigation.
+
 
 \subsubsection{Epistemic Momentum Transfer}
 
@@ -962,19 +971,7 @@ immediacy referred to physical proximity; our $\beta_{ij}$ captures epistemic
 proximity (belief similarity). The VFE framework provides one quantitative 
 instantiation of SIT's qualitative principle.
 
-\subsection{Attention Gradients}
 
-When attention weights are dynamic, the gradient includes an additional term
-
-\begin{equation}
-\nabla_{\mu_i} F_{social} = \sum_j \beta_{ij} \nabla_{\mu_i} D_{KL_{ij}} + \sum_j D_{KL_{ij}} \nabla_{\mu_i} \beta_{ij}
-\end{equation}
-
-The second term represents attention reallocation: agents are pulled toward 
-neighbors whose attention would increase most upon approach. This amplifies 
-homophily beyond the direct KL force, accelerating polarization when attention 
-is sharply selective (low $\kappa$). Most derivations in this section assume 
-fixed attention, neglecting this effect however the product rule becomes important in learning and language modeling applications where the gradient of attention imparts a non-linear activation in a manner such as ReLU/GELU in standard machine learning.
 
 
 \begin{table}[h]
