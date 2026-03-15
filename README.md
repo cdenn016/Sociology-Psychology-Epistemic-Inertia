@@ -94,24 +94,40 @@ Where:
 
 ```
 Sociology-Psychology-Epistemic-Inertia/
-├── epistemic_inertia.py     # Simplified entry point for researchers
-├── agent/                   # Agent and system implementations
-│   ├── agents.py            # Individual agent (beliefs + priors)
-│   ├── system.py            # Multi-agent social network
-│   ├── trainer.py           # Belief evolution (gradient flow)
-│   └── hamiltonian_trainer.py # Alternative: momentum-based dynamics
-├── geometry/                # Information geometry foundations
-│   ├── multi_agent_mass_matrix.py # Epistemic inertia (key!)
+├── manuscripts/                     # LaTeX manuscripts
+│   ├── belief_inertia_unified.tex   # "The Inertia of Belief" (main paper)
+│   ├── belief_inertia.tex           # Core framework paper
+│   └── GL(K)_attention.tex          # Gauge-theoretic attention
+├── agent/                           # Agent and system implementations
+│   ├── agents.py                    # Individual agent (beliefs + priors)
+│   ├── system.py                    # Multi-agent social network
+│   ├── trainer.py                   # Belief evolution (gradient flow)
+│   └── hamiltonian_trainer.py       # Momentum-based dynamics
+├── geometry/                        # Information geometry foundations
+│   ├── multi_agent_mass_matrix.py   # Epistemic inertia (key!)
 │   └── ...
-├── gradients/               # Free energy and gradient computation
-│   ├── free_energy_clean.py # VFE functional
-│   └── gradient_engine.py   # Belief update gradients
-├── experiments/             # Empirical validation
+├── gradients/                       # Free energy and gradient computation
+│   ├── free_energy_clean.py         # VFE functional
+│   └── gradient_engine.py           # Belief update gradients
+├── experiments/                     # Empirical validation (8 experiments)
+│   ├── EXPERIMENTS.md               # Full experiment design document
+│   ├── spf_inertia/                 # Fed Survey of Professional Forecasters
+│   ├── stackoverflow_inertia/       # Stack Overflow reputation → rigidity
 │   ├── manifold_epistemic_inertia/  # Prediction market data
-│   └── metaculus_epistemic_inertia/ # Forecaster data
-├── meta/                    # Group-level emergence
-│   └── emergence.py         # Meta-agent (group consensus) formation
-└── analysis/                # Visualization and analysis tools
+│   ├── metaculus_epistemic_inertia/ # Forecaster belief data
+│   ├── wikipedia_inertia/           # Editor influence → rigidity
+│   ├── wikipedia_oscillation/       # Edit wars as belief oscillation
+│   ├── openalex_inertia/            # Citation network retraction decay
+│   ├── anes_inertia/                # Political belief persistence (panel)
+│   ├── financial_inertia/           # Analyst forecast revisions
+│   └── reddit_echo_chambers/        # Echo chamber threshold test
+├── meta/                            # Group-level emergence
+│   └── emergence.py                 # Meta-agent (group consensus) formation
+├── torch_core/                      # PyTorch GPU-accelerated core
+├── docs/                            # Hypotheses, peer review, math verification
+│   └── HYPOTHESES.md                # 16 testable hypotheses with prioritization
+├── tests/                           # Unit and integration tests
+└── analysis/                        # Visualization and analysis tools
 ```
 
 ## Key Features
@@ -134,32 +150,89 @@ Hierarchical emergence of group-level beliefs (meta-agents) from individual beli
 
 ## Experiments
 
-### Manifold Markets (Prediction Markets)
-Tests epistemic inertia on real trader data:
-```bash
-cd experiments/manifold_epistemic_inertia
-python run_pipeline.py
+Eight real-world experiments test the framework's predictions using open public datasets. Each maps the mass formula to concrete, measurable proxies. See [`experiments/EXPERIMENTS.md`](experiments/EXPERIMENTS.md) for full design details.
+
+### Run Immediately (no downloads, no auth)
+
+| Experiment | Dataset | Hypothesis | Command |
+|-----------|---------|-----------|---------|
+| **SPF Forecasters** | Federal Reserve individual panel data | H2.1 Oscillation, H1.2 Relaxation, H1.1 Overshoot | `cd experiments/spf_inertia && python run_pipeline.py` |
+| **Stack Overflow** | Stack Exchange Data Explorer (SQL) | Reputation → edit rigidity | `cd experiments/stackoverflow_inertia && python fetch_data.py --print-queries` |
+| **Manifold Markets** | Manifold Markets API | 4-term mass formula | `cd experiments/manifold_epistemic_inertia && python run_pipeline.py` |
+
+### Run with API Calls (no bulk download)
+
+| Experiment | Dataset | Hypothesis | Command |
+|-----------|---------|-----------|---------|
+| **Wikipedia Inertia** | MediaWiki API | H3.1 Page watchers → revert resistance | `cd experiments/wikipedia_inertia && python fetch_data.py` |
+| **Wikipedia Oscillation** | MediaWiki API (edit wars) | H2.1 Edit war ω ∝ 1/√M | `cd experiments/wikipedia_oscillation && python detect_oscillation.py` |
+| **OpenAlex Citations** | OpenAlex + CrossRef APIs | H1.2 Retraction citation decay (Cox PH) | `cd experiments/openalex_inertia && python fetch_data.py` |
+
+### Requires Registration or Download
+
+| Experiment | Dataset | Hypothesis | Command |
+|-----------|---------|-----------|---------|
+| **ANES Panel** | American National Election Studies | H4.1 Precision → persistence, H3.4 context-dependent stubbornness | `cd experiments/anes_inertia && python analyze_panel.py --demo` |
+| **Financial Forecasts** | SPF + yfinance | Forecast revision oscillation (runs test) | `cd experiments/financial_inertia && python fetch_and_analyze.py` |
+| **Reddit Echo Chambers** | Reddit API | H3.2 Threshold ‖Δμ‖² > 2σ²κ log(N) | `cd experiments/reddit_echo_chambers && python analyze_polarization.py` |
+
+### Mass Formula Proxies Across Datasets
+
+```
+M_i = Λ_p          + Λ_o             + Σβ_ik·Λ̃_qk          + Σβ_ji·Λ_qi
+      ───            ───               ──────────              ──────────
+SPF:  experience     accuracy          consensus proximity     influence on consensus
+SO:   reputation     tag expertise     comment network         answer views × score
+Wiki: edit count     topic edits       followed editors        page watchers
+OAlex: h-index      field pubs        co-author citations     cited_by_count
+ANES: certainty     knowledge         discussion network      persuasion attempts
 ```
 
-### Metaculus (Forecasting)
-Tests epistemic inertia on forecaster data:
-```bash
-cd experiments/metaculus_epistemic_inertia
-python run_pipeline.py
-```
+## Testable Predictions
+
+The framework generates 16 falsifiable hypotheses (see [`docs/HYPOTHESES.md`](docs/HYPOTHESES.md)):
+
+| Prediction | Equation | Distinguishes From |
+|-----------|----------|-------------------|
+| Overshoot ∝ √(precision) | d = \|μ̇\| √(M/K) | Linear scaling, no overshoot |
+| Belief oscillation | ω = √(K/M - γ²/4M²) | Monotonic convergence (gradient descent) |
+| Resonant persuasion | ω_res = √(K/M) | "More exposure = more change" |
+| Relaxation time ∝ precision | τ = M/γ | Content-dependent persistence |
+| Influence → rigidity | M_out = Σ_j β_ji · Λ_qi | Rigidity as individual trait |
+| Echo chamber threshold | ‖Δμ‖² > 2σ²κ log(N) | Topology-dependent polarization |
+
+## Classical Models as Limiting Cases
+
+The unified manuscript derives these established models as special cases:
+
+| Model | Limit | Depends on Ansatz? |
+|-------|-------|-------------------|
+| **DeGroot** social learning | Overdamped, flat gauge, no priors | No |
+| **Friedkin-Johnsen** | Overdamped + prior anchoring | No |
+| **Bounded confidence** | Low temperature κ → 0 | No |
+| **Echo chambers** | Softmax attention + bimodal beliefs | No |
+| **Social Impact Theory** | Interpretive correspondence | No |
 
 ## Mathematical Details
 
-For researchers interested in the mathematical foundations, see:
-- `classical_models_as_limits.md`: How this reduces to classical models (DeGroot, Friedkin-Johnsen)
-- `derivations_sociology_manuscript.tex`: Rigorous proofs and derivations
+For the complete mathematical framework, see:
+- [`manuscripts/belief_inertia_unified.tex`](manuscripts/belief_inertia_unified.tex): Full unified manuscript with proofs
+- [`manuscripts/belief_inertia.tex`](manuscripts/belief_inertia.tex): Core framework paper
+- [`docs/MATH_VERIFICATION.md`](docs/MATH_VERIFICATION.md): Mathematical verification procedures
 
 ## Installation
 
 ```bash
 pip install numpy scipy matplotlib
-# Optional: for experiments
-pip install requests pandas
+
+# For experiments
+pip install requests pandas tqdm seaborn
+
+# Optional: for specific experiments
+pip install statsmodels              # Logistic regression (SO, ANES)
+pip install lifelines                # Cox PH survival analysis (OpenAlex)
+pip install yfinance                 # Financial data (financial_inertia)
+pip install vaderSentiment textblob  # Sentiment analysis (Reddit)
 ```
 
 ## Citation
