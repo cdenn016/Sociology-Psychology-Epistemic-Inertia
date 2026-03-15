@@ -403,6 +403,26 @@ This is a **symmetry-based prior** implementing compression geometrically.
 
 
 
+## Claude Skills
+
+All Claude Code skills are organized under `.claude/skills/`. Each skill directory contains a `SKILL.md` and optional `references/`, `assets/`, and `scripts/` subdirectories.
+
+| Skill | Directory | Purpose |
+|-------|-----------|---------|
+| ArXiv Database | `.claude/skills/arxiv-database/` | Search and analyze arXiv papers |
+| Hypothesis Generation | `.claude/skills/hypothesis-generation/` | Generate and refine research hypotheses |
+| Literature Review | `.claude/skills/literature-review/` | Systematic literature review workflows |
+| NetworkX | `.claude/skills/networkx/` | Network analysis and graph algorithms |
+| Peer Review | `.claude/skills/peer-review/` | Structured peer review of manuscripts |
+| Plotly | `.claude/skills/plotly/` | Interactive visualizations with Plotly |
+| PyMC | `.claude/skills/pymc/` | Bayesian modeling with PyMC |
+| Scientific Visualization | `.claude/skills/scientific-visualization/` | Publication-quality figures (matplotlib) |
+| Scientific Writing | `.claude/skills/scientific-writing/` | LaTeX manuscripts and scientific reports |
+| SHAP | `.claude/skills/shap/` | Model interpretability with SHAP |
+| Statistical Analysis | `.claude/skills/statistical-analysis/` | Statistical tests and diagnostics |
+| SymPy | `.claude/skills/sympy/` | Symbolic mathematics and CAS |
+| UMAP | `.claude/skills/umap-learn/` | Dimensionality reduction with UMAP |
+
 ## References
 
 - Active Inference: Friston et al.
