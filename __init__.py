@@ -42,19 +42,22 @@ Date: 2025
 __version__ = "1.0.0"
 __author__ = "Robert C. Dennis"
 
-# Re-export simplified API
-from epistemic_inertia import (
-    Agent,
-    MultiAgentSystem,
-    Trainer,
-    TrainingHistory,
-    SociologyPresets,
-    SociologyConfig,
-    create_agents,
-    compute_epistemic_inertia,
-    compute_polarization,
-    compute_social_influence_matrix,
-)
+# Re-export simplified API (optional dependency)
+try:
+    from epistemic_inertia import (
+        Agent,
+        MultiAgentSystem,
+        Trainer,
+        TrainingHistory,
+        SociologyPresets,
+        SociologyConfig,
+        create_agents,
+        compute_epistemic_inertia,
+        compute_polarization,
+        compute_social_influence_matrix,
+    )
+except ImportError:
+    pass  # epistemic_inertia module not installed
 
 __all__ = [
     # Version info
