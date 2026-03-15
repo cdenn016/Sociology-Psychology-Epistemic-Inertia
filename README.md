@@ -246,7 +246,7 @@ If you use this framework, please cite:
   url = {https://github.com/cdenn016/Sociology-Psychology-Epistemic-Inertia}
 }
 ```
-
+contact cdenn016@yahoo.com for more details
 ## License
 
 MIT License
