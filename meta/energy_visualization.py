@@ -42,7 +42,7 @@ class EnergyVisualizer:
         Shows stacked contributions from:
         - E_self (intrinsic energy)
         - E_belief_align (lateral coherence)
-        - E_prior_align (vertical alignment)
+        - E_model_align (model-model coupling)
 
         Args:
             figsize: Figure size for each page
@@ -62,14 +62,14 @@ class EnergyVisualizer:
                 'times': times,
                 'self': [snap.total_self_energy for snap in snapshots],
                 'belief': [snap.total_belief_align for snap in snapshots],
-                'prior': [snap.total_prior_align for snap in snapshots],
+                'model': [snap.total_model_align for snap in snapshots],
                 'total': [snap.total_energy for snap in snapshots]
             }
 
         if not scale_energy:
             raise ValueError("No scale data available")
 
-        colors = {'self': '#FF6B6B', 'belief': '#4ECDC4', 'prior': '#45B7D1'}
+        colors = {'self': '#FF6B6B', 'belief': '#4ECDC4', 'model': '#45B7D1'}
 
         # Sort scales
         sorted_scales = sorted(scale_energy.items())
@@ -102,7 +102,7 @@ class EnergyVisualizer:
                 ax.fill_between(times,
                                np.array(energies['self']) + np.array(energies['belief']),
                                energies['total'],
-                               label='E_prior_align', alpha=0.8, color=colors['prior'])
+                               label='E_model_align', alpha=0.8, color=colors['model'])
 
                 # Total energy line
                 ax.plot(times, energies['total'], 'k-', linewidth=2, label='Total')
@@ -407,7 +407,7 @@ class EnergyVisualizer:
         agent_ids = [aid for aid, _ in agent_data]
         E_self = [snap.E_self for _, snap in agent_data]
         E_belief = [snap.E_belief_align for _, snap in agent_data]
-        E_prior = [snap.E_prior_align for _, snap in agent_data]
+        E_prior = [snap.E_model_align for _, snap in agent_data]
 
         # Use the step from the first snapshot for title
         actual_step = agent_data[0][1].step
@@ -419,7 +419,7 @@ class EnergyVisualizer:
 
         ax.bar(x - width, E_self, width, label='E_self', color='#FF6B6B', alpha=0.8)
         ax.bar(x, E_belief, width, label='E_belief_align', color='#4ECDC4', alpha=0.8)
-        ax.bar(x + width, E_prior, width, label='E_prior_align', color='#45B7D1', alpha=0.8)
+        ax.bar(x + width, E_prior, width, label='E_model_align', color='#45B7D1', alpha=0.8)
 
         ax.set_xlabel('Agent', fontsize=12)
         ax.set_ylabel('Energy', fontsize=12)

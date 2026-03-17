@@ -2,7 +2,7 @@
 Participatory Dynamics Diagnostics
 
 Tracks and validates that participatory "it from bit" dynamics are working:
-1. Individual agent energy evolution (self, belief align, prior align)
+1. Individual agent energy evolution (self, belief align, model align)
 2. Per-scale energy aggregates
 3. Prior evolution when meta-agents form
 4. Non-equilibrium indicators (gradients, energy flux)
@@ -32,7 +32,7 @@ class AgentEnergySnapshot:
     # Energy components
     E_self: float           # KL(q||p) - self-energy
     E_belief_align: float   # Belief alignment with neighbors
-    E_prior_align: float    # Prior alignment with neighbors
+    E_model_align: float    # Model alignment γ_ij·KL(s_i||Ω̃s_j)
     E_obs: float           # Observation energy (if applicable)
     E_total: float         # Total energy
 
@@ -62,7 +62,7 @@ class ScaleEnergySnapshot:
     # Component breakdown
     total_self_energy: float
     total_belief_align: float
-    total_prior_align: float
+    total_model_align: float
 
     # Coherence
     avg_coherence: float
@@ -90,7 +90,7 @@ class ParticipatoryDiagnostics:
         Args:
             system: MultiScaleSystem to monitor
             track_agent_ids: Specific agent IDs to track in detail (default: first 3 at scale-0)
-            compute_full_energies: If True, compute belief/prior alignment energies (EXPENSIVE!)
+            compute_full_energies: If True, compute belief/model alignment energies (EXPENSIVE!)
                                    If False, only compute self-energy (fast, recommended)
         """
         self.system = system
@@ -150,12 +150,12 @@ class ParticipatoryDiagnostics:
 
         # Alignment energies - only if requested (EXPENSIVE!)
         E_belief_align = 0.0
-        E_prior_align = 0.0
+        E_model_align = 0.0
 
         if self.compute_full_energies:
             from gradients.free_energy_clean import (
                 compute_belief_alignment_energy,
-                compute_prior_alignment_energy
+                compute_model_alignment_energy
             )
             from meta.gradient_adapter import create_gradient_adapter
 
@@ -173,11 +173,11 @@ class ParticipatoryDiagnostics:
                 if config.has_belief_alignment:
                     E_belief_align = compute_belief_alignment_energy(adapter, agent_idx)
 
-                if config.has_prior_alignment:
-                    E_prior_align = compute_prior_alignment_energy(adapter, agent_idx)
+                if config.has_model_alignment:
+                    E_model_align = compute_model_alignment_energy(adapter, agent_idx)
 
         E_obs = 0.0  # Observation energy not tracked per agent
-        E_total = E_self + E_belief_align + E_prior_align + E_obs
+        E_total = E_self + E_belief_align + E_model_align + E_obs
 
         # Gradient norms (proxy)
         grad_mu_norm = np.linalg.norm(agent.mu_q - agent.mu_p)
@@ -189,7 +189,7 @@ class ParticipatoryDiagnostics:
             scale=agent.scale,
             E_self=E_self,
             E_belief_align=E_belief_align,
-            E_prior_align=E_prior_align,
+            E_model_align=E_model_align,
             E_obs=E_obs,
             E_total=E_total,
             grad_mu_norm=grad_mu_norm,
@@ -230,7 +230,7 @@ class ParticipatoryDiagnostics:
                 if self.compute_full_energies and adapter is not None:
                     from gradients.free_energy_clean import (
                         compute_belief_alignment_energy,
-                        compute_prior_alignment_energy
+                        compute_model_alignment_energy
                     )
 
                     # Find agent index in flat active agent list
@@ -240,8 +240,8 @@ class ParticipatoryDiagnostics:
                         if config.has_belief_alignment:
                             total_belief += compute_belief_alignment_energy(adapter, agent_idx)
 
-                        if config.has_prior_alignment:
-                            total_prior += compute_prior_alignment_energy(adapter, agent_idx)
+                        if config.has_model_alignment:
+                            total_prior += compute_model_alignment_energy(adapter, agent_idx)
                     except ValueError:
                         pass  # Agent not in active list
 
@@ -264,7 +264,7 @@ class ParticipatoryDiagnostics:
             avg_energy_per_agent=avg_energy,
             total_self_energy=total_self,
             total_belief_align=total_belief,
-            total_prior_align=total_prior,
+            total_model_align=total_prior,
             avg_coherence=avg_coherence,
             coherence_std=coherence_std
         )

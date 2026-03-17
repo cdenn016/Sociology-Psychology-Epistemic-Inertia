@@ -10,7 +10,7 @@ CRITICAL PRINCIPLE:
 Gradients must be χ-weighted DURING accumulation, not after!
 
 Gradient structure:
-    ∂S/∂θ_i = ∂E_self/∂θ_i + ∂E_belief/∂θ_i + ∂E_prior/∂θ_i + ∂E_obs/∂θ_i
+    ∂S/∂θ_i = ∂E_self/∂θ_i + ∂E_belief/∂θ_i + ∂E_model/∂θ_i + ∂E_obs/∂θ_i
 
 Where θ_i represents:
     - μ_q, Σ_q: Belief parameters
@@ -85,7 +85,7 @@ from math_utils.transport import compute_transport
                              
 from gradients.softmax_grads import (
        compute_softmax_coupling_gradients_belief as _softmax_belief_clean,
-       compute_softmax_coupling_gradients_prior as _softmax_prior_clean,
+       compute_softmax_coupling_gradients_model as _softmax_model_clean,
        compute_softmax_weights
    )
 from math_utils.push_pull import push_gaussian
@@ -328,14 +328,14 @@ def compute_softmax_coupling_gradients_belief(
     return result
 
 
-def compute_softmax_coupling_gradients_prior(
+def compute_softmax_coupling_gradients_model(
        system,
        agent_idx_i: int
    ) -> Dict[int, AgentGradients]:
-       """Streamlined softmax coupling for priors."""
-       
+       """Streamlined softmax coupling for model distributions s_i."""
+
        # Call clean implementation
-       softmax_grads = _softmax_prior_clean(system, agent_idx_i, eps=1e-8)
+       softmax_grads = _softmax_model_clean(system, agent_idx_i, eps=1e-8)
        
        # Convert SoftmaxGradients -> AgentGradients
        result = {}
@@ -737,28 +737,31 @@ def compute_belief_alignment_gradients(
 
 
 # =============================================================================
-# Gradient Term 3: Prior Alignment ∂E_prior/∂θ
+# Gradient Term 3: Model Alignment ∂E_model/∂θ (s_i coupling)
 # =============================================================================
 
-def compute_prior_alignment_gradients(
+def compute_model_alignment_gradients(
     system,
     agent_idx_i: int,
-    lambda_prior: float = 1.0,
+    lambda_model: float = 1.0,
     lambda_phi: float = 1.0,
 ) -> Dict[int, AgentGradients]:
     """
-    Compute gradients of prior alignment for agent i with all neighbors.
-    
-    Identical structure to belief alignment, but for priors p instead of beliefs q.
-    
+    Compute gradients of model alignment for agent i with all neighbors.
+
+    Couples generative model distributions s_i = N(μ_p, Σ_p) across agents.
+
     Energy term:
-        E = Σ_j λ ∫ χ_ij γ_ij KL(p_i || Ω[p_j]) dc
-    
+        E = Σ_j λ ∫ χ_ij γ_ij KL(s_i || Ω̃[s_j]) dc
+
+    NOTE: Currently Ω̃_ij = Ω_ij (shared gauge field). Separate model-fiber
+    gauge fields and bundle morphisms Φ, Φ̃ are deferred to future work.
+
     Args:
         system: MultiAgentSystem
         agent_idx_i: Agent index
-        lambda_prior: Coupling strength
-    
+        lambda_model: Model coupling strength
+
     Returns:
         gradients: Dict mapping agent idx → AgentGradients
     """
@@ -794,7 +797,7 @@ def compute_prior_alignment_gradients(
     
     # Compute softmax weights γ_ij(c)
     gamma_fields = compute_softmax_weights(
-        system, agent_idx_i, mode='prior', kappa=system.config.kappa_gamma
+        system, agent_idx_i, mode='model', kappa=system.config.kappa_gamma
     )
     
     # Process each neighbor
@@ -807,24 +810,24 @@ def compute_prior_alignment_gradients(
         
         Omega_ij = system.compute_transport_ij(agent_idx_i, j)
      
-        # Transported distributions (priors)
-        p_i = GaussianDistribution(agent_i.mu_p, agent_i.Sigma_p)
-        p_j = GaussianDistribution(agent_j.mu_p, agent_j.Sigma_p)
-        p_j_transported = push_gaussian(p_j, Omega_ij)
+        # Transported model distributions s_i, s_j (parameterized by mu_p, Sigma_p)
+        s_i = GaussianDistribution(agent_i.mu_p, agent_i.Sigma_p)
+        s_j = GaussianDistribution(agent_j.mu_p, agent_j.Sigma_p)
+        s_j_transported = push_gaussian(s_j, Omega_ij)
         
         # Local gradients
         g_mu_i, g_Sigma_i = grad_kl_source(
             agent_i.mu_p, agent_i.Sigma_p,
-            p_j_transported.mu, p_j_transported.Sigma
+            s_j_transported.mu, s_j_transported.Sigma
         )
-        
+
         g_mu_j, g_Sigma_j = grad_kl_target(
             agent_i.mu_p, agent_i.Sigma_p,
-            p_j_transported.mu, p_j_transported.Sigma,
+            s_j_transported.mu, s_j_transported.Sigma,
             Omega_ij
         )
-        
-        weight_field = lambda_prior * chi_ij * gamma_ij
+
+        weight_field = lambda_model * chi_ij * gamma_ij
         
         if agent_i.base_manifold.is_point:
             # 0D: weight is scalar, multiply directly
@@ -845,7 +848,7 @@ def compute_prior_alignment_gradients(
             gradients[j].grad_Sigma_p += weight_mat * g_Sigma_j
         
         
-        # ===== GAUGE FIELD GRADIENTS (for priors) =====
+        # ===== GAUGE FIELD GRADIENTS (for model alignment) =====
         if lambda_phi != 0.0:
             grad_phi_i = compute_gauge_gradient_alignment(
                 agent_i.mu_p, agent_i.Sigma_p,
@@ -1003,7 +1006,7 @@ def compute_all_gradients(system, n_jobs: Optional[int] = None,
     grad_dicts: List[Dict[str, np.ndarray]] = []
 
     for agent, g in zip(system.agents, natural_grads):
-        # Fallbacks in case some fields are None (e.g. lambda_prior_align == 0)
+        # Fallbacks in case some fields are None (e.g. lambda_model_align == 0)
         delta_mu_q = g.delta_mu_q if g.delta_mu_q is not None else np.zeros_like(agent.mu_q)
         delta_Sigma_q = (
             g.delta_Sigma_q
@@ -1011,8 +1014,8 @@ def compute_all_gradients(system, n_jobs: Optional[int] = None,
             else np.zeros_like(agent.Sigma_q)
         )
 
-        # Priors might be disabled
-        if getattr(system.config, "lambda_prior_align", 0.0) > 0.0:
+        # Model alignment might be disabled
+        if getattr(system.config, "lambda_model_align", 0.0) > 0.0:
             delta_mu_p = g.delta_mu_p if g.delta_mu_p is not None else np.zeros_like(agent.mu_p)
             delta_Sigma_p = (
                 g.delta_Sigma_p
@@ -1020,7 +1023,7 @@ def compute_all_gradients(system, n_jobs: Optional[int] = None,
                 else np.zeros_like(agent.Sigma_p)
             )
         else:
-            # Explicit zeros if prior term is off
+            # Explicit zeros if model alignment is off
             delta_mu_p = np.zeros_like(agent.mu_p)
             delta_Sigma_p = np.zeros_like(agent.Sigma_p)
 
@@ -1071,8 +1074,8 @@ def _compute_agent_euclidean_gradients(
     agent = system.agents[agent_idx]
     spatial_shape = agent.support.base_shape if hasattr(agent.support, 'base_shape') else agent.base_manifold.shape
     K = agent.K
-    enable_p = getattr(system.config, "lambda_prior_align", 0.0) > 0.0
-    # p-gradients are gated by lambda_prior_align via `enable_p`
+    enable_p = getattr(system.config, "lambda_model_align", 0.0) > 0.0
+    # s_i (model) gradients are gated by lambda_model_align via `enable_p`
 
     # Initialize accumulator
     total_grads = AgentGradients(
@@ -1115,16 +1118,16 @@ def _compute_agent_euclidean_gradients(
  
 
 
-    # (3) Prior alignment (guarded)
+    # (3) Model alignment: γ_ij · KL(s_i || Ω̃[s_j]) (guarded)
     if enable_p and len(system.get_neighbors(agent_idx)) > 0:
-        prior_grads_dict = compute_prior_alignment_gradients(
+        model_grads_dict = compute_model_alignment_gradients(
             system,
             agent_idx,
-            lambda_prior=system.config.lambda_prior_align,
+            lambda_model=system.config.lambda_model_align,
             lambda_phi=getattr(system.config, "lambda_phi", 1.0),
         )
         
-        for idx, grads in prior_grads_dict.items():
+        for idx, grads in model_grads_dict.items():
             if idx == agent_idx:
                 total_grads.grad_mu_p += grads.grad_mu_p
                 total_grads.grad_Sigma_p += grads.grad_Sigma_p
@@ -1147,15 +1150,15 @@ def _accumulate_coupling_gradients(system, agent_idx: int, euclidean_grads: List
     Accumulate coupling gradients that affect multiple agents.
 
     Handles the cross-agent gradient terms from softmax coupling.
-    MUST respect lambda_belief_align and lambda_prior_align.
+    MUST respect lambda_belief_align and lambda_model_align.
     """
     lambda_belief = getattr(system.config, "lambda_belief_align", 0.0)
-    lambda_prior  = getattr(system.config, "lambda_prior_align", 0.0)
+    lambda_model  = getattr(system.config, "lambda_model_align", 0.0)
 
     # (5) Softmax coupling (beliefs): when this agent is SENDER j
     if lambda_belief > 0.0:
         softmax_belief_grads = compute_softmax_coupling_gradients_belief(system, agent_idx)
-        
+
         for idx, grads in softmax_belief_grads.items():
             euclidean_grads[idx].grad_mu_q     += lambda_belief * grads.grad_mu_q
             euclidean_grads[idx].grad_Sigma_q  += lambda_belief * grads.grad_Sigma_q
@@ -1166,19 +1169,19 @@ def _accumulate_coupling_gradients(system, agent_idx: int, euclidean_grads: List
             if hasattr(grads, "grad_phi") and grads.grad_phi is not None:
                 euclidean_grads[idx].grad_phi += lambda_belief * grads.grad_phi
 
-    # (6) Softmax coupling (priors): when this agent is SENDER j
-    if lambda_prior > 0.0:
-        softmax_prior_grads = compute_softmax_coupling_gradients_prior(system, agent_idx)
-        
-        for idx, grads in softmax_prior_grads.items():
-            euclidean_grads[idx].grad_mu_p     += lambda_prior * grads.grad_mu_p
-            euclidean_grads[idx].grad_Sigma_p  += lambda_prior * grads.grad_Sigma_p
+    # (6) Softmax coupling (models s_i): when this agent is SENDER j
+    if lambda_model > 0.0:
+        softmax_model_grads = compute_softmax_coupling_gradients_model(system, agent_idx)
+
+        for idx, grads in softmax_model_grads.items():
+            euclidean_grads[idx].grad_mu_p     += lambda_model * grads.grad_mu_p
+            euclidean_grads[idx].grad_Sigma_p  += lambda_model * grads.grad_Sigma_p
             if hasattr(grads, "grad_mu_q") and grads.grad_mu_q is not None:
-                euclidean_grads[idx].grad_mu_q += lambda_prior * grads.grad_mu_q
+                euclidean_grads[idx].grad_mu_q += lambda_model * grads.grad_mu_q
             if hasattr(grads, "grad_Sigma_q") and grads.grad_Sigma_q is not None:
-                euclidean_grads[idx].grad_Sigma_q += lambda_prior * grads.grad_Sigma_q
+                euclidean_grads[idx].grad_Sigma_q += lambda_model * grads.grad_Sigma_q
             if hasattr(grads, "grad_phi") and grads.grad_phi is not None:
-                euclidean_grads[idx].grad_phi += lambda_prior * grads.grad_phi
+                euclidean_grads[idx].grad_phi += lambda_model * grads.grad_phi
 
 
 

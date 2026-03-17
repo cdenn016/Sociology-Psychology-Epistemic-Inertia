@@ -5,10 +5,16 @@ Complete Free Energy Functional with Clean χ-Weighted Integration
 
 Implements all energy terms with EXPLICIT χ weighting:
 
-S = Σ_i ∫ χ_i α KL(q||p)                    [Self-coupling]
-  + Σ_ij ∫ χ_ij β_ij KL(q_i||Ω[q_j])        [Belief alignment]
-  + Σ_ij ∫ χ_ij γ_ij KL(p_i||Ω[p_j])        [Prior alignment]
-  - Σ_i ∫ χ_i E_q[log p(o|x)]               [Observations]
+S = Σ_i ∫ χ_i α KL(q_i||p_i)                    [Self-coupling]
+  + Σ_ij ∫ χ_ij β_ij KL(q_i||Ω_ij[q_j])        [Belief alignment]
+  + Σ_ij ∫ χ_ij γ_ij KL(s_i||Ω̃_ij[s_j])        [Model alignment]
+  - Σ_i ∫ χ_i E_q[log p(o|x)]                   [Observations]
+
+NOTE: s_i(m_i) = N(μ_{p,i}, Σ_{p,i}) is the model distribution over generative
+model parameters (model fiber), NOT the prior p_i. In the current flat
+implementation, p_i ≡ s_i (no hierarchical marginalization). The transport
+Ω̃_ij = Ω_ij for now (shared gauge field); separate model-fiber gauge fields
+φ̃_i and cross-fiber bundle morphisms Φ, Φ̃ are deferred to future work.
 
 CRITICAL PRINCIPLES:
 -------------------
@@ -44,7 +50,7 @@ class FreeEnergyBreakdown:
     """Container for free energy components."""
     self_energy: float
     belief_align: float
-    prior_align: float
+    model_align: float
     observations: float
     total: float
     
@@ -53,7 +59,7 @@ class FreeEnergyBreakdown:
             f"FreeEnergy(\n"
             f"  self={self.self_energy:.4f},\n"
             f"  belief_align={self.belief_align:.4f},\n"
-            f"  prior_align={self.prior_align:.4f},\n"
+            f"  model_align={self.model_align:.4f},\n"
             f"  observations={self.observations:.4f},\n"
             f"  total={self.total:.4f}\n"
             f")"
@@ -197,34 +203,39 @@ def compute_belief_alignment_energy(
 
 
 # =============================================================================
-# Energy Term 3: Prior Alignment
+# Energy Term 3: Model Alignment (s_i — generative model coupling)
 # =============================================================================
 
-def compute_prior_alignment_energy(
+def compute_model_alignment_energy(
     system,
     agent_idx_i: int,
-    lambda_prior: Optional[float] = None
+    lambda_model: Optional[float] = None
 ) -> float:
     """
-    Prior alignment energy for agent i with all neighbors j:
-    
-    E_i = Σ_j λ ∫_C χ_ij(c) · γ_ij(c) · KL(p_i(c) || Ω_ij[p_j](c)) dc
-    
-    Identical structure to belief alignment, but using priors p instead of beliefs q.
-    
+    Model alignment energy for agent i with all neighbors j:
+
+    E_i = Σ_j λ ∫_C χ_ij(c) · γ_ij(c) · KL(s_i(c) || Ω̃_ij[s_j](c)) dc
+
+    Couples generative model distributions s_i = N(μ_p, Σ_p) across agents
+    via gauge-transported KL divergence. The γ_ij weights are softmax over
+    model-model KL divergences (analogous to β_ij for beliefs).
+
+    NOTE: Currently Ω̃_ij = Ω_ij (shared gauge field). Separate model-fiber
+    gauge fields and bundle morphisms Φ, Φ̃ are deferred to future work.
+
     Args:
         system: MultiAgentSystem instance
         agent_idx_i: Index of agent i
-        lambda_prior: Coupling strength (uses system.config if None)
-    
+        lambda_model: Coupling strength (uses system.config if None)
+
     Returns:
         energy: Non-negative scalar
     """
     agent_i = system.agents[agent_idx_i]
-    
+
     # Get coupling strength
-    if lambda_prior is None:
-        lambda_prior = system.config.lambda_prior_align
+    if lambda_model is None:
+        lambda_model = system.config.lambda_model_align
     
     # Get neighbors
     neighbors = system.get_neighbors(agent_idx_i)
@@ -236,7 +247,7 @@ def compute_prior_alignment_energy(
     gamma_fields = compute_softmax_weights(
         system,
         agent_idx_i,
-        mode='prior',
+        mode='model',
         kappa=system.config.kappa_gamma
     )
     
@@ -256,13 +267,13 @@ def compute_prior_alignment_energy(
        
       
         
-        # Transported KL for priors
-        # Wrap distributions in GaussianDistribution objects
-        p_i = GaussianDistribution(agent_i.mu_p, agent_i.Sigma_p)
-        p_j = GaussianDistribution(agent_j.mu_p, agent_j.Sigma_p)
+        # Transported KL for model distributions s_i, s_j
+        # (parameterized by mu_p, Sigma_p in the flat p_i ≡ s_i regime)
+        s_i = GaussianDistribution(agent_i.mu_p, agent_i.Sigma_p)
+        s_j = GaussianDistribution(agent_j.mu_p, agent_j.Sigma_p)
         
         kl_field = np.asarray(
-            compute_kl_transported(p_i, p_j, Omega_ij),
+            compute_kl_transported(s_i, s_j, Omega_ij),
             dtype=np.float32
         )  # Shape: (*S,) or () for 0D
         
@@ -272,7 +283,7 @@ def compute_prior_alignment_energy(
         
         total_energy += energy_ij
     
-    return lambda_prior * total_energy
+    return lambda_model * total_energy
 
 
 # =============================================================================
@@ -466,14 +477,14 @@ def compute_total_free_energy(system) -> FreeEnergyBreakdown:
             for i in range(system.n_agents):
                 E_belief += compute_belief_alignment_energy(system, i)
 
-    # (3) Prior alignment
-    if config.has_prior_alignment:
+    # (3) Model alignment: γ_ij · KL(s_i || Ω̃_ij[s_j])
+    if config.has_model_alignment:
         if hasattr(system, 'get_all_active_agents'):
             for i, agent in enumerate(agents):
-                E_prior += compute_prior_alignment_energy(system, i)
+                E_prior += compute_model_alignment_energy(system, i)
         else:
             for i in range(system.n_agents):
-                E_prior += compute_prior_alignment_energy(system, i)
+                E_prior += compute_model_alignment_energy(system, i)
 
     # (4) Observations (regular agents)
     if config.has_observations:
@@ -499,7 +510,7 @@ def compute_total_free_energy(system) -> FreeEnergyBreakdown:
     return FreeEnergyBreakdown(
         self_energy=E_self,
         belief_align=E_belief,
-        prior_align=E_prior,
+        model_align=E_prior,
         observations=E_obs + E_obs_meta,  # Combine regular + meta observations
         total=E_total,
     )
@@ -516,7 +527,7 @@ def compute_agent_energy_contribution(system, agent_idx: int) -> Dict[str, float
     energies = {
         "self": compute_self_energy(agent, lambda_self=system.config.lambda_self),
         "belief_align": compute_belief_alignment_energy(system, agent_idx),
-        "prior_align": compute_prior_alignment_energy(system, agent_idx),
+        "model_align": compute_model_alignment_energy(system, agent_idx),
         "observations": compute_observation_energy(
             system,
             agent,

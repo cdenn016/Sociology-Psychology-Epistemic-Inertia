@@ -19,7 +19,7 @@ Full gradient:
           + Σ_j Σ_k ∫ χ_ij [KL_ij (∂β_ij/∂KL_ik) ∂KL_ik/∂θ] dc  [TERM 2]
 
 This module computes TERM 2 only.
-TERM 1 is handled in compute_belief/prior_alignment_gradients.
+TERM 1 is handled in compute_belief/model_alignment_gradients.
 
 Key insight: For each (j,k) pair, we compute:
     contribution = χ_ij * KL_ij * (∂β_ij/∂KL_ik) * (∂KL_ik/∂θ)
@@ -54,7 +54,7 @@ class SoftmaxGradients:
 def compute_softmax_weights(
     system,
     agent_idx_i: int,
-    mode: Literal['belief', 'prior'],
+    mode: Literal['belief', 'model'],
     kappa: float
 ) -> Dict[int, np.ndarray]:
     """
@@ -68,7 +68,7 @@ def compute_softmax_weights(
     Args:
         system: MultiAgentSystem instance
         agent_idx_i: Index of agent i
-        mode: 'belief' for β weights, 'prior' for γ weights
+        mode: 'belief' for β weights, 'model' for γ weights
         kappa: Temperature parameter (κ_β or κ_γ)
     
     Returns:
@@ -104,7 +104,8 @@ def compute_softmax_weights(
         mu_i = agent_i.mu_q
         Sigma_i = agent_i.Sigma_q
         get_neighbor_dist = lambda j: (system.agents[j].mu_q, system.agents[j].Sigma_q)
-    elif mode == 'prior':
+    elif mode == 'model':
+        # Model distributions s_i parameterized by (mu_p, Sigma_p)
         mu_i = agent_i.mu_p
         Sigma_i = agent_i.Sigma_p
         get_neighbor_dist = lambda j: (system.agents[j].mu_p, system.agents[j].Sigma_p)
@@ -241,7 +242,7 @@ def compute_softmax_coupling_gradients(
     Args:
         system: MultiAgentSystem
         agent_idx_i: Index of receiving agent i
-        mode: 'belief' or 'prior'
+        mode: 'belief' or 'model'
         eps: Numerical epsilon
     
     Returns:
@@ -271,9 +272,9 @@ def compute_softmax_coupling_gradients(
             system, agent_idx_i, mode='belief', kappa=system.config.kappa_beta
         )
         get_dist = lambda agent: (agent.mu_q, agent.Sigma_q)
-    else:  # mode == 'prior'
+    else:  # mode == 'model'
         beta_fields = compute_softmax_weights(
-            system, agent_idx_i, mode='prior', kappa=system.config.kappa_gamma
+            system, agent_idx_i, mode='model', kappa=system.config.kappa_gamma
         )
         get_dist = lambda agent: (agent.mu_p, agent.Sigma_p)
     
@@ -398,7 +399,7 @@ def compute_softmax_coupling_gradients(
             if mode == 'belief':
                 gradients[agent_idx_i].grad_mu_q += weight_vec * g_mu_i
                 gradients[agent_idx_i].grad_Sigma_q += weight_mat * g_Sigma_i
-            else:  # prior
+            else:  # model
                 gradients[agent_idx_i].grad_mu_p += weight_vec * g_mu_i
                 gradients[agent_idx_i].grad_Sigma_p += weight_mat * g_Sigma_i
             
@@ -409,10 +410,55 @@ def compute_softmax_coupling_gradients(
             if mode == 'belief':
                 gradients[k].grad_mu_q += weight_vec_k * g_mu_k
                 gradients[k].grad_Sigma_q += weight_mat_k * g_Sigma_k
-            else:  # prior
+            else:  # model
                 gradients[k].grad_mu_p += weight_vec_k * g_mu_k
                 gradients[k].grad_Sigma_p += weight_mat_k * g_Sigma_k
-    
+
+            # ================================================================
+            # TERM 2 gauge field gradients: ∂KL_ik/∂φ through Ω_ik
+            # Chain rule: ∂KL_ik/∂φ = tr(∂KL/∂Ω · ∂Ω/∂φ)
+            # ================================================================
+            if hasattr(agent_i, 'gauge') and agent_i.gauge is not None:
+                from gradients.gradient_terms import grad_kl_wrt_transport
+                from math_utils.transport import compute_transport_differential
+
+                grad_mu_factor, grad_Sigma_factor = grad_kl_wrt_transport(
+                    mu_i, Sigma_i, mu_k, Sigma_k, Omega_ik, eps=eps
+                )
+
+                phi_i = agent_i.gauge.phi
+                phi_k = agent_k.gauge.phi
+                generators = agent_i.generators
+
+                # ∂Ω_ik/∂φ_i and ∂Ω_ik/∂φ_k
+                for direction, target_idx in [('i', agent_idx_i), ('j', k)]:
+                    dOmega_dPhi = compute_transport_differential(
+                        phi_i, phi_k, generators, direction=direction
+                    )
+                    n_gauge = phi_i.shape[-1]
+                    grad_phi_components = []
+                    for a in range(n_gauge):
+                        dOmega_a = np.asarray(dOmega_dPhi[a], dtype=np.float64)
+                        contrib = np.einsum(
+                            '...ij,...ij->...', grad_mu_factor, dOmega_a,
+                            optimize=True
+                        )
+                        contrib += np.einsum(
+                            '...ij,...ij->...', grad_Sigma_factor, dOmega_a,
+                            optimize=True
+                        )
+                        grad_phi_components.append(contrib)
+
+                    grad_phi_coupling = np.stack(grad_phi_components, axis=-1)
+
+                    # Apply weight field
+                    weight_phi = broadcast_mask(
+                        weight_field, grad_phi_coupling.shape, is_vector=True
+                    )
+                    gradients[target_idx].grad_phi += (
+                        weight_phi * grad_phi_coupling
+                    ).astype(np.float32, copy=False)
+
     return gradients
 
 
@@ -433,12 +479,12 @@ def compute_softmax_coupling_gradients_belief(
     )
 
 
-def compute_softmax_coupling_gradients_prior(
+def compute_softmax_coupling_gradients_model(
     system, agent_idx_i: int, eps: float = 1e-8
 ) -> Dict[int, SoftmaxGradients]:
-    """Compute softmax coupling gradients for PRIORS."""
+    """Compute softmax coupling gradients for MODEL distributions s_i."""
     return compute_softmax_coupling_gradients(
-        system, agent_idx_i, mode='prior', eps=eps
+        system, agent_idx_i, mode='model', eps=eps
     )
 
 

@@ -352,8 +352,8 @@ def grad_kl_wrt_transport(
     KL(N(μ_i, Σ_i) || N(Ω μ_j, Ω Σ_j Ωᵀ)) gradients w.r.t. Ω.
 
     Returns:
-        grad_mu_factor: for the mean transport term, shape (..., K, K)
-        grad_Sigma_factor: covariance factor (here set to 0 for clarity)
+        grad_mu_factor: mean transport term ∂KL/∂Ω|_μ, shape (..., K, K)
+        grad_Sigma_factor: covariance transport term ∂KL/∂Ω|_Σ, shape (..., K, K)
     """
     mu_i = np.asarray(mu_i, dtype=np.float64)
     Sigma_i = np.asarray(Sigma_i, dtype=np.float64)
@@ -392,8 +392,26 @@ def grad_kl_wrt_transport(
         optimize=True
     )  # (..., K, K)
 
-    # For debugging / cleanliness, drop the approximate Σ term
-    grad_Sigma_factor = np.zeros_like(grad_mu_factor)
+    # Covariance term: ∂KL/∂Ω from tr(Σ'_j⁻¹ Σ_i) + log|Σ'_j|
+    #
+    # ∂/∂Ω [ ½ tr(Σ'_j⁻¹ Σ_i) ] = -Σ'_j⁻¹ Σ_i Σ'_j⁻¹ Ω Σ_j
+    # ∂/∂Ω [ ½ log|Σ'_j| ]       = Σ'_j⁻¹ Ω Σ_j  (= Ω⁻ᵀ when Ω invertible)
+    #
+    # Combined: ½ Σ'_j⁻¹ (I - Σ_i Σ'_j⁻¹) Ω Σ_j
+    I_K = np.eye(Sigma_i.shape[-1], dtype=np.float64)
+    Sigma_i_times_inv = np.einsum(
+        '...ij,...jk->...ik', Sigma_i, Sigma_j_t_inv, optimize=True
+    )
+    bracket = I_K - Sigma_i_times_inv  # (..., K, K)
+    left = np.einsum(
+        '...ij,...jk->...ik', Sigma_j_t_inv, bracket, optimize=True
+    )  # Σ'_j⁻¹ (I - Σ_i Σ'_j⁻¹)
+    Omega_Sigma_j = np.einsum(
+        '...ij,...jk->...ik', Omega_ij, Sigma_j, optimize=True
+    )
+    grad_Sigma_factor = 0.5 * np.einsum(
+        '...ij,...jk->...ik', left, Omega_Sigma_j, optimize=True
+    )  # (..., K, K)
 
     return (
         grad_mu_factor.astype(np.float32, copy=False),

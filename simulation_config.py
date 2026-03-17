@@ -83,12 +83,12 @@ class SimulationConfig:
     # =============================================================================
     lambda_self: float           = 1  # Individual identity (resist conformity)
     lambda_belief_align: float   = 1  # Peer pressure (social)
-    lambda_prior_align: float    = 0  # Cultural authority (top-down)
+    lambda_model_align: float    = 0  # Model-model coupling γ_ij·KL(s_i||Ω̃s_j)
     lambda_obs: float            = 0  # External observations
     lambda_phi: float            = 1  # Gauge coupling
 
     kappa_beta: float            = 1.0  # Softmax temperature (belief align)
-    kappa_gamma: float           = 1.0  # Softmax temperature (prior align)
+    kappa_gamma: float           = 1.0  # Softmax temperature (model align)
 
     identical_priors: str        = "lock"  # off, lock, init_copy
     identical_priors_source: str = "first"  # first or mean
@@ -338,7 +338,7 @@ class SimulationConfig:
                 "Emergence": ["enable_emergence", "consensus_threshold", "consensus_check_interval",
                              "min_cluster_size", "max_scale", "max_meta_membership",
                              "max_total_agents", "enable_cross_scale_priors", "enable_timescale_sep"],
-                "Energy": ["lambda_self", "lambda_belief_align", "lambda_prior_align",
+                "Energy": ["lambda_self", "lambda_belief_align", "lambda_model_align",
                           "lambda_obs", "lambda_phi", "kappa_beta", "kappa_gamma"],
                 "Learning Rates": ["lr_mu_q", "lr_sigma_q", "lr_mu_p", "lr_sigma_p", "lr_phi"],
                 "Support": ["support_pattern", "agent_placement_2d", "agent_radius",
@@ -387,7 +387,7 @@ def emergence_demo_config() -> SimulationConfig:
         consensus_check_interval=5,
         lambda_self=3.0,
         lambda_belief_align=2.0,
-        lambda_prior_align=2.5,
+        lambda_model_align=2.5,
         enable_cross_scale_priors=True,
         # Early stopping: stop once we reach 5 scales or form 15 meta-agents
         stop_if_n_scales_reached=5,
@@ -461,7 +461,7 @@ def hamiltonian_config() -> SimulationConfig:
         # Energy weights
         lambda_self=1.0,
         lambda_belief_align=1.0,
-        lambda_prior_align=1.0,
+        lambda_model_align=1.0,
         lambda_obs=0.0,
         lambda_phi=0.0,
     )
@@ -512,7 +512,7 @@ def hamiltonian_emergence_config() -> SimulationConfig:
         # Balanced energy landscape
         lambda_self=1.0,
         lambda_belief_align=1.0,
-        lambda_prior_align=1.0,
+        lambda_model_align=1.0,
         lambda_obs=0.0,
         lambda_phi=0.0,
 
@@ -555,7 +555,7 @@ def critical_damping_config() -> SimulationConfig:
         # Energy weights
         lambda_self=1.0,
         lambda_belief_align=1.0,
-        lambda_prior_align=1.0,
+        lambda_model_align=1.0,
         lambda_obs=0.0,
         lambda_phi=0.0,
     )

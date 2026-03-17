@@ -7,7 +7,7 @@ Complete VFE functional, fully differentiable via torch.autograd.
 
 F = α · KL(q || p)                                   [Self-coupling]
   + λ_β · Σ_{i,j} β_ij · KL(q_i || Ω_ij[q_j])      [Belief alignment]
-  + λ_γ · Σ_{i,j} γ_ij · KL(p_i || Ω_ij[p_j])      [Prior alignment]
+  + λ_γ · Σ_{i,j} γ_ij · KL(s_i || Ω̃_ij[s_j])      [Model alignment]
   - λ_o · Σ_i E_q[log p(o|x)]                        [Observations]
 
 The key advantage over NumPy: torch.autograd.grad(F, params) replaces
@@ -38,7 +38,7 @@ class FreeEnergy(NamedTuple):
     """Container for free energy components."""
     self_energy: Tensor
     belief_align: Tensor
-    prior_align: Tensor
+    model_align: Tensor
     observations: Tensor
     total: Tensor
 
@@ -165,27 +165,29 @@ def free_energy_belief_alignment(
     return lambda_belief * energy
 
 
-def free_energy_prior_alignment(
+def free_energy_model_alignment(
     mu_p: Tensor,
     Sigma_p: Tensor,
     phi: Tensor,
     generators: Tensor,
     gamma: Tensor,
-    lambda_prior: float = 1.0,
+    lambda_model: float = 1.0,
     eps: float = 1e-6,
 ) -> Tensor:
     """
-    Prior alignment energy: λ_γ · Σ_{i,j} γ_ij · KL(p_i || Ω_ij[p_j]).
+    Model alignment energy: λ_γ · Σ_{i,j} γ_ij · KL(s_i || Ω̃_ij[s_j]).
 
-    Same structure as belief alignment but for priors.
+    Couples generative model distributions s_i = N(μ_p, Σ_p) across agents.
+    NOTE: Currently Ω̃_ij = Ω_ij (shared gauge field); separate model-fiber
+    gauge fields and bundle morphisms Φ, Φ̃ are deferred to future work.
 
     Args:
-        mu_p: Prior means, shape (N, K)
-        Sigma_p: Prior covariances, shape (N, K, K)
+        mu_p: Model means (s_i params), shape (N, K)
+        Sigma_p: Model covariances (s_i params), shape (N, K, K)
         phi: Gauge fields, shape (N, d)
         generators: SO(K) generators, shape (d, K, K)
-        gamma: Prior attention weights, shape (N, N)
-        lambda_prior: Coupling strength
+        gamma: Model attention weights γ_ij, shape (N, N)
+        lambda_model: Model coupling strength
 
     Returns:
         energy: Scalar tensor (differentiable)
@@ -201,13 +203,14 @@ def free_energy_prior_alignment(
             if g_ij < 1e-8:
                 continue
 
+            # NOTE: Using Ω_ij (belief transport) as proxy for Ω̃_ij (model transport)
             Omega_ij = compute_transport(phi[i], phi[j], generators)
             kl_ij = kl_transported(
                 mu_p[i], Sigma_p[i], mu_p[j], Sigma_p[j], Omega_ij, eps=eps
             )
             energy = energy + g_ij * kl_ij
 
-    return lambda_prior * energy
+    return lambda_model * energy
 
 
 def free_energy_observation(
@@ -275,7 +278,7 @@ def free_energy_total(
     kappa: float = 1.0,
     alpha: float = 1.0,
     lambda_belief: float = 1.0,
-    lambda_prior: float = 0.0,
+    lambda_model: float = 0.0,
     lambda_obs: float = 0.0,
     observations: Optional[Tensor] = None,
     W_obs: Optional[Tensor] = None,
@@ -300,13 +303,13 @@ def free_energy_total(
         kappa: Attention temperature
         alpha: Self-coupling strength
         lambda_belief: Belief alignment strength
-        lambda_prior: Prior alignment strength
+        lambda_model: Model alignment strength (γ_ij coupling)
         lambda_obs: Observation coupling strength
         observations: Observed data, shape (N, D) or None
         W_obs: Observation matrix, shape (D, K) or None
         R_obs: Observation noise, shape (D, D) or None
         beta: Precomputed attention weights or None (computed from beliefs)
-        gamma: Precomputed prior attention weights or None
+        gamma: Precomputed model attention weights γ_ij or None
         eps: Regularization
 
     Returns:
@@ -325,12 +328,12 @@ def free_energy_total(
     else:
         E_belief = torch.tensor(0.0, dtype=mu_q.dtype, device=mu_q.device)
 
-    # (3) Prior alignment
-    if lambda_prior > 0:
+    # (3) Model alignment: γ_ij · KL(s_i || Ω̃_ij[s_j])
+    if lambda_model > 0:
         if gamma is None:
             gamma = softmax_attention(mu_p, Sigma_p, phi, generators, kappa=kappa, eps=eps)
-        E_prior = free_energy_prior_alignment(
-            mu_p, Sigma_p, phi, generators, gamma, lambda_prior=lambda_prior, eps=eps
+        E_prior = free_energy_model_alignment(
+            mu_p, Sigma_p, phi, generators, gamma, lambda_model=lambda_model, eps=eps
         )
     else:
         E_prior = torch.tensor(0.0, dtype=mu_q.dtype, device=mu_q.device)
@@ -348,7 +351,7 @@ def free_energy_total(
     return FreeEnergy(
         self_energy=E_self,
         belief_align=E_belief,
-        prior_align=E_prior,
+        model_align=E_prior,
         observations=E_obs,
         total=E_total,
     )

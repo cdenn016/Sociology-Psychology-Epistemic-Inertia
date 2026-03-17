@@ -113,7 +113,7 @@ def filter_history_steps(history, skip_initial_steps=0):
 
         # Filter all list attributes
         for attr in ['steps', 'total_energy', 'self_energy', 'belief_align',
-                     'prior_align', 'observations', 'grad_norm_mu_q',
+                     'model_align', 'observations', 'grad_norm_mu_q',
                      'grad_norm_Sigma_q', 'grad_norm_phi']:
             if hasattr(filtered, attr):
                 value = getattr(filtered, attr)
@@ -178,7 +178,7 @@ def normalize_history(history):
             "total": history.total_energy if hasattr(history, 'total_energy') else [],
             "self": history.self_energy if hasattr(history, 'self_energy') else [],
             "belief_align": history.belief_align if hasattr(history, 'belief_align') else [],
-            "prior_align": history.prior_align if hasattr(history, 'prior_align') else [],
+            "model_align": history.model_align if hasattr(history, 'model_align') else [],
             "observations": history.observations if hasattr(history, 'observations') else [],
             "grad_norm_mu_q": history.grad_norm_mu_q if hasattr(history, 'grad_norm_mu_q') else [],
             "grad_norm_Sigma_q": history.grad_norm_Sigma_q if hasattr(history, 'grad_norm_Sigma_q') else [],

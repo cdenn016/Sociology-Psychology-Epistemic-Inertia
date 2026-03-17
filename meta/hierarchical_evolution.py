@@ -664,7 +664,7 @@ def create_and_evolve_demo(n_base_agents: int = 12,
         spatial_shape=(),
         lambda_self=1.0,
         lambda_belief_align=1.0,
-        lambda_prior_align=0.5
+        lambda_model_align=0.5
     )
 
     print(f"Creating {n_base_agents} base agents...")
