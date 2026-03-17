@@ -49,16 +49,14 @@ from .geometry_base import (
 from .multi_agent_mass_matrix import (
     build_full_mass_matrix,
     build_mu_mass_matrix,
-    MassMatrixConfig,
 )
 
 from .geodesic_corrections import (
     compute_geodesic_force,
-    GeodesicConfig,
 )
 
 from .pullback_metrics import (
-    compute_pullback_metric,
+    pullback_metric_gaussian,
 )
 
 __all__ = [
@@ -71,12 +69,10 @@ __all__ = [
     # Mass matrix (epistemic inertia)
     'build_full_mass_matrix',
     'build_mu_mass_matrix',
-    'MassMatrixConfig',
 
     # Geodesic corrections
     'compute_geodesic_force',
-    'GeodesicConfig',
 
     # Pullback metrics
-    'compute_pullback_metric',
+    'pullback_metric_gaussian',
 ]

@@ -22,7 +22,7 @@ Sociology/Psychology Interpretation:
 ------------------------------------
 - Free energy minimization = reducing cognitive dissonance
 - Gradient descent = belief updating through social learning
-- The softmax attention ²_ij = who you're listening to
+- The softmax attention Î²_ij = who you're listening to
 - Mass matrix M = epistemic inertia (how hard it is to change beliefs)
 
 Key Components:
@@ -47,14 +47,12 @@ from .gradient_engine import (
 
 from .softmax_grads import (
     compute_softmax_weights,
-    compute_kl_matrix,
 )
 
 from .update_engine import GradientApplier
 
 from .retraction import (
     retract_spd,
-    retract_spd_cholesky,
 )
 
 __all__ = [
@@ -72,10 +70,8 @@ __all__ = [
 
     # Softmax attention
     'compute_softmax_weights',
-    'compute_kl_matrix',
 
     # Updates
     'GradientApplier',
     'retract_spd',
-    'retract_spd_cholesky',
 ]

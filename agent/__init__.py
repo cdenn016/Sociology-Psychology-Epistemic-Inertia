@@ -7,7 +7,7 @@ Core agent and multi-agent system implementations for belief dynamics.
 
 Sociology/Psychology Interpretation:
 ------------------------------------
-- Agent: An individual with beliefs (q), priors (p), and a reference frame (Æ)
+- Agent: An individual with beliefs (q), priors (p), and a reference frame (Ï†)
 - MultiAgentSystem: A social network where agents influence each other
 - Trainer: How beliefs evolve through social learning
 - HamiltonianTrainer: Alternative dynamics with "epistemic momentum"
@@ -24,7 +24,7 @@ from .agents import Agent, AgentGeometry
 from .system import MultiAgentSystem
 from .trainer import Trainer, TrainingHistory
 from .hamiltonian_trainer import HamiltonianTrainer, HamiltonianHistory
-from .masking import MaskConfig, SupportPatternConfig
+from .masking import MaskConfig
 
 __all__ = [
     'Agent',
@@ -35,5 +35,4 @@ __all__ = [
     'HamiltonianTrainer',
     'HamiltonianHistory',
     'MaskConfig',
-    'SupportPatternConfig',
 ]
