@@ -41,14 +41,14 @@ class SystemConfig:
     # === EXISTING FIELDS (keep these!) ===
     lambda_self:         float = 1.0
     lambda_belief_align: float = 1.0
-    lambda_prior_align:  float = 0.0
+    lambda_model_align:  float = 0.0   # γ_ij model-model coupling strength (s_i alignment)
     lambda_phi:          float = 0.0
     lambda_obs:          float = 0.0
     lambda_obs_meta:     float = 1.0  # Meta-agent observation of constituents (bottom-up coupling)
     lambda_gauge_smooth: float = 0.0
     
-    kappa_beta: float          = 1.0
-    kappa_gamma: float         = 1.0
+    kappa_beta: float          = 1.0   # Softmax temperature for belief alignment (β_ij)
+    kappa_gamma: float         = 1.0   # Softmax temperature for model alignment (γ_ij)
     
     overlap_threshold: float   = 0.1
     
@@ -106,7 +106,7 @@ class SystemConfig:
         # EXISTING VALIDATION (keep this!)
         lambdas = [
             self.lambda_self, self.lambda_belief_align,
-            self.lambda_prior_align, self.lambda_obs,
+            self.lambda_model_align, self.lambda_obs,
             self.lambda_obs_meta, self.lambda_gauge_smooth
         ]
         if any(lam < 0 for lam in lambdas):
@@ -164,8 +164,8 @@ class SystemConfig:
         return self.lambda_belief_align > 0
     
     @property
-    def has_prior_alignment(self) -> bool:
-        return self.lambda_prior_align > 0
+    def has_model_alignment(self) -> bool:
+        return self.lambda_model_align > 0
     
     @property
     def has_gauge_smoothness(self) -> bool:
@@ -466,7 +466,7 @@ def get_consensus_config() -> Tuple[AgentConfig, SystemConfig, TrainingConfig]:
     system = SystemConfig(
         lambda_self=1.0,
         lambda_belief_align=0.8,
-        lambda_prior_align=0.1,
+        lambda_model_align=0.1,
         kappa_beta=1.0,
     )
     training = TrainingConfig(
@@ -499,7 +499,7 @@ def get_polarization_config() -> Tuple[AgentConfig, SystemConfig, TrainingConfig
     system = SystemConfig(
         lambda_self=1.0,
         lambda_belief_align=0.3,
-        lambda_prior_align=0.5,
+        lambda_model_align=0.5,
         kappa_beta=0.5,  # Lower temperature = sharper attention
     )
     training = TrainingConfig(
@@ -532,7 +532,7 @@ def get_expert_novice_config() -> Tuple[AgentConfig, SystemConfig, TrainingConfi
     system = SystemConfig(
         lambda_self=1.0,
         lambda_belief_align=0.5,
-        lambda_prior_align=0.4,
+        lambda_model_align=0.4,
         kappa_beta=1.0,
     )
     training = TrainingConfig(
@@ -566,7 +566,7 @@ def get_backfire_config() -> Tuple[AgentConfig, SystemConfig, TrainingConfig]:
     system = SystemConfig(
         lambda_self=1.0,
         lambda_belief_align=0.1,  # Low social influence
-        lambda_prior_align=0.9,   # Strong prior anchoring
+        lambda_model_align=0.9,   # Strong model anchoring
         kappa_beta=0.3,  # Very selective attention
     )
     training = TrainingConfig(

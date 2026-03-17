@@ -10,12 +10,12 @@ Mathematical Foundation:
 The free energy functional S[q] measures how well an agent's beliefs
 balance compression (matching priors) with accuracy (explaining observations).
 
-    S = E_self + E_belief + E_prior + E_obs
+    S = E_self + E_belief + E_model + E_obs
 
 Where:
-    - E_self: Self-consistency (KL between belief and prior within agent)
-    - E_belief: Alignment with other agents' beliefs
-    - E_prior: Alignment with other agents' priors
+    - E_self: Self-consistency (KL between belief q_i and prior p_i)
+    - E_belief: β_ij-weighted alignment of beliefs q_i across agents
+    - E_model: γ_ij-weighted alignment of model distributions s_i across agents
     - E_obs: Fit to observations/evidence
 
 Sociology/Psychology Interpretation:
@@ -36,7 +36,7 @@ from .free_energy_clean import (
     FreeEnergyBreakdown,
     compute_self_energy,
     compute_belief_alignment_energy,
-    compute_prior_alignment_energy,
+    compute_model_alignment_energy,
     compute_observation_energy,
 )
 
@@ -61,7 +61,7 @@ __all__ = [
     'FreeEnergyBreakdown',
     'compute_self_energy',
     'compute_belief_alignment_energy',
-    'compute_prior_alignment_energy',
+    'compute_model_alignment_energy',
     'compute_observation_energy',
 
     # Gradients

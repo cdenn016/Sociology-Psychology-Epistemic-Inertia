@@ -46,7 +46,7 @@ class TrainingHistory:
     total_energy: List[float] = field(default_factory=list)
     self_energy: List[float] = field(default_factory=list)
     belief_align: List[float] = field(default_factory=list)
-    prior_align: List[float] = field(default_factory=list)
+    model_align: List[float] = field(default_factory=list)
     observations: List[float] = field(default_factory=list)
 
     # Gradient norms (for diagnostics)
@@ -73,7 +73,7 @@ class TrainingHistory:
         self.total_energy.append(energies.total)
         self.self_energy.append(energies.self_energy)
         self.belief_align.append(energies.belief_align)
-        self.prior_align.append(energies.prior_align)
+        self.model_align.append(energies.model_align)
         self.observations.append(energies.observations)
     
         # Gradient norms (if provided)
@@ -254,7 +254,7 @@ class Trainer:
         print(f"\nInitial energy: {initial_energies.total:.6f}")
         print(f"  Self: {initial_energies.self_energy:.6f}")
         print(f"  Belief align: {initial_energies.belief_align:.6f}")
-        print(f"  Prior align: {initial_energies.prior_align:.6f}")
+        print(f"  Model align: {initial_energies.model_align:.6f}")
         print(f"  Observations: {initial_energies.observations:.6f}")
         print()
         
@@ -319,8 +319,8 @@ class Trainer:
             components.append(f"self={energies.self_energy:.3f}")
         if energies.belief_align > 1e-6:
             components.append(f"β={energies.belief_align:.3f}")
-        if energies.prior_align > 1e-6:
-            components.append(f"γ={energies.prior_align:.3f}")
+        if energies.model_align > 1e-6:
+            components.append(f"γ={energies.model_align:.3f}")
         if abs(energies.observations) > 1e-6:
             components.append(f"obs={energies.observations:.3f}")
         

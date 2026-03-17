@@ -792,7 +792,7 @@ class MultiAgentSystem:
             f"  Self: {energies['self']:.4f}",
             f"  Observations: {energies['observations']:.4f}",
             f"  Belief align: {energies['belief_align']:.4f}",
-            f"  Prior align: {energies['prior_align']:.4f}",
+            f"  Model align: {energies['model_align']:.4f}",
             f"  Total: {energies['total']:.4f}",
         ]
         

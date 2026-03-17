@@ -56,7 +56,7 @@ class ConsensusDetector:
     -------
     Agents i,j reach consensus when:
         KL(q_i || Ω_ij[q_j]) < ε_belief  (belief consensus)
-        KL(p_i || Ω_ij[p_j]) < ε_model   (model consensus)
+        KL(s_i || Ω̃_ij[s_j]) < ε_model   (model consensus)
     
     Where Ω_ij = exp(φ_i) exp(-φ_j) is the gauge transport operator.
     
@@ -509,7 +509,7 @@ class ConsensusDetector:
         Compute full consensus divergence matrix for analysis.
         
         Returns:
-            Matrix where element (i,j) = KL(q_i || Ω_ij[q_j]) + KL(p_i || Ω_ij[p_j])
+            Matrix where element (i,j) = KL(q_i || Ω_ij[q_j]) + KL(s_i || Ω̃_ij[s_j])
         """
         n_agents = system.n_agents
         consensus_matrix = np.zeros((n_agents, n_agents))

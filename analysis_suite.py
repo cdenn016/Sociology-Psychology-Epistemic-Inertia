@@ -78,7 +78,7 @@ def plot_energy_components_separate(history, out_dir: Path):
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # Determine grid layout
-    components = ['total', 'self', 'belief_align', 'prior_align']
+    components = ['total', 'self', 'belief_align', 'model_align']
     if 'observations' in history and np.any(np.array(history['observations']) != 0):
         components.append('observations')
     if 'gauge_smooth' in history and np.any(np.array(history['gauge_smooth']) != 0):
@@ -96,7 +96,7 @@ def plot_energy_components_separate(history, out_dir: Path):
         'total': 'Total Energy',
         'self': 'Self Energy (KL(q||p))',
         'belief_align': 'Belief Alignment',
-        'prior_align': 'Prior Alignment',
+        'model_align': 'Model Alignment',
         'observations': 'Observation Likelihood',
         'gauge_smooth': 'Gauge Smoothness'
     }
@@ -128,7 +128,7 @@ def plot_energy_components_separate(history, out_dir: Path):
     for key, label in [
         ("self", "Self"),
         ("belief_align", "Belief"),
-        ("prior_align", "Prior"),
+        ("model_align", "Model"),
         ("observations", "Obs"),
         ("gauge_smooth", "Gauge")
     ]:
@@ -243,7 +243,7 @@ def main():
     if system is not None:
         beta_dir = out_dir / "softmax"
         plot_softmax_weights(system, beta_dir, agent_idx=None, mode="belief")
-        plot_softmax_weights(system, beta_dir, agent_idx=None, mode="prior")
+        plot_softmax_weights(system, beta_dir, agent_idx=None, mode="model")
 
     print("\n" + "=" * 70)
     print("✓ ANALYSIS COMPLETE")

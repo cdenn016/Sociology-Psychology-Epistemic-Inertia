@@ -66,7 +66,7 @@ class HamiltonianHistory:
     total_energy: List[float] = field(default_factory=list)
     self_energy: List[float] = field(default_factory=list)
     belief_align: List[float] = field(default_factory=list)
-    prior_align: List[float] = field(default_factory=list)
+    model_align: List[float] = field(default_factory=list)
     observations: List[float] = field(default_factory=list)
 
     # Hamiltonian energy components (NEW)
@@ -110,7 +110,7 @@ class HamiltonianHistory:
         self.total_energy.append(energies.total)
         self.self_energy.append(energies.self_energy)
         self.belief_align.append(energies.belief_align)
-        self.prior_align.append(energies.prior_align)
+        self.model_align.append(energies.model_align)
         self.observations.append(energies.observations)
 
         # Hamiltonian energies

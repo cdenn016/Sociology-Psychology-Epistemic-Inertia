@@ -365,7 +365,7 @@ def build_system(agents, cfg: SimulationConfig, rng):
     system_cfg = SystemConfig(
         lambda_self=cfg.lambda_self,
         lambda_belief_align=cfg.lambda_belief_align,
-        lambda_prior_align=cfg.lambda_prior_align,
+        lambda_model_align=cfg.lambda_model_align,
         lambda_obs=cfg.lambda_obs,
         lambda_phi=cfg.lambda_phi,
         identical_priors=cfg.identical_priors,
@@ -665,7 +665,7 @@ def _run_gpu_training(system, cfg, output_dir):
     # Update tensor system config from simulation config
     tensor_system.lambda_self = cfg.lambda_self
     tensor_system.lambda_belief = cfg.lambda_belief_align
-    tensor_system.lambda_prior = cfg.lambda_prior_align
+    tensor_system.lambda_model = cfg.lambda_model_align
     tensor_system.kappa_beta = cfg.kappa_beta
     tensor_system.kappa_gamma = cfg.kappa_gamma
 
@@ -1002,7 +1002,7 @@ def _run_hierarchical_training(system, cfg, output_dir):
         print("  Initializing comprehensive visualization tools...")
         analyzer = MetaAgentAnalyzer(system)
 
-        # Note: compute_full_energies=True enables belief/prior alignment energy tracking
+        # Note: compute_full_energies=True enables belief/model alignment energy tracking
         # This is VERY EXPENSIVE (10-100x slower) but gives detailed energy decomposition
         # Set to False for fast performance with only self-energy tracking
         diagnostics = ParticipatoryDiagnostics(

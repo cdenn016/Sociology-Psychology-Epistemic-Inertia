@@ -72,13 +72,27 @@ class Agent:
     """
     Agent as smooth section over base manifold C.
     
-    Carries:
-        - Belief distribution: q(c) = N(μ_q(c), Σ_q(c))
-        - Prior distribution: p(c) = N(μ_p(c), Σ_p(c))
-        - Gauge field: φ(c) ∈ so(3)
+    Carries two distribution channels per the GL(K) manuscript:
+
+        Belief channel (fast inference):
+            q_i(k_i) = N(μ_{q,i}, Σ_{q,i})   — variational belief over latent states
+            Stored as: mu_q, Sigma_q
+
+        Model channel (slow learning):
+            s_i(m_i) = N(μ_{p,i}, Σ_{p,i})   — generative model distribution
+            Stored as: mu_p, Sigma_p
+            NOTE: In the flat (non-hierarchical) regime, the prior p_i ≡ s_i.
+            The full hierarchical relationship p_i(k) = ∫ p(k|m) s_i(m) dm
+            collapses to identity when K_q = K_p and the conditioning is trivial.
+
+        Gauge field: φ(c) ∈ so(K)
+            NOTE: Currently shared across belief and model fibers (Ω̃ = Ω).
+            Separate model-fiber gauge fields φ̃_i and cross-fiber bundle
+            morphisms Φ, Φ̃ are deferred to future work.
+
     Fields (GAUGE-COVARIANT STORAGE):
         Sigma_q(c): Belief covariance (SPD), shape (*S, K, K) - PRIMARY
-        Sigma_p(c): Prior covariance (SPD), shape (*S, K, K) - PRIMARY
+        Sigma_p(c): Model covariance (SPD), shape (*S, K, K) - PRIMARY
         L_q(c), L_p(c): Cholesky factors (computed on-demand for sampling)
         mu_q(c), mu_p(c): Means (unchanged)
         phi(c): Gauge field (unchanged)

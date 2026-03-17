@@ -60,7 +60,7 @@ class HamiltonianDynamics:
         kappa: Attention temperature
         alpha: Self-coupling strength
         lambda_belief: Belief alignment strength
-        lambda_prior: Prior alignment strength
+        lambda_model: Model alignment strength (γ_ij coupling)
         lambda_obs: Observation coupling strength
         observations: Observed data or None
         W_obs: Observation matrix or None
@@ -78,7 +78,7 @@ class HamiltonianDynamics:
         kappa: float = 1.0,
         alpha: float = 1.0,
         lambda_belief: float = 1.0,
-        lambda_prior: float = 0.0,
+        lambda_model: float = 0.0,
         lambda_obs: float = 0.0,
         observations: Optional[Tensor] = None,
         W_obs: Optional[Tensor] = None,
@@ -93,7 +93,7 @@ class HamiltonianDynamics:
         self.kappa = kappa
         self.alpha = alpha
         self.lambda_belief = lambda_belief
-        self.lambda_prior = lambda_prior
+        self.lambda_model = lambda_model
         self.lambda_obs = lambda_obs
         self.observations = observations
         self.W_obs = W_obs
@@ -128,7 +128,7 @@ class HamiltonianDynamics:
             kappa=self.kappa,
             alpha=self.alpha,
             lambda_belief=self.lambda_belief,
-            lambda_prior=self.lambda_prior,
+            lambda_model=self.lambda_model,
             lambda_obs=self.lambda_obs,
             observations=self.observations,
             W_obs=self.W_obs,
@@ -280,7 +280,7 @@ class HamiltonianDynamics:
             kappa=self.kappa,
             alpha=self.alpha,
             lambda_belief=self.lambda_belief,
-            lambda_prior=self.lambda_prior,
+            lambda_model=self.lambda_model,
             lambda_obs=self.lambda_obs,
             observations=self.observations,
             W_obs=self.W_obs,

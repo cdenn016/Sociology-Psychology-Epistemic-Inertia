@@ -11,7 +11,7 @@ Softmax Weight Visualization
 
 Plotting functions for visualizing spatial softmax weights:
 - β_ij(c): Belief alignment softmax weights
-- γ_ij(c): Prior alignment softmax weights
+- γ_ij(c): Model alignment softmax weights
 
 These weights show how agent i weights information from neighbor j
 across the spatial manifold.
@@ -49,7 +49,7 @@ def plot_softmax_weights(system, out_dir: Path, agent_idx: int = None, mode: str
         system: MultiAgentSystem with compute_softmax_weights method
         out_dir: Directory to save plots
         agent_idx: Which agent to visualize (default: auto-select one with neighbors)
-        mode: Either "belief" (β) or "prior" (γ)
+        mode: Either "belief" (β) or "model" (γ)
     """
     if system is None:
         return
