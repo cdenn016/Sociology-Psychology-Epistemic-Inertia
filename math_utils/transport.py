@@ -25,6 +25,7 @@ Date: November 2025
 """
 
 import numpy as np
+import scipy
 from typing import Optional, Tuple
 
 
@@ -512,8 +513,6 @@ def compute_transport_differential(
     
     else:
         raise ValueError(f"Invalid direction: {direction}")
-
-import scipy
 
 def frechet_expm(X, H, steps=6):
     """

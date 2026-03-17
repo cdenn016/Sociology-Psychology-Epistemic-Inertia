@@ -615,32 +615,31 @@ class Agent:
                 config=self.config.mask_config
             )
 
-            # --- μ fields ---
-            self.mu_q = FieldEnforcer.enforce_mean_field(self.mu_q, self.support)
-            self.mu_p = FieldEnforcer.enforce_mean_field(self.mu_p, self.support)
+        # --- μ fields ---
+        self.mu_q = FieldEnforcer.enforce_mean_field(self.mu_q, self.support)
+        self.mu_p = FieldEnforcer.enforce_mean_field(self.mu_p, self.support)
 
-            # --- Σ fields: enforce directly (GAUGE-COVARIANT) ---
-            self.Sigma_q = FieldEnforcer.enforce_covariance_field(
-                self.Sigma_q,
-                self.support,
-                inside_scale=self.config.sigma_scale,
-                outside_scale=self.config.mask_config.outside_cov_scale,
-                use_smooth_transition=self.config.mask_config.use_smooth_cov_transition,
-            )
+        # --- Σ fields: enforce directly (GAUGE-COVARIANT) ---
+        self.Sigma_q = FieldEnforcer.enforce_covariance_field(
+            self.Sigma_q,
+            self.support,
+            inside_scale=self.config.sigma_scale,
+            outside_scale=self.config.mask_config.outside_cov_scale,
+            use_smooth_transition=self.config.mask_config.use_smooth_cov_transition,
+        )
 
-            self.Sigma_p = FieldEnforcer.enforce_covariance_field(
-                self.Sigma_p,
-                self.support,
-                inside_scale=2.0 * self.config.sigma_scale,
-                outside_scale=self.config.mask_config.outside_cov_scale,
-                use_smooth_transition=self.config.mask_config.use_smooth_cov_transition,
-            )
+        self.Sigma_p = FieldEnforcer.enforce_covariance_field(
+            self.Sigma_p,
+            self.support,
+            inside_scale=2.0 * self.config.sigma_scale,
+            outside_scale=self.config.mask_config.outside_cov_scale,
+            use_smooth_transition=self.config.mask_config.use_smooth_cov_transition,
+        )
 
-            # Invalidate Cholesky caches
-            self._L_q_cache = None
-            self._L_p_cache = None
-            
-          
+        # Invalidate Cholesky caches
+        self._L_q_cache = None
+        self._L_p_cache = None
+
         self.gauge.phi = FieldEnforcer.enforce_gauge_field(
             self.gauge.phi,
             self.support,
@@ -874,7 +873,10 @@ class Agent:
     
     def set_observations(self, x_obs: np.ndarray):
         """Set observations for this agent."""
-        expected_shape = (*self.geometry.spatial_shape, self.D)
+        # Observation dimension D is inferred from the data
+        D = x_obs.shape[-1]
+        expected_spatial = self.geometry.spatial_shape
+        expected_shape = (*expected_spatial, D)
         if x_obs.shape != expected_shape:
             raise ValueError(
                 f"Observation shape {x_obs.shape} doesn't match "
@@ -902,7 +904,7 @@ class Agent:
             f"  Base manifold: {self.base_manifold.ndim}D, shape={self.base_manifold.shape}\n"
             f"  Support: {self.support.n_active}/{self.base_manifold.n_points} points "
             f"({self.support.coverage:.1%} coverage)\n"
-            f"  Latent dim: K={self.K}, Obs dim: D={self.D}\n"
+            f"  Latent dim: K={self.K}, Obs dim: D={self.x_obs.shape[-1] if self.x_obs is not None else 'N/A'}\n"
             f"  Fields: μ_q{self.mu_q.shape}, Σ_q{self.Sigma_q.shape}, φ{self.gauge.phi.shape}\n"
             f"  Has observations: {self.x_obs is not None}"
         )

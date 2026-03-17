@@ -438,7 +438,8 @@ class HierarchyVisualizer:
         # Node traces (by scale)
         node_traces = []
         scales = sorted(set(data['scale'] for _, data in G.nodes(data=True)))
-        colors = px.colors.sample_colorscale('Viridis', [i / (len(scales) - 1) for i in range(len(scales))])
+        n_scales = len(scales)
+        colors = px.colors.sample_colorscale('Viridis', [i / max(n_scales - 1, 1) for i in range(n_scales)])
 
         for scale, color in zip(scales, colors):
             nodes = [n for n, d in G.nodes(data=True) if d['scale'] == scale]

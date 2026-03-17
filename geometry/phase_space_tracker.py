@@ -378,8 +378,8 @@ class PhaseSpaceTracker:
             fig, ax = plt.subplots(figsize=(8, 8))
             
         mu = traj['mu'][:, components[0]]
-        pi = traj['pi_mu'][:, components[0]]
-        
+        pi = traj['pi_mu'][:, components[1]]
+
         if color_by_time:
             t = np.arange(len(mu))
             scatter = ax.scatter(mu, pi, c=t, cmap='viridis', s=1, alpha=0.7)
@@ -389,9 +389,9 @@ class PhaseSpaceTracker:
             ax.plot(mu[0], pi[0], 'go', markersize=10, label='Start')
             ax.plot(mu[-1], pi[-1], 'ro', markersize=10, label='End')
             ax.legend()
-            
+
         ax.set_xlabel(f'μ[{components[0]}]')
-        ax.set_ylabel(f'π_μ[{components[0]}]')
+        ax.set_ylabel(f'π_μ[{components[1]}]')
         ax.set_title(f'Phase Portrait - Agent {agent_id}')
         ax.set_aspect('equal')
         ax.grid(alpha=0.3)
