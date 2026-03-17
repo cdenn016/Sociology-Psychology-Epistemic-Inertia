@@ -453,9 +453,6 @@ def plot_mu_gauge_orbit(history, out_dir: Path):
 
     K = components0.shape[1]
 
-    import numpy as np
-    import matplotlib.pyplot as plt
-
     if K < 2:
         print("⚠️  Latent dim K < 2 — no meaningful gauge orbit to plot.")
         return
@@ -711,9 +708,6 @@ def plot_mu_gauge_orbit_projections(history, out_dir: Path):
         return
 
     out_dir.mkdir(parents=True, exist_ok=True)
-
-    import numpy as np
-    import matplotlib.pyplot as plt
 
     n_agents = (
         len(tracker.agent_indices)

@@ -232,11 +232,6 @@ def push_gaussian(
     # Symmetrize (remove numerical asymmetry)
     Sigma_pushed = 0.5 * (Sigma_pushed + np.swapaxes(Sigma_pushed, -1, -2))
     
-    # Add tiny regularization for numerical stability
-    MIN_VARIANCE = 1e-4  # Absolute floor on variance
-    reg = MIN_VARIANCE * np.eye(K, dtype=np.float64)
-    Sigma_pushed = Sigma_pushed + reg
-    
     # ========== Compute precision if requested ==========
     Sigma_inv_pushed = None
     

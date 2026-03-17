@@ -191,9 +191,10 @@ class MetaAgentAnalyzer:
         """Compute KL(N(mu1, Sigma1) || N(mu2, Sigma2))."""
         d = len(mu1)
 
-        # Add small regularization for numerical stability
-        Sigma1_reg = Sigma1 + 1e-8 * np.eye(d)
-        Sigma2_reg = Sigma2 + 1e-8 * np.eye(d)
+        # Adaptive regularization for numerical stability
+        reg_scale = max(1e-8, 1e-6 * min(np.mean(np.diag(Sigma1)), np.mean(np.diag(Sigma2))))
+        Sigma1_reg = Sigma1 + reg_scale * np.eye(d)
+        Sigma2_reg = Sigma2 + reg_scale * np.eye(d)
 
         try:
             Sigma2_inv = np.linalg.inv(Sigma2_reg)

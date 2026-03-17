@@ -98,69 +98,69 @@ def compute_geodesic_force(
     idx_ranges = _compute_parameter_index_ranges(trainer)
 
     # Only compute for mu parameters (Sigma handled by hyperbolic geodesic flow)
-    for agent_idx, (mu_start, mu_end, Sigma_start, Sigma_end) in idx_ranges.items():
-        agent = trainer.system.agents[agent_idx]
-        K = agent.config.K
-        n_spatial = agent.mu_q.size // K
+    theta_backup = trainer._pack_parameters()
 
-        # Extract momenta for this agent's mu part
-        p_mu = p[mu_start:mu_end].reshape(agent.mu_q.shape)
+    try:
+        for agent_idx, (mu_start, mu_end, Sigma_start, Sigma_end) in idx_ranges.items():
+            agent = trainer.system.agents[agent_idx]
+            K = agent.config.K
+            n_spatial = agent.mu_q.size // K
 
-        # Compute M^{-1} at current theta
-        theta_backup = trainer._pack_parameters()
-        M_inv_current = _compute_M_inverse_for_agent(trainer, agent, agent_idx)
+            # Extract momenta for this agent's mu part
+            p_mu = p[mu_start:mu_end].reshape(agent.mu_q.shape)
 
-        # Compute geodesic force for each mu parameter
-        for local_idx in range(mu_end - mu_start):
-            global_idx = mu_start + local_idx
+            # Compute M^{-1} at current theta
+            M_inv_current = _compute_M_inverse_for_agent(trainer, agent, agent_idx)
 
-            # Perturbed theta+
-            theta_plus = theta.copy()
-            theta_plus[global_idx] += eps
-            trainer._unpack_parameters(theta_plus)
+            # Compute geodesic force for each mu parameter
+            for local_idx in range(mu_end - mu_start):
+                global_idx = mu_start + local_idx
 
-            M_inv_plus = _compute_M_inverse_for_agent(
-                trainer, trainer.system.agents[agent_idx], agent_idx,
-                recompute_beta=include_beta_variation
-            )
+                # Perturbed theta+
+                theta_plus = theta.copy()
+                theta_plus[global_idx] += eps
+                trainer._unpack_parameters(theta_plus)
 
-            # Perturbed theta-
-            theta_minus = theta.copy()
-            theta_minus[global_idx] -= eps
-            trainer._unpack_parameters(theta_minus)
+                M_inv_plus = _compute_M_inverse_for_agent(
+                    trainer, trainer.system.agents[agent_idx], agent_idx,
+                    recompute_beta=include_beta_variation
+                )
 
-            M_inv_minus = _compute_M_inverse_for_agent(
-                trainer, trainer.system.agents[agent_idx], agent_idx,
-                recompute_beta=include_beta_variation
-            )
+                # Perturbed theta-
+                theta_minus = theta.copy()
+                theta_minus[global_idx] -= eps
+                trainer._unpack_parameters(theta_minus)
 
-            # Restore original theta
-            trainer._unpack_parameters(theta_backup)
+                M_inv_minus = _compute_M_inverse_for_agent(
+                    trainer, trainer.system.agents[agent_idx], agent_idx,
+                    recompute_beta=include_beta_variation
+                )
 
-            # Central difference: dM^{-1}/d\theta_i
-            dM_inv_dtheta_i = (M_inv_plus - M_inv_minus) / (2 * eps)
+                # Restore original theta
+                trainer._unpack_parameters(theta_backup)
 
-            # Compute -(1/2) p^T (dM^{-1}/d\theta_i) p for this spatial point
-            # Map local_idx to spatial point and component
-            spatial_idx = local_idx // K
-            component_idx = local_idx % K
+                # Central difference: dM^{-1}/d\theta_i
+                dM_inv_dtheta_i = (M_inv_plus - M_inv_minus) / (2 * eps)
 
-            if agent.mu_q.ndim == 1:
-                # 0D: single matrix
-                geodesic_force[global_idx] = -0.5 * p_mu @ dM_inv_dtheta_i @ p_mu
-            elif agent.mu_q.ndim == 2:
-                # 1D field
-                p_local = p_mu[spatial_idx]
-                dM_local = dM_inv_dtheta_i[spatial_idx] if dM_inv_dtheta_i.ndim == 3 else dM_inv_dtheta_i
-                geodesic_force[global_idx] = -0.5 * p_local @ dM_local @ p_local
-            else:
-                # 2D field
-                shape = agent.mu_q.shape[:-1]
-                x = spatial_idx // shape[1]
-                y = spatial_idx % shape[1]
-                p_local = p_mu[x, y]
-                dM_local = dM_inv_dtheta_i[x, y] if dM_inv_dtheta_i.ndim == 4 else dM_inv_dtheta_i
-                geodesic_force[global_idx] = -0.5 * p_local @ dM_local @ p_local
+                # Compute -(1/2) p^T (dM^{-1}/d\theta_i) p for this spatial point
+                spatial_idx = local_idx // K
+
+                if agent.mu_q.ndim == 1:
+                    geodesic_force[global_idx] = -0.5 * p_mu @ dM_inv_dtheta_i @ p_mu
+                elif agent.mu_q.ndim == 2:
+                    p_local = p_mu[spatial_idx]
+                    dM_local = dM_inv_dtheta_i[spatial_idx] if dM_inv_dtheta_i.ndim == 3 else dM_inv_dtheta_i
+                    geodesic_force[global_idx] = -0.5 * p_local @ dM_local @ p_local
+                else:
+                    shape = agent.mu_q.shape[:-1]
+                    x = spatial_idx // shape[1]
+                    y = spatial_idx % shape[1]
+                    p_local = p_mu[x, y]
+                    dM_local = dM_inv_dtheta_i[x, y] if dM_inv_dtheta_i.ndim == 4 else dM_inv_dtheta_i
+                    geodesic_force[global_idx] = -0.5 * p_local @ dM_local @ p_local
+    finally:
+        # Always restore original parameters, even on error
+        trainer._unpack_parameters(theta_backup)
 
     return geodesic_force
 
@@ -197,61 +197,62 @@ def compute_geodesic_force_vectorized(
     # Current state backup
     theta_backup = trainer._pack_parameters()
 
-    for agent_idx, (mu_start, mu_end, Sigma_start, Sigma_end) in idx_ranges.items():
-        agent = trainer.system.agents[agent_idx]
-        K = agent.config.K
-        n_spatial = agent.mu_q.size // K
+    try:
+        for agent_idx, (mu_start, mu_end, Sigma_start, Sigma_end) in idx_ranges.items():
+            agent = trainer.system.agents[agent_idx]
+            K = agent.config.K
+            n_spatial = agent.mu_q.size // K
 
-        # Extract mu momentum for this agent
-        p_mu = p[mu_start:mu_end].reshape(agent.mu_q.shape)
+            # Extract mu momentum for this agent
+            p_mu = p[mu_start:mu_end].reshape(agent.mu_q.shape)
 
-        # Compute current M^{-1}
-        M_inv_current = _compute_M_inverse_for_agent(trainer, agent, agent_idx)
+            # Compute current M^{-1}
+            M_inv_current = _compute_M_inverse_for_agent(trainer, agent, agent_idx)
 
-        # For each mu parameter, compute the geodesic force contribution
-        for local_idx in range(mu_end - mu_start):
-            global_idx = mu_start + local_idx
-            spatial_idx = local_idx // K
+            # For each mu parameter, compute the geodesic force contribution
+            for local_idx in range(mu_end - mu_start):
+                global_idx = mu_start + local_idx
+                spatial_idx = local_idx // K
 
-            # Forward perturbation
-            theta[global_idx] += eps
-            trainer._unpack_parameters(theta)
-            M_inv_plus = _compute_M_inverse_for_agent(
-                trainer, trainer.system.agents[agent_idx], agent_idx,
-                recompute_beta=True
-            )
+                # Forward perturbation
+                theta[global_idx] += eps
+                trainer._unpack_parameters(theta)
+                M_inv_plus = _compute_M_inverse_for_agent(
+                    trainer, trainer.system.agents[agent_idx], agent_idx,
+                    recompute_beta=True
+                )
 
-            # Backward perturbation
-            theta[global_idx] -= 2 * eps
-            trainer._unpack_parameters(theta)
-            M_inv_minus = _compute_M_inverse_for_agent(
-                trainer, trainer.system.agents[agent_idx], agent_idx,
-                recompute_beta=True
-            )
+                # Backward perturbation
+                theta[global_idx] -= 2 * eps
+                trainer._unpack_parameters(theta)
+                M_inv_minus = _compute_M_inverse_for_agent(
+                    trainer, trainer.system.agents[agent_idx], agent_idx,
+                    recompute_beta=True
+                )
 
-            # Restore
-            theta[global_idx] += eps
+                # Restore this parameter
+                theta[global_idx] += eps
 
-            # Central difference
-            dM_inv = (M_inv_plus - M_inv_minus) / (2 * eps)
+                # Central difference
+                dM_inv = (M_inv_plus - M_inv_minus) / (2 * eps)
 
-            # Compute quadratic form at appropriate spatial location
-            if agent.mu_q.ndim == 1:
-                geodesic_force[global_idx] = -0.5 * p_mu @ dM_inv @ p_mu
-            elif agent.mu_q.ndim == 2:
-                p_local = p_mu[spatial_idx]
-                dM_local = dM_inv[spatial_idx] if dM_inv.ndim == 3 else dM_inv
-                geodesic_force[global_idx] = -0.5 * p_local @ dM_local @ p_local
-            else:
-                shape = agent.mu_q.shape[:-1]
-                x = spatial_idx // shape[1]
-                y = spatial_idx % shape[1]
-                p_local = p_mu[x, y]
-                dM_local = dM_inv[x, y] if dM_inv.ndim == 4 else dM_inv
-                geodesic_force[global_idx] = -0.5 * p_local @ dM_local @ p_local
-
-    # Restore original parameters
-    trainer._unpack_parameters(theta_backup)
+                # Compute quadratic form at appropriate spatial location
+                if agent.mu_q.ndim == 1:
+                    geodesic_force[global_idx] = -0.5 * p_mu @ dM_inv @ p_mu
+                elif agent.mu_q.ndim == 2:
+                    p_local = p_mu[spatial_idx]
+                    dM_local = dM_inv[spatial_idx] if dM_inv.ndim == 3 else dM_inv
+                    geodesic_force[global_idx] = -0.5 * p_local @ dM_local @ p_local
+                else:
+                    shape = agent.mu_q.shape[:-1]
+                    x = spatial_idx // shape[1]
+                    y = spatial_idx % shape[1]
+                    p_local = p_mu[x, y]
+                    dM_local = dM_inv[x, y] if dM_inv.ndim == 4 else dM_inv
+                    geodesic_force[global_idx] = -0.5 * p_local @ dM_local @ p_local
+    finally:
+        # Always restore original parameters, even on error
+        trainer._unpack_parameters(theta_backup)
 
     return geodesic_force
 

@@ -286,18 +286,16 @@ class InducedMetric:
         # Sort in descending order
         idx = np.argsort(eigvals, axis=-1)[..., ::-1]
 
-        # Gather sorted eigenvalues using take_along_axis
+        # Gather sorted eigenvalues
         self.eigenvalues = np.take_along_axis(eigvals, idx, axis=-1)
 
-        # For eigenvectors, we need to reorder columns
-        # eigvecs has shape (..., n_dims, n_dims)
-        # idx has shape (..., n_dims)
-        # We want eigvecs[..., :, idx[..., j]] for each j
-
-        # Expand idx to match eigenvectors shape for indexing columns
-        idx_expanded = idx[..., None, :]  # (..., 1, n_dims)
-
-        # Use take_along_axis on the last axis (columns)
+        # Reorder eigenvector columns: eigvecs[..., :, sorted_col_j]
+        # idx shape (..., n_dims), eigvecs shape (..., n_dims, n_dims)
+        # Broadcast idx to (..., n_dims, n_dims) for column reordering
+        idx_expanded = np.broadcast_to(
+            idx[..., None, :],  # (..., 1, n_dims)
+            eigvecs.shape
+        )
         self.eigenvectors = np.take_along_axis(eigvecs, idx_expanded, axis=-1)
 
     def get_observable_sector(

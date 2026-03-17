@@ -473,15 +473,20 @@ class ConsensusDetector:
                 state_ij = self.check_full_consensus(
                     system.agents[i], system.agents[j]
                 )
-                
+
                 if state_ij.is_epistemically_dead:
-                    # Check reverse direction for mutual consensus
-                    state_ji = self.check_full_consensus(
-                        system.agents[j], system.agents[i]
-                    )
-                    if state_ji.is_epistemically_dead:
+                    if self.use_symmetric_kl:
+                        # Symmetric KL: forward check is sufficient
                         consensus_matrix[i, j] = True
                         consensus_matrix[j, i] = True
+                    else:
+                        # Asymmetric KL: need reverse direction too
+                        state_ji = self.check_full_consensus(
+                            system.agents[j], system.agents[i]
+                        )
+                        if state_ji.is_epistemically_dead:
+                            consensus_matrix[i, j] = True
+                            consensus_matrix[j, i] = True
         
         # Find connected components (consensus clusters)
         sparse_matrix = csr_matrix(consensus_matrix)
