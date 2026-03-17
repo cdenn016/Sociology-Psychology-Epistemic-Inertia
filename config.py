@@ -235,26 +235,18 @@ class AgentConfig:
 
        
 
-        if (
-            self.use_identity_observation
-            and self.D is not None
-            and self.D != self.K
-        ):
-            raise ValueError(
-                f"use_identity_observation=True requires D == K, "
-                f"got D={self.D}, K={self.K}"
-            )
+        # Note: identity observation requires D_x == K, validated at system level
+        # where D_x is available (SystemConfig.D_x, not AgentConfig)
 
-       
         # Validate learning rates
         if self.lr_mu_q < 0:
-            raise ValueError(f"lr_mu must be positive, got {self.lr_mu}")
+            raise ValueError(f"lr_mu_q must be positive, got {self.lr_mu_q}")
         if self.lr_sigma_q < 0:
-            raise ValueError(f"lr_sigma must be positive, got {self.lr_sigma}")
+            raise ValueError(f"lr_sigma_q must be positive, got {self.lr_sigma_q}")
         if self.lr_mu_p < 0:
-            raise ValueError(f"lr_mu must be positive, got {self.lr_mu}")
+            raise ValueError(f"lr_mu_p must be positive, got {self.lr_mu_p}")
         if self.lr_sigma_p < 0:
-            raise ValueError(f"lr_sigma must be positive, got {self.lr_sigma}")
+            raise ValueError(f"lr_sigma_p must be positive, got {self.lr_sigma_p}")
         if self.lr_phi < 0:
             raise ValueError(f"lr_phi must be positive, got {self.lr_phi}")
 
