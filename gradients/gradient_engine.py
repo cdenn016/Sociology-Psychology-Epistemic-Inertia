@@ -462,29 +462,24 @@ def compute_gauge_gradient_alignment(
         eps=eps,
     )
     
-    # Initialize gradient
-    spatial_shape = phi_i.shape[:-1]
-    grad_phi = np.zeros((*spatial_shape, 3), dtype=np.float32)
-    
-    # Contract at each spatial point with weight β_ij(c)
-    # Note: beta_ij can vary spatially!
-    for idx in np.ndindex(spatial_shape):
-        weight = float(beta_ij[idx])
-        
-        if abs(weight) < 1e-12:
-            continue  # Skip if weight negligible
-        
-        # Extract local values
-        gmu = grad_mu_factor[idx]  # (K, K)
-        gSig = grad_Sigma_factor[idx]  # (K, K)
-        dOm = tuple(dOmega_dPhi[a][idx] for a in range(3))  # 3x (K, K)
-        
-        # Contract
-        grad_phi[idx] = contract_gauge_gradient(
-            gmu, gSig, dOm, weight=weight
-        )
-    
-    return grad_phi
+    # Vectorized contraction: compute all spatial points at once
+    grad_mu_factor = np.asarray(grad_mu_factor, dtype=np.float64)
+    grad_Sigma_factor = np.asarray(grad_Sigma_factor, dtype=np.float64)
+    beta_ij = np.asarray(beta_ij, dtype=np.float64)
+
+    grad_phi_components = []
+    for a in range(3):
+        dOmega_a = np.asarray(dOmega_dPhi[a], dtype=np.float64)  # (*S, K, K)
+
+        # tr(grad_factor · dΩ/dφ^a) at each spatial point
+        contrib_mu = np.einsum('...ij,...ij->...', grad_mu_factor, dOmega_a, optimize=True)
+        contrib_Sigma = np.einsum('...ij,...ij->...', grad_Sigma_factor, dOmega_a, optimize=True)
+
+        grad_phi_components.append(beta_ij * (contrib_mu + contrib_Sigma))
+
+    grad_phi = np.stack(grad_phi_components, axis=-1)
+
+    return grad_phi.astype(np.float32, copy=False)
 
 
 # =============================================================================

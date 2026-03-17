@@ -20,8 +20,8 @@ import hashlib
 class TransportCache:
     """
     Pickle-safe transport operator cache.
-    
-    Uses LRU caching with hash-based keys for fast lookups.
+
+    Uses FIFO eviction with hash-based keys for fast lookups.
     Can be serialized with pickle unlike nested function approach.
     """
     
@@ -104,7 +104,7 @@ class TransportCache:
         """
         Store transport operator in cache.
         
-        Implements simple LRU eviction if cache is full.
+        Implements simple FIFO eviction if cache is full.
         """
         agent_i = self.system.agents[i]
         agent_j = self.system.agents[j]
@@ -116,7 +116,7 @@ class TransportCache:
         
         # Evict oldest entry if cache full
         if len(self._cache) >= self.max_size:
-            # Remove first key (simple FIFO, could use LRU)
+            # Remove oldest entry (FIFO eviction)
             self._cache.pop(next(iter(self._cache)))
         
         self._cache[key] = Omega_ij

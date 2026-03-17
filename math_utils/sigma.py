@@ -406,24 +406,29 @@ def generate_random_spd_field(
     """
     if rng is None:
         rng = np.random.default_rng()
-    
+
     n_points = int(np.prod(spatial_shape))
-    
-    # Generate random SPD matrix at each point
-    Sigma_flat = np.zeros((n_points, K, K), dtype=np.float32)
-    for i in range(n_points):
-        Sigma_flat[i] = generate_random_spd(
-            K, 
-            min_eigenvalue=min_eigenvalue,
-            max_eigenvalue=max_eigenvalue,
-            scale=scale,
-            rng=rng
-        )
-    
-    # Reshape to spatial
-    Sigma_field = Sigma_flat.reshape(*spatial_shape, K, K)
-    
-    return Sigma_field
+
+    # Vectorized: generate all eigenvalues and rotations at once
+    log_eigs = rng.uniform(
+        np.log(min_eigenvalue), np.log(max_eigenvalue),
+        size=(n_points, K)
+    )
+    eigs = scale * np.exp(log_eigs)  # (n_points, K)
+
+    # Random orthogonal matrices via QR decomposition (batched)
+    A = rng.standard_normal((n_points, K, K))
+    Q, _ = np.linalg.qr(A)  # (n_points, K, K)
+
+    # Σ = Q diag(eigs) Qᵀ  — vectorized via einsum
+    Sigma_flat = np.einsum(
+        'nij,nj,nkj->nik', Q, eigs, Q, optimize=True
+    ).astype(np.float32)
+
+    # Ensure symmetry
+    Sigma_flat = 0.5 * (Sigma_flat + np.swapaxes(Sigma_flat, -1, -2))
+
+    return Sigma_flat.reshape(*spatial_shape, K, K)
 
 
 def generate_smooth_spd_field(
@@ -589,12 +594,10 @@ def _generate_center_field(
 ) -> np.ndarray:
     """Generate field where covariance increases toward center."""
     
-    # Compute distance from center at each point
+    # Distance field from center
     center = tuple(s // 2 for s in spatial_shape)
-    
-    # Distance field
     coords = np.meshgrid(*[np.arange(s) for s in spatial_shape], indexing='ij')
-    dist_sq = sum((c - center[i])**2 for i, c in enumerate(coords))
+    dist_sq = sum((c - center[d])**2 for d, c in enumerate(coords))
     max_dist_sq = sum((s // 2)**2 for s in spatial_shape)
     
     # Normalized distance: 0 at center, 1 at edges

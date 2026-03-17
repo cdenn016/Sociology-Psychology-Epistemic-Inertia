@@ -25,12 +25,15 @@ Author: Chris & Christine
 Date: November 2025
 """
 
+import logging
 import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional, Union
 from dataclasses import dataclass, field
 import pickle
 import matplotlib.pyplot as plt
+
+logger = logging.getLogger(__name__)
 
 from geometry.pullback_metrics import (
     agent_induced_metrics,
@@ -234,7 +237,7 @@ class GeometryTracker:
                 agent_metrics_prior.append(G_prior)
 
             except Exception as e:
-               # print(f"  ⚠️  Warning: Failed to compute metrics for agent {agent.agent_id}: {e}")
+                logger.warning(f"Failed to compute metrics for agent {agent.agent_id}: {e}")
                 continue
 
         snapshot.agent_metrics_belief = agent_metrics_belief
@@ -311,8 +314,8 @@ class GeometryTracker:
                 n_observable_list.append(np.mean(np.sum(obs_mask, axis=-1)))
                 n_dark_list.append(np.mean(np.sum(dark_mask, axis=-1)))
                 n_internal_list.append(np.mean(np.sum(int_mask, axis=-1)))
-            except (np.linalg.LinAlgError, ValueError):
-                pass
+            except (np.linalg.LinAlgError, ValueError) as e:
+                logger.warning("Sector decomposition failed for agent: %s", e)
 
         if n_observable_list:
             snapshot.mean_n_observable = np.mean(n_observable_list)
@@ -327,14 +330,14 @@ class GeometryTracker:
             try:
                 vol_b = G_b.volume_element()
                 volumes_belief.append(np.mean(vol_b))
-            except (np.linalg.LinAlgError, ValueError):
-                pass
+            except (np.linalg.LinAlgError, ValueError) as e:
+                logger.warning("Belief volume element failed for agent: %s", e)
 
             try:
                 vol_p = G_p.volume_element()
                 volumes_prior.append(np.mean(vol_p))
-            except (np.linalg.LinAlgError, ValueError):
-                pass
+            except (np.linalg.LinAlgError, ValueError) as e:
+                logger.warning("Prior volume element failed for agent: %s", e)
 
         if volumes_belief:
             snapshot.mean_volume_belief = np.mean(volumes_belief)

@@ -18,10 +18,17 @@ Date: November 2025
 
 import numpy as np
 from dataclasses import dataclass, field
-from typing import Tuple, Optional, Dict, Any, Literal
+from typing import Tuple, Optional, Dict, Any, Literal, TYPE_CHECKING
 from pathlib import Path
 
-from agent.masking import MaskConfig
+if TYPE_CHECKING:
+    from agent.masking import MaskConfig
+
+
+def _default_mask_config():
+    """Lazy import to break circular dependency: config -> agent.masking -> agent -> config."""
+    from agent.masking import MaskConfig
+    return MaskConfig()
 
 
 
@@ -57,7 +64,7 @@ class SystemConfig:
     cache_transports: bool     = True
     cache_size: int            = 10000
 
-    mask_config: MaskConfig = field(default_factory=MaskConfig)
+    mask_config: 'MaskConfig' = field(default_factory=_default_mask_config)
     
     use_connection: bool = False
     connection_init_mode: Literal['flat', 'random', 'constant'] = 'flat'
@@ -222,7 +229,7 @@ class AgentConfig:
     alpha: float = 1.0
 
     # Mask configuration for field agents
-    mask_config: MaskConfig = field(default_factory=MaskConfig)
+    mask_config: 'MaskConfig' = field(default_factory=_default_mask_config)
 
     def __post_init__(self):
         """Validate and fill defaults."""

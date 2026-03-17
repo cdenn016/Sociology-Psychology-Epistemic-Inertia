@@ -348,13 +348,30 @@ def safe_inv_cholesky(Sigma: np.ndarray, eps: float = 1e-8) -> np.ndarray:
 # -----------------------------------------------------------------------------
 # Sigma sanitation (vectorized)
 # -----------------------------------------------------------------------------
-def sanitize_sigma(Sigma: np.ndarray, 
-                   eps: float = 1e-4,  # INCREASE from 1e-6!
-                   max_cond: float = 1e4,  # DECREASE from 1e6!
+def sanitize_sigma(Sigma: np.ndarray,
+                   eps: float = 1e-4,
+                   max_cond: float = 1e4,
                    max_eig: float = None) -> np.ndarray:
     """
     Sanitize covariance matrix for numerical stability.
+
+    Ensures SPD by clamping eigenvalues to [eps, max_eig] and
+    enforcing a maximum condition number.
+
+    Args:
+        Sigma: Covariance matrix/field, shape (..., K, K)
+        eps: Minimum eigenvalue floor (absolute)
+        max_cond: Maximum condition number
+        max_eig: Maximum eigenvalue cap (None = no cap)
+
+    Returns:
+        Sigma_clean: Sanitized SPD matrix/field
     """
+    if Sigma.ndim < 2 or Sigma.shape[-2] != Sigma.shape[-1]:
+        raise ValueError(
+            f"sanitize_sigma expects (..., K, K), got shape {Sigma.shape}"
+        )
+
     # Symmetrize
     Sigma = 0.5 * (Sigma + np.swapaxes(Sigma, -1, -2))
     
@@ -383,7 +400,7 @@ def sanitize_sigma(Sigma: np.ndarray,
 
 
 
-def _chol_logdet(Sigma: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def _chol_logdet(Sigma: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """
     Compute Cholesky decomposition and log-determinant.
     

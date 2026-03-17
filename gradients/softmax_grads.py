@@ -151,8 +151,8 @@ def compute_softmax_weights(
     exp_x = np.exp(x - x_max)           # (J, *S)
     denom = np.sum(exp_x, axis=0, keepdims=True)  # (1, *S)
 
-    # Guard against degenerate denom (should basically never happen)
-    denom = np.where(denom < 1e-30, 1e-30, denom)
+    # Guard against degenerate denom — use 1.0 to produce uniform weights
+    denom = np.where(denom < 1e-30, 1.0, denom)
 
     # Final softmax
     beta_stack = exp_x / denom          # (J, *S)
