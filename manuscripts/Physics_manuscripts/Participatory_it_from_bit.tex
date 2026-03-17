@@ -3583,6 +3583,284 @@ $$
 $$
 
 
+\section{Detailed KL Expansion for Multivariate Gaussians}
+\label{app:kl}
+
+For $q = \mathcal{N}(\mu_q, \Sigma_q)$ and $p = \mathcal{N}(\mu_p, \Sigma_p)$, the KL divergence is:
+\begin{equation}
+D_{KL}(q \| p) = \frac{1}{2}\left[tr(\Sigma_p^{-1}\Sigma_q) + \Delta\mu^T \Sigma_p^{-1} \Delta\mu - K + \ln\frac{|\Sigma_p|}{|\Sigma_q|}\right]
+\end{equation}
+where $\Delta\mu = \mu_q - \mu_p$ and $K = \dim(\mu)$.
+
+Under the shift $\mu_q \to \mu_q + d\mu$:
+\begin{align}
+D_{KL}(q + dq \| p) &= \frac{1}{2}\left[tr(\Sigma_p^{-1}\Sigma_q) + (\Delta\mu + d\mu)^T \Sigma_p^{-1} (\Delta\mu + d\mu) - K + \ln\frac{|\Sigma_p|}{|\Sigma_q|}\right] \\
+&= D_{KL}(q \| p) + \Delta\mu^T \Sigma_p^{-1} d\mu + \frac{1}{2} d\mu^T \Sigma_p^{-1} d\mu
+\end{align}
+
+The first-order term $\Delta\mu^T \Sigma_p^{-1} d\mu$ is the directional derivative (force).
+
+The second-order term $\frac{1}{2} d\mu^T \Sigma_p^{-1} d\mu$ is the kinetic energy contribution.
+
+With $d\mu = \dot{\mu}\, dt$:
+\begin{equation}
+\Delta D_{KL} = \left(\nabla_\mu D_{KL}\right) \cdot \dot{\mu}\, dt + \frac{1}{2} \dot{\mu}^T \Sigma_p^{-1} \dot{\mu}\, dt^2
+\end{equation}
+
+Integrating over time and identifying the action:
+\begin{equation}
+S = \int dt \left[\frac{1}{2} \dot{\mu}^T \Sigma_p^{-1} \dot{\mu} - V(\mu)\right]
+\end{equation}
+
+\subsection*{Mass Evolution from Prior Alignment}
+
+Updates to prior covariances $\Sigma_{p,i}$ via $\gamma_{ij}$ coupling 
+directly modify the mass tensor $M_i = \Sigma_{p,i}^{-1}$. This creates 
+dynamical mass:
+\begin{equation}
+\frac{dM_i}{dt} = -M_i \left(\frac{d\Sigma_{p,i}}{dt}\right) M_i
+\end{equation}
+
+Consensus formation drives $\Sigma_{p,i} \to \Sigma_{\text{consensus}}$, 
+establishing shared mass values. This is how objectivity emerges.
+
+
+
+\section{Gauge Structure and the Emergent Metric}
+\label{app:gauge}
+
+In the full gauge-theoretic framework \cite{Dennis2025a}, agents carry gauge frames $\phi_i(c) \in \mathfrak{so}(3)$ over the base manifold $\mathbb{C}$. The transport operator:
+\begin{equation}
+\Omega_{ij} = e^{\phi_i} e^{-\phi_j}
+\end{equation}
+
+
+
+
+The emergent metric has components:
+\begin{equation}
+g_{\mu\nu}(x) = \sum_i G_{ab}^{(i)}(x) \frac{\partial \theta_i^a}{\partial x^\mu} \frac{\partial \theta_i^b}{\partial x^\nu}
+\end{equation}
+
+where $\theta_i^a$ are coordinates on agent $i$'s statistical manifold 
+(fiber), and the pullback $\frac{\partial \theta_i^a}{\partial x^\mu}$ 
+maps base manifold tangent vectors to fiber coordinates and $G_{ab}^{(i)}$ is the Fisher metric on agent $i$'s statistical manifold.
+
+
+
+\section*{Explicit Gradient Expressions for SO(3) Gaussian Agents}
+
+We derive explicit natural gradient expressions for gauge-theoretic free energy minimization with Gaussian distributions and SO(3) transport. All operations are gauge covariant.
+
+\subsection*{Setup and Notation}
+
+Agent $i$ maintains belief $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ and prior $p_i = \mathcal{N}(\mu_{p,i}, \Sigma_{p,i})$ over $K$-dimensional fiber. Transport operator $\Omega_{ij} = \exp(\phi_i)\exp(-\phi_j) \in \mathrm{SO}(3)$ acts via representation $\rho: \mathrm{SO}(3) \to \mathrm{GL}(K)$.
+
+The free energy decomposes as:
+\begin{equation}
+S = \sum_i \mathrm{KL}(q_i \| p_i) + \sum_{ij} \beta_{ij} \mathrm{KL}(q_i \| \Omega_{ij}[q_j]) + \sum_{ij} \gamma_{ij} \mathrm{KL}(p_i \| \tilde{\Omega}_{ij}[p_j])
+\end{equation}
+
+Attention weights are defined by:
+\begin{equation}
+\beta_{ij} = \frac{\exp\left[-\kappa_\beta^{-1}\mathrm{KL}(q_i \| \Omega_{ij}[q_j])\right]}{\sum_k \exp\left[-\kappa_\beta^{-1}\mathrm{KL}(q_i \| \Omega_{ik}[q_k])\right]}
+\end{equation}
+
+\subsection*{Free Energy Gradient: Belief Means (Complete)}
+
+The belief alignment term is:
+\begin{equation}
+S_{\mathrm{belief}} = \sum_j \beta_{ij}(\mu_i, \Sigma_i) \, \mathrm{KL}(q_i \| \Omega_{ij}[q_j])
+\end{equation}
+
+Applying the product rule:
+\begin{equation}
+\nabla_{\mu_i} S_{\mathrm{belief}} = \sum_j \left[ \frac{\partial \beta_{ij}}{\partial \mu_i} \mathrm{KL}_{ij} + \beta_{ij} \frac{\partial \mathrm{KL}_{ij}}{\partial \mu_i} \right]
+\end{equation}
+
+The softmax derivative for attention weights gives:
+\begin{equation}
+\frac{\partial \beta_{ij}}{\partial \mu_i} = -\frac{1}{\kappa_\beta} \beta_{ij} \left[\frac{\partial \mathrm{KL}_{ij}}{\partial \mu_i} - \sum_k \beta_{ik} \frac{\partial \mathrm{KL}_{ik}}{\partial \mu_i}\right]
+\end{equation}
+
+For the direct KL gradient:
+\begin{equation}
+\frac{\partial \mathrm{KL}_{ij}}{\partial \mu_i} = (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}(\mu_i - \Omega_{ij}\mu_j)
+\end{equation}
+
+Substituting and simplifying:
+\begin{align}
+\nabla_{\mu_i} S_{\mathrm{belief}} &= \sum_j \beta_{ij} (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}(\mu_i - \Omega_{ij}\mu_j) \left[1 - \frac{\mathrm{KL}_{ij}}{\kappa_\beta}\right] \nonumber \\
+&\quad + \frac{1}{\kappa_\beta}\left(\sum_j \beta_{ij}\mathrm{KL}_{ij}\right) \sum_k \beta_{ik} (\Omega_{ik}\Sigma_k\Omega_{ik}^T)^{-1}(\mu_i - \Omega_{ik}\mu_k)
+\end{align}
+
+Including the self-term $\mathrm{KL}(q_i \| p_i)$:
+\begin{equation}
+\boxed{\nabla_{\mu_i} S = \Sigma_i^{-1}(\mu_i - \mu_{p,i}) + \sum_j \beta_{ij} (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}(\mu_i - \Omega_{ij}\mu_j) \left[1 - \frac{\mathrm{KL}_{ij}}{\kappa_\beta}\right] + R_\mu}
+\end{equation}
+
+where the reweighting term is:
+\begin{equation}
+R_\mu = \frac{1}{\kappa_\beta}\left(\sum_j \beta_{ij}\mathrm{KL}_{ij}\right) \sum_k \beta_{ik} (\Omega_{ik}\Sigma_k\Omega_{ik}^T)^{-1}(\mu_i - \Omega_{ik}\mu_k)
+\end{equation}
+
+The natural gradient is:
+\begin{equation}
+\tilde{\nabla}_{\mu_i} S = \Sigma_i \nabla_{\mu_i} S
+\end{equation}
+
+\subsection*{Free Energy Gradient: Belief Covariances (Complete)}
+
+Similarly for covariances, the product rule gives:
+\begin{equation}
+\nabla_{\Sigma_i} S_{\mathrm{belief}} = \sum_j \left[ \frac{\partial \beta_{ij}}{\partial \Sigma_i} \mathrm{KL}_{ij} + \beta_{ij} \frac{\partial \mathrm{KL}_{ij}}{\partial \Sigma_i} \right]
+\end{equation}
+
+The softmax derivative is:
+\begin{equation}
+\frac{\partial \beta_{ij}}{\partial \Sigma_i} = -\frac{1}{\kappa_\beta} \beta_{ij} \left[\frac{\partial \mathrm{KL}_{ij}}{\partial \Sigma_i} - \sum_k \beta_{ik} \frac{\partial \mathrm{KL}_{ik}}{\partial \Sigma_i}\right]
+\end{equation}
+
+For Gaussian KL divergence:
+\begin{equation}
+\frac{\partial \mathrm{KL}_{ij}}{\partial \Sigma_i} = \frac{1}{2}\left[-\Sigma_i^{-1} + (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}\right]
+\end{equation}
+
+The complete gradient including self-term is:
+\begin{align}
+\nabla_{\Sigma_i} S &= \frac{1}{2}\left[-\Sigma_i^{-1} + \Sigma_{p,i}^{-1}\right] \nonumber \\
+&\quad + \frac{1}{2}\sum_j \beta_{ij} \left[-\Sigma_i^{-1} + (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}\right]\left[1 - \frac{\mathrm{KL}_{ij}}{\kappa_\beta}\right] \nonumber \\
+&\quad + \frac{1}{2\kappa_\beta}\left(\sum_j \beta_{ij}\mathrm{KL}_{ij}\right) \sum_k \beta_{ik} \left[-\Sigma_i^{-1} + (\Omega_{ik}\Sigma_k\Omega_{ik}^T)^{-1}\right]
+\end{align}
+
+The natural gradient on $\mathcal{S}_{++}^K$ is:
+\begin{equation}
+\tilde{\nabla}_{\Sigma_i} S = \Sigma_i (\nabla_{\Sigma_i} S) \Sigma_i
+\end{equation}
+
+\textbf{Gauge Covariance:} Under gauge transformation $g \in \mathrm{SO}(3)$:
+\begin{align}
+\Sigma_i &\mapsto g\Sigma_i g^T \\
+\nabla_{\Sigma_i} S &\mapsto g(\nabla_{\Sigma_i} S)g^T \\
+\tilde{\nabla}_{\Sigma_i} S &\mapsto g(\tilde{\nabla}_{\Sigma_i} S)g^T
+\end{align}
+
+This bilinear form $\Sigma (\cdot) \Sigma$ is the unique gauge-covariant gradient structure on $\mathcal{S}_{++}^K$.
+
+\subsection*{Retraction: Staying on the SPD Manifold}
+
+After computing $\tilde{\nabla}_{\Sigma_i} S$, we update via retraction to ensure $\Sigma_i$ remains positive-definite:
+\begin{equation}
+\Sigma_i^{\mathrm{new}} = \mathcal{R}_{\Sigma_i}(-\eta_\Sigma \tilde{\nabla}_{\Sigma_i} S)
+\end{equation}
+
+We use the \textbf{affine-invariant exponential map}:
+\begin{equation}
+\mathcal{R}_{\Sigma}(\Delta) = \Sigma^{1/2} \exp\left(\Sigma^{-1/2} \Delta \Sigma^{-1/2}\right) \Sigma^{1/2}
+\end{equation}
+
+where $\exp(\cdot)$ is the matrix exponential. This retraction:
+\begin{itemize}
+\item Preserves positive-definiteness (exponential of symmetric matrix is SPD)
+\item Is affine-invariant under $\Sigma \mapsto A\Sigma A^T$ for invertible $A$
+\item Is gauge covariant: $\mathcal{R}_{g\Sigma g^T}(g\Delta g^T) = g \mathcal{R}_{\Sigma}(\Delta) g^T$
+\end{itemize}
+
+\textbf{Computational Implementation:} Using eigendecomposition $\Sigma = V\Lambda V^T$:
+\begin{equation}
+\mathcal{R}_{\Sigma}(\Delta) = V \sqrt{\Lambda} \exp\left(\sqrt{\Lambda}^{-1} V^T \Delta V \sqrt{\Lambda}^{-1}\right) \sqrt{\Lambda} V^T
+\end{equation}
+
+This is the Riemannian exponential map---the geodesic retraction following the unique geodesic from $\Sigma$ in direction $\Delta$ for unit parameter.
+
+
+
+\subsection*{Complete Gauge Frame Gradients (Product Rule)}
+
+The free energy contains gauge frames $\phi_i$ through both transport operators and attention weights. For the belief alignment term:
+\begin{equation}
+S_{\mathrm{belief}} = \sum_j \beta_{ij}(\phi_i) \, \mathrm{KL}(q_i \| \Omega_{ij}(\phi_i)[q_j])
+\end{equation}
+
+Applying the product rule:
+\begin{equation}
+\nabla_{\phi_i} S_{\mathrm{belief}} = \sum_j \left[ \frac{\partial \beta_{ij}}{\partial \phi_i} \mathrm{KL}(q_i \| \Omega_{ij}[q_j]) + \beta_{ij} \frac{\partial}{\partial \phi_i}\mathrm{KL}(q_i \| \Omega_{ij}[q_j]) \right]
+\end{equation}
+
+\subsubsection*{Term 1: Direct KL Gradient}
+
+For small gauge fields $|\phi_i| \ll 1$, or using right-invariant 
+vector fields
+
+\begin{equation}
+\frac{\partial \Omega_{ij}}{\partial \phi_i^a} = G_a \Omega_{ij}
+\end{equation}
+
+where $\{G_a\}$ are the SO(3) generators. For finite transformations, 
+the full differential involves $d\exp$ via the Baker-Campbell-Hausdorff 
+formula.
+
+For the transported KL divergence, using $\frac{\partial \Omega_{ij}}{\partial \phi_i^a} = G_a \Omega_{ij}$ where $\{G_a\}$ are SO(3) generators:
+\begin{equation}
+\frac{\partial}{\partial \phi_i^a}\mathrm{KL}(q_i \| \Omega_{ij}[q_j]) = \mathrm{tr}\left[G_a \Omega_{ij} \frac{\partial}{\partial \Omega_{ij}}\mathrm{KL}(q_i \| \Omega_{ij}[q_j])\right]
+\end{equation}
+
+For Gaussians, the functional derivative is:
+\begin{equation}
+\frac{\partial}{\partial \Omega_{ij}}\mathrm{KL}(q_i \| \Omega_{ij}[q_j]) = (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}(\mu_i - \Omega_{ij}\mu_j)\mu_j^T + \mathrm{tr}\left[(\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}\Sigma_j\right]\Omega_{ij}
+\end{equation}
+
+\subsubsection*{Term 2: Attention Weight Gradient (Softmax Derivative)}
+
+The softmax structure of $\beta_{ij}$ yields:
+\begin{equation}
+\frac{\partial \beta_{ij}}{\partial \phi_i^a} = -\frac{1}{\kappa_\beta} \beta_{ij} \left[\frac{\partial}{\partial \phi_i^a}\mathrm{KL}(q_i \| \Omega_{ij}[q_j]) - \sum_k \beta_{ik} \frac{\partial}{\partial \phi_i^a}\mathrm{KL}(q_i \| \Omega_{ik}[q_k])\right]
+\end{equation}
+
+This follows from $\frac{\partial}{\partial x_i}\mathrm{softmax}(x)_j = \mathrm{softmax}(x)_j(\delta_{ij} - \mathrm{softmax}(x)_i)$ applied with $x_j = -\kappa_\beta^{-1}\mathrm{KL}_j$.
+
+\subsubsection*{Combined Gradient (Two-Term Structure)}
+
+Substituting the softmax derivative and simplifying:
+\begin{align}
+\nabla_{\phi_i^a} S_{\mathrm{belief}} &= \sum_j \beta_{ij}\frac{\partial \mathrm{KL}_{ij}}{\partial \phi_i^a}\left[1 - \frac{\mathrm{KL}_{ij}}{\kappa_\beta}\right] \nonumber \\
+&\quad + \frac{1}{\kappa_\beta}\left(\sum_j \beta_{ij}\mathrm{KL}_{ij}\right)\left(\sum_k \beta_{ik}\frac{\partial \mathrm{KL}_{ik}}{\partial \phi_i^a}\right)
+\end{align}
+
+where $\mathrm{KL}_{ij} \equiv \mathrm{KL}(q_i \| \Omega_{ij}[q_j])$.
+
+\subsubsection*{Physical Interpretation}
+
+The complete gradient has two interpretable terms:
+\begin{equation}
+\boxed{\nabla_{\phi_i} S = \underbrace{\sum_j \beta_{ij}\nabla_{\phi_i}\mathrm{KL}_{ij}}_{\text{Direct alignment}} + \underbrace{\frac{1}{\kappa_\beta}\left(\sum_j \beta_{ij}\mathrm{KL}_{ij}\right) \left(\sum_k \beta_{ik}\nabla_{\phi_i}\mathrm{KL}_{ik}\right)}_{\text{Attention reweighting}}}
+\end{equation}
+
+\begin{itemize}
+\item \textbf{Direct alignment:} Gradient of weighted KL divergences (as if $\beta$ were constant)
+\item \textbf{Attention reweighting:} How changing $\phi_i$ redistributes attention across neighbors
+\end{itemize}
+
+When $\kappa_\beta \to \infty$ (soft/uniform attention), the reweighting term vanishes. When $\kappa_\beta \to 0$ (hard attention), reweighting dominates.
+
+\subsubsection*{Prior Alignment (Similar Structure)}
+
+The prior alignment gradient has identical form:
+\begin{equation}
+\nabla_{\phi_i} S_{\mathrm{prior}} = \sum_j \gamma_{ij}\nabla_{\phi_i}\mathrm{KL}(p_i \| \tilde{\Omega}_{ij}[p_j]) + \frac{1}{\kappa_\gamma}\left(\sum_j \gamma_{ij}\mathrm{KL}(p_i \| \tilde{\Omega}_{ij}[p_j])\right)\left(\sum_k \gamma_{ik}\nabla_{\phi_i}\mathrm{KL}_{ik}^p\right)
+\end{equation}
+
+\subsection*{Complete Update Equations}
+
+The gauge-covariant update scheme is:
+\begin{align}
+\mu_i^{t+1} &= \mu_i^t - \eta_\mu \Sigma_i^t \nabla_{\mu_i} S \\
+\Sigma_i^{t+1} &= \left(\Sigma_i^t\right)^{1/2} \exp\left[\left(\Sigma_i^t\right)^{-1/2}\left(-\eta_\Sigma \tilde{\nabla}_{\Sigma_i} S\right)\left(\Sigma_i^t\right)^{-1/2}\right] \left(\Sigma_i^t\right)^{1/2} \\
+\phi_i^{t+1} &= \phi_i^t - \eta_\phi \nabla_{\phi_i} S
+\end{align}
+
+where learning rates satisfy timescale separation $\eta_\mu : \eta_p : \eta_\phi \sim 1 : \epsilon : \epsilon^2$ with $\epsilon \ll 1$.
+
 
 \bibliographystyle{unsrt} 
 \bibliography{references}
