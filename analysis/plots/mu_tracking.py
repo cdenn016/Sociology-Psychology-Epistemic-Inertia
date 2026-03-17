@@ -1,6 +1,3 @@
-
-# Additional imports for advanced plotting
-from mpl_toolkits.mplot3d.art3d import Line3DCollection
 """
 Mu Center Tracking Plots
 =========================
@@ -12,6 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 from typing import Any
+from mpl_toolkits.mplot3d.art3d import Line3DCollection
+from analysis.core.loaders import get_mu_tracker
 
 
 def plot_mu_summary(mu_tracker: Any, save_path: Path):
@@ -420,10 +419,6 @@ def _get_symmetry_status(var_norm: float) -> str:
 
 
 
-from pathlib import Path
-
-from pathlib import Path
-
 def plot_mu_gauge_orbit(history, out_dir: Path):
     r"""
     Visualize normalized $\mu$-trajectories as gauge orbits.
@@ -782,7 +777,7 @@ def plot_mu_gauge_orbit_projections(history, out_dir: Path):
     plt.tight_layout()
     plt.savefig(path, dpi=300)
     plt.close()
-    print(f"✓ ploted projections {path}")
+    print(f"✓ plotted projections {path}")
 
 
 

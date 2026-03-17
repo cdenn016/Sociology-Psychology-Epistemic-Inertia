@@ -49,8 +49,6 @@ from math_utils.numerical_utils import sanitize_sigma, safe_inv
 # Main Retraction Function
 # =============================================================================
 
-import numpy as np
-
 def retract_spd(
     Sigma: np.ndarray,
     delta_Sigma: np.ndarray,
@@ -275,8 +273,8 @@ def retract_spd_batch(
     Note:
         This is just a convenience wrapper; retract_spd already handles batches.
     """
-    return retract_spd(Sigma_batch, Delta_batch, 
-                       mode=mode, trust_region=trust_region, eps=eps)
+    return retract_spd(Sigma_batch, Delta_batch,
+                       trust_region=trust_region, eps=eps)
 
 
 # =============================================================================

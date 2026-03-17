@@ -84,7 +84,7 @@ def so3_log(R: np.ndarray, eps: float = 1e-8) -> np.ndarray:
         # Compute rotation angle
         trace = np.trace(Ri)
         cos_theta = (trace - 1.0) / 2.0
-        cos_theta = np.clip(cos_theta, -1.0, 1.0)  # Numerical stability
+        cos_theta = np.clip(cos_theta, -1.0 + 1e-7, 1.0 - 1e-7)  # Numerical stability
         theta = np.arccos(cos_theta)
         
         if theta < eps:
@@ -100,7 +100,7 @@ def so3_log(R: np.ndarray, eps: float = 1e-8) -> np.ndarray:
             # Find column with largest norm
             col_norms = np.linalg.norm(B, axis=0)
             k = np.argmax(col_norms)
-            axis = B[:, k] / col_norms[k]
+            axis = B[:, k] / np.maximum(col_norms[k], 1e-10)
             
             # Determine sign of rotation
             # Use Rodrigues formula property

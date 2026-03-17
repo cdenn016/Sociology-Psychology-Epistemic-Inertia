@@ -1034,7 +1034,7 @@ def compute_all_gradients(system, n_jobs: Optional[int] = None,
         if trains_phi and g.delta_phi is not None:
             delta_phi = g.delta_phi
         else:
-            delta_phi = np.zeros_like(agent.phi)
+            delta_phi = np.zeros_like(agent.gauge.phi)
 
         grad_dicts.append(
             {
@@ -1075,7 +1075,7 @@ def _compute_agent_euclidean_gradients(
     """
     agent = system.agents[agent_idx]
     spatial_shape = agent.support.base_shape if hasattr(agent.support, 'base_shape') else agent.base_manifold.shape
-    K = agent.config.K
+    K = agent.K
     enable_p = getattr(system.config, "lambda_prior_align", 0.0) > 0.0
     # p-gradients are gated by lambda_prior_align via `enable_p`
 

@@ -42,7 +42,7 @@ Status: Phase 1 - Infrastructure Only
 """
 
 import numpy as np
-from typing import Optional, Tuple, Literal
+from typing import List, Optional, Tuple, Literal
 from dataclasses import dataclass
 from math_utils.generators import generate_so3_generators
 
@@ -314,8 +314,8 @@ def compute_agent_connection_deviation(
 
 
 def compute_consensus_connection(
-    agent_gauge_fields: list[np.ndarray],  # List of (*S, 3)
-    support_masks: list[np.ndarray],  # List of (*S,) boolean
+    agent_gauge_fields: List[np.ndarray],  # List of (*S, 3)
+    support_masks: List[np.ndarray],  # List of (*S,) boolean
     K: int,
     N: int = 3,
 ) -> ConnectionField:

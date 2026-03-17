@@ -434,8 +434,11 @@ def create_smooth_consensus_support(
         dist_outside = distance_transform_edt(~consensus_mask)
         signed_dist = dist_inside - dist_outside
 
-        # Sigmoid transition
-        support = 1.0 / (1.0 + np.exp(-signed_dist / sigma))
+        # Sigmoid transition (numerically stable)
+        x = signed_dist / sigma
+        support = np.where(x >= 0,
+                           1.0 / (1.0 + np.exp(-x)),
+                           np.exp(x) / (1.0 + np.exp(x)))
         return support.astype(np.float32)
 
     elif boundary_falloff == 'linear':
