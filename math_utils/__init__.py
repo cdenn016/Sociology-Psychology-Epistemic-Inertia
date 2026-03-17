@@ -22,19 +22,26 @@ Sociological interpretation:
 
 import numpy as np
 
-# Core utilities
+# Core utilities (no circular dependencies)
 from .transport import compute_transport as transport_operator
 from .push_pull import push_gaussian as transport_gaussian, GaussianDistribution
 from .generators import generate_so3_generators
 from .numerical_utils import (
     safe_inv,
     kl_gaussian,
-    softmax_numerically_stable,
-    entropy_gaussian,
 )
-from .sigma import CovarianceFieldInitializer
-from .fisher_metric import compute_fisher_matrix
 from .so3_frechet import average_gauge_frames_so3
+
+# Deferred imports: these modules have circular dependencies
+# (fisher_metric → gradients → math_utils, sigma → agent → math_utils)
+def __getattr__(name):
+    if name == 'CovarianceFieldInitializer':
+        from .sigma import CovarianceFieldInitializer
+        return CovarianceFieldInitializer
+    if name == 'compute_fisher_matrix':
+        from .fisher_metric import natural_gradient_gaussian as compute_fisher_matrix
+        return compute_fisher_matrix
+    raise AttributeError(f"module 'math_utils' has no attribute {name!r}")
 
 
 def symmetrize(M: np.ndarray) -> np.ndarray:
@@ -75,8 +82,6 @@ __all__ = [
     # Numerical utilities
     'safe_inv',
     'kl_gaussian',
-    'softmax_numerically_stable',
-    'entropy_gaussian',
 
     # Covariance utilities
     'CovarianceFieldInitializer',

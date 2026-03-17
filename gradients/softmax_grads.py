@@ -132,9 +132,6 @@ def compute_softmax_weights(
         kl_fields.append(kl_ij)
     
     # Stack KL fields along new axis: shape = (n_neighbors, *S)
-    kl_stack = np.stack(kl_fields, axis=0)
-    
-    # Stack KL fields along new axis: shape = (n_neighbors, *S)
     kl_stack = np.stack(kl_fields, axis=0)  # (J, *S)
     
     # -----------------------------------------------------------------
@@ -166,15 +163,6 @@ def compute_softmax_weights(
         for i, j in enumerate(neighbor_list)
     }
 
-    return weights
-
-    
-    # Package as dictionary mapping neighbor j → weight field
-    weights = {
-        j: beta_stack[i].astype(np.float32)
-        for i, j in enumerate(neighbor_list)
-    }
-    
     return weights
 
 

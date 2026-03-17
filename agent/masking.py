@@ -664,7 +664,11 @@ class FieldEnforcer:
         use_smooth_transition: bool = False  # Usually False for computation
     ) -> np.ndarray:
         """
-        BROKEN~!!~!
+        Enforce covariance field constraints within support region.
+
+        Inside support: keep original covariance.
+        Outside support: replace with large diagonal (high uncertainty).
+
         Args:
             Sigma: Covariance field
             support: Support region  

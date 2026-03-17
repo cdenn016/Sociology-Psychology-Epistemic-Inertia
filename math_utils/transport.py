@@ -474,8 +474,6 @@ def compute_transport_differential(
     G = np.asarray(generators, dtype=np.float64)
     
     K = G.shape[1]
-    
-    K = G.shape[1]
 
     # Compute exponentials if not provided.
     # Use the *same irrep basis* for all K so dΩ/dφ matches Ω(φ).

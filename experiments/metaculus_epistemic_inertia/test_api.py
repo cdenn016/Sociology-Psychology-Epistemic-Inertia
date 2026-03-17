@@ -140,7 +140,7 @@ def main():
             results = data.get('results', [])
             if results:
                 question_id = results[0].get('question', {}).get('id')
-        except:
+        except (requests.RequestException, ValueError, KeyError):
             pass
 
     # Test predictions endpoint

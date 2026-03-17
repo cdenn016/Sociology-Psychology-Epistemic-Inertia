@@ -260,8 +260,8 @@ class GeometryTracker:
                     dx=self.dx,
                     weight_function=None  # Uniform weights
                 )
-            except Exception as e:
-                c=3 #print(f"  ⚠️  Warning: Failed to compute consensus metrics: {e}")
+            except (np.linalg.LinAlgError, ValueError):
+                pass  # Consensus metrics may fail for singular matrices
 
         # Compute summary statistics
         if agent_metrics_belief:
@@ -311,7 +311,7 @@ class GeometryTracker:
                 n_observable_list.append(np.mean(np.sum(obs_mask, axis=-1)))
                 n_dark_list.append(np.mean(np.sum(dark_mask, axis=-1)))
                 n_internal_list.append(np.mean(np.sum(int_mask, axis=-1)))
-            except:
+            except (np.linalg.LinAlgError, ValueError):
                 pass
 
         if n_observable_list:
@@ -327,13 +327,13 @@ class GeometryTracker:
             try:
                 vol_b = G_b.volume_element()
                 volumes_belief.append(np.mean(vol_b))
-            except:
+            except (np.linalg.LinAlgError, ValueError):
                 pass
 
             try:
                 vol_p = G_p.volume_element()
                 volumes_prior.append(np.mean(vol_p))
-            except:
+            except (np.linalg.LinAlgError, ValueError):
                 pass
 
         if volumes_belief:
