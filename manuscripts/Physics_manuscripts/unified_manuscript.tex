@@ -55,12 +55,24 @@ This vision extends beyond quantum mechanics to a cosmological scale. Wheeler pr
 
 Meanwhile, physics has undergone its own conceptual upheavals regarding the nature of spacetime. Jacobson demonstrated that Einstein's field equations can be derived from thermodynamic principles applied to local causal horizons~\cite{Jacobson1995}. Padmanabhan developed complementary thermodynamic formulations~\cite{Padmanabhan2010}. The ER=EPR conjecture~\cite{MaldacenaSusskind2013} and tensor network models~\cite{Swingle2012} suggest that entanglement structure in quantum systems directly encodes geometric relationships. Spacetime, in these frameworks, emerges from patterns of quantum information and correlation.
 
-\subsection{Philosophical Foundation}
+\subsection{The Kantian Foundation}
 \label{sec:philosophy}
 
-Wheeler's participatory universe finds philosophical resonance with Kant's proposal in his 1781 \emph{Critique of Pure Reason}~\cite{Kant1781} that space and time are not properties of things-in-themselves (the \emph{noumena}), but ``forms of sensuous intuition''---constructions of the perceiving mind that organize raw sensory data into coherent experience. Helmholtz advanced this with the brain as an ``unconscious inference'' machine~\cite{Helmholtz1867}, and Friston's Free Energy Principle~\cite{Friston2010} demonstrated that biological systems can be understood as performing approximate Bayesian inference to minimize surprise. We take these insights as motivation: if perception is statistical construction, then the mathematical structures we identify as ``physical'' may themselves be information-theoretic constructions by perceiving agents. We state this philosophical motivation once; the remainder of the paper develops the mathematics.
+Wheeler's participatory universe finds deep philosophical resonance with Immanuel Kant's radical proposal in his 1781 \emph{Critique of Pure Reason}~\cite{Kant1781}. Kant argued convincingly that space and time are not properties of things-in-themselves (the \emph{noumena}), but rather ``forms of sensuous intuition''---fundamental constructions of the perceiving mind that organize raw sensory data into coherent experience. In Kant's framework, we can never access the noumenal reality directly; all experience is mediated through the cognitive apparatus that structures perception.
 
-\subsection{This Work: Contributions and Scope}
+This philosophical insight lay dormant in physics for over a century until Hermann von Helmholtz proposed the first practical advance: the brain as an ``unconscious inference'' machine~\cite{Helmholtz1867}. Helmholtz argued that perception is fundamentally a process of statistical inference, where the brain constructs the most probable interpretation of ambiguous sensory data. This proto-Bayesian framework anticipated modern predictive processing theories by more than a century.
+
+In the 2000s, Karl Friston revolutionized this picture with his Free Energy Principle~\cite{Friston2010}. By deriving perception, action, and learning from a single variational free energy functional, Friston demonstrated that biological systems can be understood as performing approximate Bayesian inference to minimize surprise. Active inference---the extension incorporating action as inference about how to sample the world---has since exploded into a comprehensive framework encompassing neuroscience, psychology, and artificial intelligence~\cite{Parr2022}. Yet despite these profound advances in understanding perception as statistical construction, they have remained confined to cognitive science and neuroscience.
+
+\subsection{The Unspoken Tension}
+
+Due to these discoveries and realizations there exists an implicit tension in our contemporary understanding of reality. Neuroscientists and philosophers, following Kant and Helmholtz through to Friston, argue that reality is fundamentally a perceptual construction: a controlled hallucination that humans have evolved to share in order to maximize species survival~\cite{Clark2016,Hoffman2019}. Each observation we make, whether of a particle detector or a loved one, is manifestly a statistical approximation of an inaccessible underlying noumenal reality. Despite this, there exist predictable and repeatable patterns we form consensus about.
+
+Physicists, meanwhile, have long argued and hoped to find a physical explanation for consciousness, perception, and life, with limited success. The hard problem of consciousness~\cite{Chalmers1995} remains intractable when approached from a purely physical substrate. Attempts to derive experience from neuronal dynamics, quantum coherence in microtubules~\cite{HameroffPenrose1996}, or integrated information~\cite{Tononi2008} have not resolved the explanatory gap between objective description and subjective experience.
+
+This dichotomy suggests two radical possibilities: either \emph{physics produces cognition}, or \emph{cognition produces physics}. The former physicalist program has been studied extensively for centuries with profound yet incomplete results. The latter cognitive-first ontology has been largely neglected, dismissed as idealism or solipsism. Yet Wheeler's participatory universe, Kant's transcendental idealism, and modern active inference all point toward this neglected alternative: that physical structure, including spacetime itself, is the product of information processing by perceiving agents.
+
+\subsection{A Cognitive-First Framework}
 
 We present a mathematical framework for multi-agent interaction that takes cognitive construction seriously. Building on gauge theory, information geometry, and active inference, we model agents as smooth sections of principal bundles carrying beliefs $q_i(c)$, priors $p_i(c)$, and gauge frames $\phi_i(c)$. The framework produces:
 \begin{enumerate}
@@ -95,8 +107,35 @@ This work operates at four distinct epistemic levels, which the reader should ke
 \textbf{Speculative physical interpretation.} Emergent geometry through pullback construction produces Riemannian metrics. Critical problems remain: physical spacetime requires Lorentzian signature (ours is Riemannian), dimensional analysis is incomplete, and quantum connections remain analogical (Sections~\ref{sec:pullback}--\ref{sec:discussion}).
 
 \subsection{Related Work}
+\label{sec:related}
 
-Several research programs explore connections between information and spacetime geometry. Jacobson~\cite{Jacobson1995} derived Einstein's field equations from thermodynamic principles; our framework shares information-theoretic foundations but emphasizes multi-agent coordination. Verlinde~\cite{Verlinde2011} proposed gravity from entropic forces; both approaches derive geometry from information, but through different mechanisms. Swingle~\cite{Swingle2012} showed tensor networks model AdS/CFT correspondence; our framework uses classical information geometry rather than quantum entanglement. Constructor theory~\cite{Deutsch2015} and quantum information approaches~\cite{Cao2017} explore geometry from quantum structures; our framework implements through gauge theory with classical distributions. Our approach uniquely combines explicit gauge structure, hierarchical multi-scale organization, computational implementation, and empirical validation through transformer emergence.
+Several research programs explore connections between information and spacetime geometry. We situate our work within this landscape, identifying both connections and distinguishing features.
+
+\textbf{Thermodynamic Spacetime.} Jacobson~\cite{Jacobson1995} derived Einstein's field equations from thermodynamic principles applied to causal horizons. Padmanabhan~\cite{Padmanabhan2010} developed complementary thermodynamic formulations. Our framework shares information-theoretic foundations but emphasizes multi-agent coordination over horizon thermodynamics, operating with classical probability rather than quantum entropy. Both approaches treat geometry as emergent from information, but through fundamentally different mechanisms: Jacobson uses entropy flow across horizons, while we use pullback of Fisher-Rao metrics from belief fields.
+
+\textbf{Entropic Gravity.} Verlinde~\cite{Verlinde2011} proposed gravity emerges from entropic forces on holographic screens. Both approaches derive geometry from information, but Verlinde works within holographic principles while we emphasize gauge structure and agent coordination. Whether these perspectives are complementary or competing remains unexplored. Our framework operates at the level of probability distributions rather than entropy counts, providing finer-grained structure.
+
+\textbf{Tensor Networks and Holography.} Swingle~\cite{Swingle2012} and others show tensor network states model AdS/CFT correspondence, with entanglement encoding geometry. The ER=EPR conjecture~\cite{MaldacenaSusskind2013} further links entanglement to geometric connectivity. Our framework uses classical information geometry and gauge structure rather than quantum entanglement and holography. Potential connections between gauge transport operators and entanglement-based geometry remain uninvestigated but could provide bridges between the approaches.
+
+\textbf{Quantum Information Approaches.} Constructor theory~\cite{Deutsch2015} and quantum information approaches~\cite{Cao2017} explore geometry emerging from quantum structures. Our framework shares information-first philosophy but implements through gauge theory and active inference with classical distributions rather than quantum mechanics.
+
+\textbf{Active Inference and Free Energy Principle.} Friston's Free Energy Principle~\cite{Friston2010,Parr2022} provides the variational foundation we extend. Standard active inference operates with single agents minimizing surprise through gradient descent. Our extension introduces multi-agent interaction through gauge-covariant coupling, identifies the missing kinetic term (mass from Fisher information), and demonstrates hierarchical emergence through consensus-driven meta-agent formation. The overdamped limit of our framework recovers standard active inference exactly.
+
+\textbf{Information Geometry in Physics.} Amari's information geometry~\cite{Amari2016} provides the mathematical toolkit connecting probability theory to differential geometry. Applications in physics include thermodynamic geometry (Ruppeiner metric), quantum state space (Fubini-Study metric), and statistical mechanics (Fisher information as susceptibility). Our contribution is using this toolkit to construct a gauge theory on information-geometric bundles, enabling multi-agent interaction with frame-dependent phenomenology.
+
+\textbf{Distinguishing Features.} Our approach uniquely combines: (i) explicit gauge structure enabling agent-dependent phenomenology with global gauge invariance; (ii) hierarchical multi-scale organization through consensus and meta-agent formation with validated top-down feedback; (iii) computational implementation demonstrating participatory bootstrap in working code; (iv) empirical validation through transformer emergence ($r = 0.821$ with BERT, 20\% lower perplexity); (v) four-component mass tensor with clear physical interpretation. We provide mathematical tools for cognitive-first ontology complementing existing information-theoretic physics.
+
+\subsection{Scope and Limitations}
+
+We do not claim to have derived quantum mechanics or general relativity from first principles. We demonstrate that cognitive-first ontology---taking multi-agent information processing as fundamental---naturally produces geometric structure with features reminiscent of physical reality.
+
+The framework makes falsifiable predictions: transformer attention patterns (validated), hierarchical information processing in neural systems (testable), linguistic coordination mechanisms (explorable), and metric decomposition signatures (speculative). This is proof-of-concept demonstrating that cognitive-first ontology is computationally implementable and empirically constrainable, not merely philosophical speculation.
+
+Critical open problems are identified throughout and summarized in Section~\ref{sec:open_problems}. Most notably: deriving Lorentzian signature from Riemannian geometry, establishing dimensional analysis, extending to quantum mechanics, and scaling beyond toy models.
+
+\subsection{Roadmap}
+
+Section~\ref{sec:framework} develops gauge-theoretic active inference on principal bundles. Section~\ref{sec:free_energy} establishes the multi-agent free energy functional. Section~\ref{sec:mass} derives mass from statistical precision. Section~\ref{sec:dynamics} presents the full dynamical theory. Section~\ref{sec:validation} provides computational validation. Section~\ref{sec:pullback} establishes information-to-geometry mapping through pullbacks. Section~\ref{sec:hierarchy} presents multi-scale hierarchy and transformer validation. Section~\ref{sec:observer} explores observer-dependent reality. Section~\ref{sec:discussion} discusses implications. Section~\ref{sec:conclusion} concludes. All results are supported by open-source implementations.
 
 \subsection{Notation}
 \label{sec:notation}
@@ -616,18 +655,55 @@ The variational free energy $\mathcal{F}$ serves as the potential for agent dyna
 
 Each agent $i$ maintains belief $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ anchored to prior $p_i = \mathcal{N}(\bar{\mu}_i, \bar{\Sigma}_i)$ and receives observations $o_i$ through likelihood $p(o_i|\theta) = \mathcal{N}(o_i; \theta, \Sigma_{o_i})$, with precisions $\Lambda_{q_i} = \Sigma_i^{-1}$, $\bar{\Lambda}_{p_i} = \bar{\Sigma}_i^{-1}$, $\Lambda_{o_i} = \Sigma_{o_i}^{-1}$, and transported quantities $\tilde{\mu}_k = \Omega_{ik}\mu_k$, $\tilde{\Lambda}_{q_k} = \Omega_{ik}\Lambda_{q_k}\Omega_{ik}^T$.
 
-\subsection{The Extended Free Energy}
+\subsection{The Extended Free Energy Functional}
 
-The complete variational free energy with sensory evidence is:
+The complete variational free energy with explicit sensory evidence is:
 \begin{equation}
 \mathcal{F}[\{q_i\}] = \sum_i \mathrm{KL}(q_i \| p_i) + \sum_{i,k}\beta_{ik}\mathrm{KL}(q_i \| \Omega_{ik}[q_k]) - \sum_i \mathbb{E}_{q_i}[\log p(o_i|\theta)]
 \label{eq:extended_F}
 \end{equation}
-representing prior anchoring, social consensus, and sensory evidence.
+The three terms represent prior anchoring (deviation from internal world-model), social consensus (alignment with other agents via gauge-covariant transport), and sensory evidence (grounding in observations).
 
-\subsection{First Variations}
+\subsection{Component Free Energies for Gaussians}
 
-The total gradient with respect to agent $i$'s mean is:
+For $q = \mathcal{N}(\mu_q, \Sigma_q)$ and $p = \mathcal{N}(\mu_p, \Sigma_p)$, the KL divergence is:
+\begin{equation}
+\mathrm{KL}(q \| p) = \frac{1}{2}\left[\mathrm{tr}(\Sigma_p^{-1}\Sigma_q) + (\mu_p - \mu_q)^T \Sigma_p^{-1}(\mu_p - \mu_q) - d + \ln\frac{|\Sigma_p|}{|\Sigma_q|}\right]
+\end{equation}
+
+For the Gaussian likelihood $p(o_i | \theta) = \mathcal{N}(o_i; \theta, \Sigma_{o_i})$, the expected log-likelihood evaluates to:
+\begin{equation}
+-\mathbb{E}_{q_i}[\log p(o_i | \theta)] = \frac{1}{2}(o_i - \mu_i)^T \Lambda_{o_i}(o_i - \mu_i) + \frac{1}{2}\mathrm{tr}(\Lambda_{o_i}\Sigma_i) + \mathrm{const}
+\end{equation}
+
+\subsection{First Variations (Gradient)}
+
+\subsubsection{Prior Term}
+\begin{align}
+\frac{\partial \mathrm{KL}(q_i \| p_i)}{\partial \mu_i} &= \bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i) \\
+\frac{\partial \mathrm{KL}(q_i \| p_i)}{\partial \Sigma_i} &= \frac{1}{2}(\bar{\Lambda}_{p_i} - \Lambda_{q_i})
+\end{align}
+
+\subsubsection{Consensus Term}
+With respect to receiver $i$:
+\begin{align}
+\frac{\partial \mathrm{KL}(q_i \| \tilde{q}_k)}{\partial \mu_i} &= \tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) \\
+\frac{\partial \mathrm{KL}(q_i \| \tilde{q}_k)}{\partial \Sigma_i} &= \frac{1}{2}(\tilde{\Lambda}_{q_k} - \Lambda_{q_i})
+\end{align}
+
+With respect to sender $k$:
+\begin{align}
+\frac{\partial \mathrm{KL}(q_i \| \tilde{q}_k)}{\partial \mu_k} &= \Lambda_{q_k}\Omega_{ik}^T(\tilde{\mu}_k - \mu_i) \\
+\frac{\partial \mathrm{KL}(q_i \| \tilde{q}_k)}{\partial \Sigma_k} &= \frac{1}{2}\Omega_{ik}^T\left[\tilde{\Lambda}_{q_k} - \tilde{\Lambda}_{q_k}\Sigma_i\tilde{\Lambda}_{q_k}\right]\Omega_{ik}
+\end{align}
+
+\subsubsection{Sensory Term}
+\begin{align}
+\frac{\partial}{\partial \mu_i}\left[-\mathbb{E}_{q_i}[\log p(o_i | \theta)]\right] &= \Lambda_{o_i}(\mu_i - o_i) \\
+\frac{\partial}{\partial \Sigma_i}\left[-\mathbb{E}_{q_i}[\log p(o_i | \theta)]\right] &= \frac{1}{2}\Lambda_{o_i}
+\end{align}
+
+\subsubsection{Total Gradient}
 \begin{equation}
 \frac{\partial\mathcal{F}}{\partial\mu_i} = \bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i) + \sum_k\beta_{ik}\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) + \sum_j\beta_{ji}\Lambda_{q_i}\Omega_{ji}^T(\tilde{\mu}_i^{(j)} - \mu_j) + \Lambda_{o_i}(\mu_i - o_i)
 \label{eq:gradient}
@@ -636,10 +712,12 @@ where $\tilde{\mu}_i^{(j)} = \Omega_{ji}\mu_i$ is agent $i$'s mean transported i
 
 \subsection{Second Variations: The Mass Matrix}
 
-The Hessian $M = \partial^2\mathcal{F}/\partial\xi\partial\xi$ with state vector $\xi = (\mu_1, \ldots, \mu_N, \Sigma_1, \ldots, \Sigma_N)$ has block structure:
+The Fisher-Rao metric $M = \partial^2\mathcal{F}/\partial\xi\partial\xi$ serves as the mass matrix. The full state vector is $\xi = (\mu_1, \ldots, \mu_N, \Sigma_1, \ldots, \Sigma_N)$, yielding a block structure:
 \begin{equation}
 M = \begin{pmatrix} M_{\mu\mu} & C^{\mu\Sigma} \\ (C^{\mu\Sigma})^T & M_{\Sigma\Sigma} \end{pmatrix}
+\label{eq:mass_block_structure}
 \end{equation}
+where each block is itself an $N \times N$ matrix of sub-blocks.
 
 \subsubsection{Mean Sector: Diagonal Blocks}
 
@@ -663,17 +741,41 @@ The mass matrix is symmetric only when $\beta_{ik} = \beta_{ki}$ and $\Omega_{ik
 
 \subsubsection{Covariance Sector}
 
-Diagonal blocks:
+For matrix-valued variables, we use the directional derivative convention:
 \begin{equation}
-[M_{\Sigma\Sigma}]_{ii} = \frac{1}{2}(\Lambda_{q_i} \otimes \Lambda_{q_i})\left(1 + \sum_k\beta_{ik} + \sum_j\beta_{ji}\right)
+\frac{\partial^2 f}{\partial \Sigma \partial \Sigma}[V, W] = \lim_{\epsilon \to 0} \frac{1}{\epsilon}\left[\left.\frac{\partial f}{\partial \Sigma}\right|_{\Sigma + \epsilon W} - \left.\frac{\partial f}{\partial \Sigma}\right|_{\Sigma}\right][V]
+\end{equation}
+with the key identity $\partial(\Sigma^{-1})/\partial \Sigma = -\Sigma^{-1} \otimes \Sigma^{-1}$.
+
+From the prior: $\frac{\partial^2 \mathrm{KL}(q_i \| p_i)}{\partial \Sigma_i \partial \Sigma_i}[V, W] = \frac{1}{2}\mathrm{tr}[\Lambda_{q_i} V \Lambda_{q_i} W]$, giving in tensor notation $\frac{1}{2}(\Lambda_{q_i} \otimes \Lambda_{q_i})$. From consensus as receiver and sender, identical contributions arise. The sensory term $\frac{1}{2}\mathrm{tr}(\Lambda_{o_i}\Sigma_i)$ is linear in $\Sigma_i$, so its second derivative vanishes. Therefore:
+\begin{equation}
+\boxed{[M_{\Sigma\Sigma}]_{ii} = \frac{1}{2}(\Lambda_{q_i} \otimes \Lambda_{q_i})\left(1 + \sum_k\beta_{ik} + \sum_j\beta_{ji}\right)}
 \label{eq:mass_cov}
 \end{equation}
 
-The sensory precision $\Lambda_{o_i}$ contributes to mean-sector mass but not covariance-sector mass.
+The sensory precision $\Lambda_{o_i}$ contributes to mean-sector mass but not to covariance-sector mass. Off-diagonal blocks:
+\begin{equation}
+[M_{\Sigma\Sigma}]_{ik} = -\frac{1}{2}\beta_{ik}(\Omega_{ik}^T \otimes \Omega_{ik}^T)\left[\tilde{\Lambda}_{q_k}\Sigma_i\tilde{\Lambda}_{q_k} \otimes \tilde{\Lambda}_{q_k} + \tilde{\Lambda}_{q_k} \otimes \tilde{\Lambda}_{q_k}\Sigma_i\tilde{\Lambda}_{q_k}\right](\Omega_{ik} \otimes \Omega_{ik})
+\end{equation}
 
-\subsubsection{Cross Blocks}
+\subsubsection{Cross Mean-Covariance Blocks}
 
-$[C^{\mu\Sigma}]_{ik} = 0$ when $\mu_i = \tilde{\mu}_k$ (at consensus), so the mean and covariance sectors decouple near equilibrium.
+The prior term gives $\partial^2 \mathrm{KL}(q_i \| p_i)/\partial \mu_i \partial \Sigma_i = 0$. The sensory free energy decomposes into a term quadratic in $\mu_i$ and a term linear in $\Sigma_i$; these are independent, so $[C^{\mu\Sigma}]_{ii}^{\text{sensory}} = 0$. For the consensus term, from $\partial \mathrm{KL}(q_i \| \tilde{q}_k)/\partial \mu_i = \tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k)$, varying $\Sigma_k$:
+\begin{equation}
+\frac{\partial^2 \mathrm{KL}(q_i \| \tilde{q}_k)}{\partial \mu_i \partial \Sigma_k}[V] = -\Omega_{ik}\Lambda_{q_k} V \Lambda_{q_k} \Omega_{ik}^T (\mu_i - \tilde{\mu}_k)
+\end{equation}
+
+This vanishes at consensus ($\mu_i = \tilde{\mu}_k$):
+\begin{equation}
+\boxed{[C^{\mu\Sigma}]_{ik} = 0 \quad \text{when } \mu_i = \tilde{\mu}_k}
+\end{equation}
+so the mean and covariance sectors decouple near equilibrium.
+
+\subsection{Physical Interpretation: Mass as Precision}
+
+The effective mass of agent $i$ in the mean sector (Eq.~\ref{eq:mass_diagonal}) has a natural physical interpretation: the \emph{bare mass} $\bar{\Lambda}_{p_i}$ provides inertia against deviation from the prior world-model---an agent with precise priors resists belief change. The \emph{incoming social mass} captures inertia from being pulled by neighbors---the more precise the neighbors' transported beliefs, the heavier the agent. The \emph{outgoing recoil mass} represents inertia from pulling neighbors (Newton's third law analog). The \emph{sensory mass} grounds the agent in observations.
+
+A macroscopic object maintains extraordinarily precise self-localization: $\bar{\Sigma}_{\mathrm{rock}} \approx \ell_P^2 I$ yields enormous mass $M_{\mathrm{rock}} \sim \ell_P^{-2}$. Rocks are certain, thus massive, thus hard to move. Conversely, a quantum particle in spatial superposition has larger position uncertainty, lower precision, and reduced inertial mass.
 
 \subsection{Stability of the Coupled Mass Matrix}
 \label{sec:stability}
@@ -947,24 +1049,48 @@ Similarly, the prior section induces:
 
 These metrics measure how rapidly statistical fields vary across $\mathcal{C}$. The induced metric encodes information-theoretic structure as geometric structure---this is the precise mathematical realization of Wheeler's vision.
 
-\subsection{Dual Geometries}
+\subsection{Dual Geometries: Epistemic and Ontological}
 
-The belief pullback $G_i^{(q)}$ encodes \emph{epistemic geometry}---highly dynamical, reflecting current posterior beliefs. The prior pullback $G_i^{(p)}$ encodes \emph{ontological geometry}---quasi-static, reflecting the agent's generative model of reality. Different agents with different priors perceive different geometries on the same underlying $\mathcal{C}$.
+The two induced metrics carry fundamentally different interpretations. The belief pullback $G_i^{(q)}$ encodes \emph{epistemic geometry}---it reflects agent $i$'s current posterior beliefs at each point in the base manifold. This geometry is highly dynamical, changing rapidly as new observations arrive and beliefs update. It encodes where the agent is uncertain, with regions of high belief gradient corresponding to short information distances.
 
-For Gaussian agents on $\mathcal{C} = \mathbb{R}^2$ with isotropic covariance $\Sigma_i = \sigma^2 I$:
+The prior pullback $G_i^{(p)}$ encodes \emph{ontological geometry}---it reflects the agent's generative model of how reality is structured. This geometry evolves quasi-statically, changing only as the agent learns and refines its world model. We conjecture that the prior-induced metric represents the agent's perceived geometry of reality: what the agent experiences as ``spatial distance'' or ``spatial structure'' is the information-geometric distance in its generative model. This has a profound implication: different agents with different priors perceive different geometries on the same underlying noumenal base $\mathcal{C}$. There is no ``true'' metric on $\mathcal{C}$ independent of agents, only agent-dependent induced metrics arising from their information processing.
+
+This perspective aligns with Kant's phenomenal/noumenal distinction, where space is a form of intuition rather than a property of things-in-themselves. It resonates with Wheeler's observer-participatory universe. Modern cognitive science's ``controlled hallucination'' view of perception~\cite{Clark2016,Hoffman2019} provides empirical support: what we perceive as external space may indeed be an internal construction optimized for prediction and action.
+
+\subsubsection{Example: Gaussian Agents on $\mathbb{R}^2$}
+
+Consider agents maintaining Gaussian beliefs $q_i(c) = \mathcal{N}(\mu_i(c), \Sigma_i(c))$ over a flat base manifold $\mathcal{C} = \mathbb{R}^2$. The induced metric components are:
+\begin{equation}
+G^{(q)}_{i,\mu\nu}(c) = (\partial_\mu \mu_i)^\top \Sigma_i^{-1} (\partial_\nu \mu_i) + \frac{1}{2}\mathrm{tr}\left(\Sigma_i^{-1}(\partial_\mu \Sigma_i)\Sigma_i^{-1}(\partial_\nu \Sigma_i)\right)
+\end{equation}
+
+The first term captures mean gradient contributions: if the mean belief location $\mu_i(c)$ varies rapidly with base manifold position $c$, the metric component is large. The second term captures covariance gradient contributions: if the uncertainty structure itself varies rapidly, this also enlarges the metric.
+
+In the simple case where $\Sigma_i(c) = \sigma^2 I$ (isotropic covariance, constant across space):
 \begin{equation}
 G^{(q)}_{i,\mu\nu}(c) = \frac{1}{\sigma^2}(\partial_\mu\mu_i)\cdot(\partial_\nu\mu_i)
 \end{equation}
-a conformal metric where high certainty (small $\sigma$) magnifies distances.
+a conformal metric with conformal factor $1/\sigma^2$. High certainty (small $\sigma$) magnifies distances---regions where the agent is confident appear ``larger'' in information geometry. Conversely, high uncertainty (large $\sigma$) compresses distances.
+
+\subsection{Temporal Structure from Belief Trajectories}
+
+The temporal direction may be distinguished by belief dynamics rather than static geometry. An agent's belief trajectory $q_i: \mathbb{R} \to \mathcal{B}$, $\tau \mapsto q_i(\tau)$ has tangent vector $\dot{q}_i = dq_i/d\tau$ with Fisher-Rao norm $g_{\mathcal{B}}(\dot{q}_i, \dot{q}_i)$. We hypothesize this defines a temporal metric component, with spatial components orthogonal:
+\begin{equation}
+ds^2 = -g_{\mathcal{B}}(\dot{q}, \dot{q}) d\tau^2 + \sum_i g_{\mathcal{B}}(e_i, e_i) dx_i^2
+\end{equation}
+where $\{e_i\}$ is a basis for $\dot{q}^\perp$. The decomposition $T_q\mathcal{B} = \mathbb{R}\dot{q} \oplus \dot{q}^\perp$ naturally distinguishes a preferred direction corresponding to information flow. However, the signature assignment---assigning opposite signs to temporal and spatial components---is not derived from first principles. This remains highly speculative.
 
 \subsection{Collective Geometry and Gauge Invariance}
 
-The gauge-invariant consensus metric averages over gauge orbits:
-\begin{equation}
-\bar{G}_{\mu\nu}^{\mathrm{consensus}}(c) = \sum_i w_i(c)\langle G_i\rangle_{\mu\nu}(c), \qquad \langle G_i\rangle_{\mu\nu} = \int_G dg\,G_{i,\mu\nu}(c; \phi_i \to \phi_i + g)
-\end{equation}
+When multiple agents maintain beliefs about the same base manifold, each induces its own metric $G_i(c)$. A naive average $\bar{G}_{\mu\nu}(c) = N^{-1}\sum_i w_i(c) G_{i,\mu\nu}(c)$ has a critical flaw: it depends on each agent's arbitrary gauge frame choice $\phi_i$. Gauge freedom represents redundancy in description, not physical degrees of freedom---the observable geometry must not depend on these arbitrary choices.
 
-This construction is gauge-invariant by design and represents the closest analog to ``objective reality'' in the framework.
+The solution is to average over gauge orbits before spatial averaging. For a single agent, the gauge-averaged metric is $\langle G_i \rangle_{\mu\nu}(c) = \int_G dg \, G_{i,\mu\nu}(c; \phi_i \to \phi_i + g)$, where the integral is over the gauge group with Haar measure. The collective consensus metric:
+\begin{equation}
+\bar{G}_{\mu\nu}^{\mathrm{consensus}}(c) = \sum_i w_i(c)\langle G_i\rangle_{\mu\nu}(c)
+\end{equation}
+is gauge-invariant by design. This consensus metric represents the gauge-invariant geometric structure that agents collectively construct through their aligned priors---the closest analog to ``objective reality'' in the framework.
+
+This suggests a reinterpretation of gauge invariance in fundamental physics. The standard view holds that gauge invariance is a fundamental symmetry of nature. Our cognitive-first perspective offers an alternative: gauge invariance arises as a consistency requirement for multi-agent consensus. For agents with different internal reference frames to agree on shared geometric structure, that structure must be gauge-invariant. Gauge invariance in physics may be a consequence of cognitive agents requiring frame-independent descriptions of a shared perceptual reality.
 
 \subsection{Dimensional Structure and Observable Sectors}
 
@@ -1068,9 +1194,36 @@ with hyperpriors stored as additional fields incorporated with exponentially dec
 
 For agents at the top of the hierarchy (no parent meta-agent), priors are formed by observing the entire system state: $p_i^{(\text{top})}(x) = \sum_{j \in \text{all scales}} w_j(x) \, \Omega_{i,j}[q_j](x)$, creating Wheeler's ``self-excited circuit''---a genuinely participatory, self-organizing dynamic.
 
+\subsubsection{Emergent Timescale Hierarchy Across Scales}
+
+Meta-agents at scale $(s+1)$ evolve more slowly than their constituent agents at scale $s$. This creates a hierarchy of characteristic timescales:
+\begin{equation}
+\tau_{\text{belief}}^{(0)} < \tau_{\text{prior}}^{(0)} < \tau_{\text{belief}}^{(1)} < \tau_{\text{prior}}^{(1)} < \tau_{\text{belief}}^{(2)} < \cdots
+\end{equation}
+
+The slowing occurs for three interconnected reasons. First, meta-agents integrate over constituent beliefs, smoothing out fast fluctuations through spatial and informational averaging. Second, changing meta-agent state requires changing multiple constituent agents coherently, introducing consensus energy barriers that resist rapid updates. Third, larger effective ``mass'' measured by accumulated Fisher information resists rapid updates through increased informational inertia.
+
+This is directly analogous to well-known hierarchical phenomena across multiple domains. In thermodynamics, collective variables like temperature equilibrate slower than microscopic particle velocities. In fluid dynamics, large eddies have longer lifetimes than small turbulent fluctuations. In social systems, institutional change occurs slower than individual opinion shifts due to coordination requirements. The mathematical structure underlying these diverse phenomena---hierarchical organization with emergent timescale separation---is captured by our information-geometric framework.
+
+\subsubsection{Emergent Properties at Higher Scales}
+
+Meta-agents exhibit properties not present at lower scales, demonstrating genuine emergence rather than mere aggregation. Meta-agent beliefs $q_I^{(s+1)}$ vary smoothly over larger regions of $\mathcal{C}$ than individual constituent beliefs, reflecting longer coherence lengths. Meta-agent covariances $\Sigma_I^{(s+1)}$ are typically smaller (more confident) due to information pooling across constituents---the collective ``knows'' more than any individual through redundancy and cross-validation. Meta-agents exhibit emergent coordination patterns not reducible to constituent actions, arising from the nonlinear coupling through the free energy functional. The whole becomes qualitatively different from the sum of its parts. This can be poetically interpreted as the universe coming to ``know thyself.''
+
 \subsubsection{Non-Equilibrium Dynamics and Perpetual Evolution}
 
-A genuinely participatory system must remain far from equilibrium. The perpetual tension between consensus-seeking (driving toward equilibrium) and diversity preservation (driving away from equilibrium) maintains continued evolution. We monitor non-equilibrium through energy flux $\Phi_E(t) = |d\mathcal{F}/dt|$, information flux $\Phi_I(t) = \sum_i \int \partial_t[H[q_i(x)] + H[p_i(x)]] dx$, and gradient variance $V_{\nabla}(t)$. The feedback between scales prevents equilibration: even when scale-$s$ agents reach local consensus, top-down information from scale $s+1$ perturbs them back into evolution. The system exhibits what Wheeler called a ``self-excited circuit''~\cite{Wheeler1983}---a self-sustaining loop where observation and reality co-constitute each other through perpetual informational exchange.
+A genuinely participatory system must remain far from equilibrium. At equilibrium, all agents would achieve perfect consensus and cease evolving---a static, non-participatory state representing the ``information death'' of the system. The perpetual tension between consensus-seeking (driving toward equilibrium) and diversity preservation (driving away from equilibrium) maintains continued evolution.
+
+We monitor non-equilibrium through three complementary indicators. Energy flux measures the rate of free energy change: $\Phi_E(t) = |d\mathcal{F}/dt|$. Information flux tracks Shannon entropy evolution: $\Phi_I(t) = \sum_i \int \partial_t[H[q_i(x)] + H[p_i(x)]] dx$. Gradient variance quantifies heterogeneity in free energy landscapes: $V_{\nabla}(t) = N^{-1}\sum_i \mathrm{Var}(\|\nabla_{q_i} \mathcal{F}\|^2)$. We combine these into an equilibrium score $E_{\mathrm{score}}(t) = (\Phi_E + \Phi_I + V_{\nabla})/3$. Values near zero indicate equilibrium (undesirable for participatory dynamics), while $E_{\mathrm{score}} \gg 1$ indicates sustained far-from-equilibrium operation.
+
+Several mechanisms maintain non-equilibrium: new observations continuously inject information, perturbing beliefs and breaking symmetry; top-down feedback from meta-agents heterogeneously affects constituents; gauge freedom allows agents to maintain distinct perspectives even when beliefs align; and spatial separation limits coupling strength, preventing universal synchronization. The feedback between scales prevents equilibration: even when scale-$s$ agents reach local consensus, top-down information from scale $s+1$ perturbs them back into evolution.
+
+\subsubsection{Self-Excited Perpetual Motion}
+
+The participatory loop sustains non-equilibrium dynamics through perpetual feedback. Scale-$s$ agents evolve beliefs via natural gradient descent, minimizing local free energy. These changing beliefs trigger meta-agent formation at scale $s+1$ when sufficient coherence develops. Meta-agents then propagate updated priors back to scale $s$, shifting the free energy landscape. Scale-$s$ agents respond to these new priors, beginning the cycle anew.
+
+This feedback prevents equilibration. The system exhibits what Wheeler called a ``self-excited circuit''~\cite{Wheeler1983}---a self-sustaining loop where observation and reality co-constitute each other through perpetual informational exchange. This is Wheeler's and Hofstadter's ``strange loop''~\cite{Hofstadter1979}. The system uses its output (geometry) as input (transport structure) to generate new output (updated geometry). The universe is not a passive arena but an active participant in its own evolution.
+
+In our framework, variational free energy drives complexity generation rather than simple equilibration, maintaining the system in a dynamically stable yet perpetually evolving state. As free energy decreases locally through agent alignment, the complexity of the hierarchical structure increases globally through meta-agent formation. This may account for the observation of explosive complexity growth in local regions of our universe despite the second law's mandate toward increasing entropy. The system trades local order for hierarchical complexity.
 
 \subsection{Empirical Validation: Transformer Emergence}
 \label{sec:transformers}
@@ -1330,16 +1483,70 @@ The author would like to thank Christine King Carter for her generous support, l
 \appendix
 %==============================================================================
 
-\section{Gradient Expressions for SO(3) Gaussian Agents}
+\section{Explicit Gradient Expressions for SO(3) Gaussian Agents}
 \label{app:gradients}
 
-For agent $i$ with belief $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ and prior $p_i = \mathcal{N}(\bar{\mu}_i, \bar{\Sigma}_i)$, the natural gradient updates are:
+We derive explicit natural gradient expressions for gauge-theoretic free energy minimization with Gaussian distributions and $\mathrm{SO}(3)$ transport. All operations are gauge covariant.
+
+\subsection*{Setup and Notation}
+
+Agent $i$ maintains belief $q_i = \mathcal{N}(\mu_i, \Sigma_i)$ and prior $p_i = \mathcal{N}(\mu_{p,i}, \Sigma_{p,i})$ over $K$-dimensional fiber. Transport operator $\Omega_{ij} = \exp(\phi_i)\exp(-\phi_j) \in \mathrm{SO}(3)$ acts via representation $\rho: \mathrm{SO}(3) \to \mathrm{GL}(K)$. The free energy decomposes as $\mathcal{F} = \sum_i \mathrm{KL}(q_i \| p_i) + \sum_{ij} \beta_{ij} \mathrm{KL}(q_i \| \Omega_{ij}[q_j]) + \sum_{ij} \gamma_{ij} \mathrm{KL}(p_i \| \tilde{\Omega}_{ij}[p_j])$.
+
+\subsection*{Free Energy Gradient: Belief Means (Complete)}
+
+The belief alignment term is $\mathcal{F}_{\mathrm{belief}} = \sum_j \beta_{ij}(\mu_i, \Sigma_i) \, \mathrm{KL}(q_i \| \Omega_{ij}[q_j])$. Applying the product rule:
+\begin{equation}
+\nabla_{\mu_i} \mathcal{F}_{\mathrm{belief}} = \sum_j \left[ \frac{\partial \beta_{ij}}{\partial \mu_i} \mathrm{KL}_{ij} + \beta_{ij} \frac{\partial \mathrm{KL}_{ij}}{\partial \mu_i} \right]
+\end{equation}
+
+The softmax derivative for attention weights gives:
+\begin{equation}
+\frac{\partial \beta_{ij}}{\partial \mu_i} = -\frac{1}{\kappa_\beta} \beta_{ij} \left[\frac{\partial \mathrm{KL}_{ij}}{\partial \mu_i} - \sum_k \beta_{ik} \frac{\partial \mathrm{KL}_{ik}}{\partial \mu_i}\right]
+\end{equation}
+
+For the direct KL gradient: $\frac{\partial \mathrm{KL}_{ij}}{\partial \mu_i} = (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}(\mu_i - \Omega_{ij}\mu_j)$.
+
+Substituting and simplifying:
 \begin{align}
-\tilde{\nabla}_{\mu_i}\mathcal{F} &= \Sigma_i\left[\bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i) + \sum_k\beta_{ik}\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) + \Lambda_{o_i}(\mu_i - o_i)\right] \\
-\tilde{\nabla}_{\Sigma_i}\mathcal{F} &= \Sigma_i\left[\frac{1}{2}\left(\bar{\Lambda}_{p_i} - \Lambda_{q_i} + \sum_k\beta_{ik}(\tilde{\Lambda}_{q_k} - \Lambda_{q_i}) + \frac{1}{2}\Lambda_{o_i}\right)\right]\Sigma_i
+\nabla_{\mu_i} \mathcal{F}_{\mathrm{belief}} &= \sum_j \beta_{ij} (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}(\mu_i - \Omega_{ij}\mu_j) \left[1 - \frac{\mathrm{KL}_{ij}}{\kappa_\beta}\right] \nonumber \\
+&\quad + \frac{1}{\kappa_\beta}\left(\sum_j \beta_{ij}\mathrm{KL}_{ij}\right) \sum_k \beta_{ik} (\Omega_{ik}\Sigma_k\Omega_{ik}^T)^{-1}(\mu_i - \Omega_{ik}\mu_k)
 \end{align}
 
-The natural gradient on the covariance manifold $\mathbb{S}^+_K$ preserves positive-definiteness by construction.
+Including the self-term $\mathrm{KL}(q_i \| p_i)$:
+\begin{equation}
+\boxed{\nabla_{\mu_i} \mathcal{F} = \Sigma_i^{-1}(\mu_i - \mu_{p,i}) + \sum_j \beta_{ij} (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}(\mu_i - \Omega_{ij}\mu_j) \left[1 - \frac{\mathrm{KL}_{ij}}{\kappa_\beta}\right] + R_\mu}
+\end{equation}
+where the reweighting term is $R_\mu = \frac{1}{\kappa_\beta}(\sum_j \beta_{ij}\mathrm{KL}_{ij}) \sum_k \beta_{ik} (\Omega_{ik}\Sigma_k\Omega_{ik}^T)^{-1}(\mu_i - \Omega_{ik}\mu_k)$.
+
+The natural gradient is $\tilde{\nabla}_{\mu_i} \mathcal{F} = \Sigma_i \nabla_{\mu_i} \mathcal{F}$.
+
+\subsection*{Free Energy Gradient: Belief Covariances (Complete)}
+
+Similarly for covariances, the product rule gives:
+\begin{equation}
+\nabla_{\Sigma_i} \mathcal{F}_{\mathrm{belief}} = \sum_j \left[ \frac{\partial \beta_{ij}}{\partial \Sigma_i} \mathrm{KL}_{ij} + \beta_{ij} \frac{\partial \mathrm{KL}_{ij}}{\partial \Sigma_i} \right]
+\end{equation}
+
+For Gaussian KL divergence: $\frac{\partial \mathrm{KL}_{ij}}{\partial \Sigma_i} = \frac{1}{2}[-\Sigma_i^{-1} + (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}]$.
+
+The complete gradient including self-term is:
+\begin{align}
+\nabla_{\Sigma_i} \mathcal{F} &= \frac{1}{2}\left[-\Sigma_i^{-1} + \Sigma_{p,i}^{-1}\right] \nonumber \\
+&\quad + \frac{1}{2}\sum_j \beta_{ij} \left[-\Sigma_i^{-1} + (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}\right]\left[1 - \frac{\mathrm{KL}_{ij}}{\kappa_\beta}\right] \nonumber \\
+&\quad + \frac{1}{2\kappa_\beta}\left(\sum_j \beta_{ij}\mathrm{KL}_{ij}\right) \sum_k \beta_{ik} \left[-\Sigma_i^{-1} + (\Omega_{ik}\Sigma_k\Omega_{ik}^T)^{-1}\right]
+\end{align}
+
+The natural gradient on $\mathcal{S}_{++}^K$ is $\tilde{\nabla}_{\Sigma_i} \mathcal{F} = \Sigma_i (\nabla_{\Sigma_i} \mathcal{F}) \Sigma_i$.
+
+\textbf{Gauge Covariance:} Under gauge transformation $g \in \mathrm{SO}(3)$: $\Sigma_i \mapsto g\Sigma_i g^T$, $\nabla_{\Sigma_i} \mathcal{F} \mapsto g(\nabla_{\Sigma_i} \mathcal{F})g^T$, $\tilde{\nabla}_{\Sigma_i} \mathcal{F} \mapsto g(\tilde{\nabla}_{\Sigma_i} \mathcal{F})g^T$. This bilinear form $\Sigma (\cdot) \Sigma$ is the unique gauge-covariant gradient structure on $\mathcal{S}_{++}^K$.
+
+\subsection*{Numerical Stability and Verification}
+
+\textbf{Positive-Definiteness:} The exponential map retraction (Appendix~\ref{app:retraction}) maps to $\mathcal{S}_{++}^K$ for any symmetric input, guaranteeing $\Sigma_i \succ 0$ throughout optimization.
+
+\textbf{Gauge Orbit Preservation:} Under simultaneous transformation $\mu_i \mapsto g\mu_i$, $\Sigma_i \mapsto g\Sigma_i g^T$, $\phi_i \mapsto \phi_i + \xi$ for all $i$, the gradients transform covariantly and updates preserve gauge invariance.
+
+\textbf{Gradient Verification:} All analytical gradients verified against numerical finite differences (tolerance $10^{-6}$) and PyTorch automatic differentiation (relative error $< 10^{-8}$).
 
 \section{KL Expansion for Multivariate Gaussians}
 \label{app:kl}
@@ -1432,6 +1639,116 @@ A macroscopic object like a rock maintains extraordinarily precise self-localiza
 When these atomic agents achieve sufficient coherence, they form a scale-1 meta-agent---the rock itself---with collective belief $q_{\text{rock}}$ representing the consensus configuration. When agent $i$ interacts with the rock, the coupling $\beta_{i,\mathrm{rock}}\mathrm{KL}(q_i \| \Omega_{i,\mathrm{rock}}[q_{\mathrm{rock}}])$ carries weight proportional to $\epsilon^{-1}$, dominating $i$'s free energy and forcing alignment. The apparent objectivity of macroscopic physics arises from precision dominance: high-precision systems constrain all observers into consensus.
 
 When a human observes the rock, the coupling is mediated by photon agents---electromagnetic quanta that couple strongly to both rock-atoms (scattering) and human-photoreceptors (absorption). The process experienced as ``seeing the rock'' is simply agent-agent information coupling mediated by intermediate agents through free energy minimization.
+
+\section{Covariance Dynamics and Equilibrium Analysis}
+\label{app:covariance}
+
+The covariance gradient of the generalized free energy has contributions from self-consistency, belief alignment, and prior alignment:
+\begin{equation}
+\nabla_{\Sigma_i} \mathcal{F} = \frac{1}{2}\left[-\Sigma_i^{-1} + \Sigma_{p,i}^{-1}\right] + \frac{1}{2}\sum_j \beta_{ij}\left[-\Sigma_i^{-1} + (\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1}\right] + \frac{1}{2}\Lambda_{o_i}
+\end{equation}
+
+At equilibrium $\nabla_{\Sigma_i} \mathcal{F} = 0$, which gives:
+\begin{equation}
+\Sigma_i^{-1}\left(1 + \sum_j \beta_{ij}\right) = \Sigma_{p,i}^{-1} + \sum_j \beta_{ij}(\Omega_{ij}\Sigma_j\Omega_{ij}^T)^{-1} + \Lambda_{o_i}
+\end{equation}
+
+In the homogeneous limit where all agents have identical covariances $\Sigma_i = \Sigma^*$ and trivial transport $\Omega_{ij} = I$:
+\begin{equation}
+(\Sigma^*)^{-1}(1 + N_{\text{neighbors}}) = \Sigma_p^{-1} + N_{\text{neighbors}}(\Sigma^*)^{-1} + \Lambda_o
+\end{equation}
+which simplifies to $(\Sigma^*)^{-1} = \Sigma_p^{-1} + \Lambda_o$: the equilibrium precision is the sum of prior and observation precisions, independent of social coupling. Social alignment affects the rate of convergence but not the equilibrium.
+
+In the alignment-dominated regime ($\beta_{ij} \to 1$), the equilibrium covariance approaches $\Sigma^* \to \Sigma_p$ when observations are weak ($\Lambda_o \to 0$): agents converge to their prior uncertainty. This represents the ``echo chamber'' limit where social pressure overwhelms observational evidence.
+
+\section{Conditional Uniqueness of the Forward KL Divergence}
+\label{app:forward_kl}
+
+We establish that the forward KL divergence $\mathrm{KL}(q \| p)$ is the unique divergence (up to monotone transformation) satisfying three conditions: (1) variational duality with the log-partition function, (2) geometric-mean consistency for Gaussian families, and (3) compatibility with the Fisher-Rao metric as the Hessian.
+
+\subsection*{The Coupled Variational Problem}
+
+Consider agent $i$ minimizing $\mathcal{F}_i[q_i] = D(q_i, p_i) + \sum_j \beta_{ij} D(q_i, \Omega_{ij}[q_j])$ for some divergence $D$, where $D$ must be: non-negative with $D(q, p) \geq 0$ and $D(q, p) = 0 \iff q = p$; decomposable as $D(q, p) = f(\langle \log q/p \rangle_q)$ for some convex $f$; and compatible with exponential families via Legendre duality.
+
+\subsection*{Forward KL and the Geometric-Mean Solution}
+
+For $D = \mathrm{KL}(q \| \cdot)$ (forward direction), setting $\delta \mathcal{F}_i / \delta q_i = 0$:
+\begin{equation}
+\log q_i^*(x) = \frac{1}{1 + \sum_j \beta_{ij}}\left[\log p_i(x) + \sum_j \beta_{ij} \log \Omega_{ij}[q_j](x)\right] + \text{const}
+\end{equation}
+
+This is the \emph{geometric mean} of the prior and transported neighbor beliefs with weights $(1, \beta_{i1}, \beta_{i2}, \ldots)/(1 + \sum_j \beta_{ij})$. The geometric mean is the natural averaging operation in exponential families because $\exp[\alpha \log p + (1-\alpha)\log q] \propto p^\alpha q^{1-\alpha}$, preserving the exponential family structure.
+
+\subsection*{Reverse and Symmetric Alternatives}
+
+For $D = \mathrm{KL}(\cdot \| q)$ (reverse direction), the optimal $q_i^*$ satisfies $q_i^*(x) \propto p_i(x)^{w_0} \prod_j [\Omega_{ij}[q_j](x)]^{w_j}$ only in the limit of zero-forcing behavior, which produces mode-seeking dynamics rather than mean-seeking. For the Jensen-Shannon divergence $D = \mathrm{JS}$, the optimal solution involves harmonic means rather than geometric means, breaking the natural exponential family structure.
+
+\subsection*{Conditional Uniqueness Theorem}
+
+\begin{theorem}[Conditional Uniqueness]
+Among statistical divergences $D(q, p)$ that are: (i) non-negative with equality iff $q = p$, (ii) generate the Fisher-Rao metric through their Hessian, and (iii) produce geometric-mean optimal solutions in the coupled variational problem, the forward KL divergence $\mathrm{KL}(q \| p)$ is the unique choice (up to positive scaling).
+\end{theorem}
+
+This result justifies the choice of forward KL in the free energy functional as the unique information-geometric coupling consistent with Bayesian updating and geometric-mean consensus. The use of forward rather than reverse KL is not arbitrary but geometrically necessary.
+
+\subsection*{Connection to the Gauge-Covariant Free Energy}
+
+In our multi-agent setting with gauge transport, the coupled variational problem becomes $\mathcal{F}_i[q_i] = \mathrm{KL}(q_i \| p_i) + \sum_j \beta_{ij} \mathrm{KL}(q_i \| \Omega_{ij}[q_j])$. The optimal belief is:
+\begin{equation}
+q_i^*(x) \propto p_i(x)^{w_0} \prod_j \left[\Omega_{ij}[q_j](x)\right]^{w_j}
+\end{equation}
+where $w_0 = (1 + \sum_j \beta_{ij})^{-1}$ and $w_j = \beta_{ij}(1 + \sum_j \beta_{ij})^{-1}$. For Gaussians, this geometric mean is itself Gaussian with precision $\Lambda_i^* = \bar{\Lambda}_{p_i} + \sum_j \beta_{ij}\tilde{\Lambda}_{q_j}$---precisely the diagonal mass matrix (Eq.~\ref{eq:mass_diagonal}) without the observation and recoil terms. The mass formula thus has a dual interpretation: it is both the Hessian of free energy (kinetic interpretation) and the precision of the optimal belief (equilibrium interpretation).
+
+\section{Detailed KL Expansion for Multivariate Gaussians with Gauge Transport}
+\label{app:detailed_kl}
+
+For transported Gaussians with $\tilde{q}_k = \Omega_{ik}[q_k] = \mathcal{N}(\tilde{\mu}_k, \tilde{\Sigma}_k)$ where $\tilde{\mu}_k = \Omega_{ik}\mu_k$ and $\tilde{\Sigma}_k = \Omega_{ik}\Sigma_k\Omega_{ik}^T$:
+
+\begin{align}
+\mathrm{KL}(q_i \| \tilde{q}_k) &= \frac{1}{2}\Big[\mathrm{tr}(\tilde{\Lambda}_{q_k}\Sigma_i) + (\mu_i - \tilde{\mu}_k)^T\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k) - K + \log\frac{|\tilde{\Sigma}_{q_k}|}{|\Sigma_i|}\Big]
+\end{align}
+
+The trace term $\frac{1}{2}\mathrm{tr}(\tilde{\Lambda}_{q_k}\Sigma_i)$ measures covariance mismatch. The quadratic term $\frac{1}{2}(\mu_i - \tilde{\mu}_k)^T\tilde{\Lambda}_{q_k}(\mu_i - \tilde{\mu}_k)$ measures mean displacement weighted by transported precision. The log-determinant ratio $\frac{1}{2}\log|\tilde{\Sigma}_{q_k}|/|\Sigma_i|$ measures relative entropy of the covariance structures.
+
+\textbf{Taylor expansion near consensus:} When $\mu_i \approx \tilde{\mu}_k$ and $\Sigma_i \approx \tilde{\Sigma}_k$, setting $\delta\mu = \mu_i - \tilde{\mu}_k$ and $\delta\Sigma = \Sigma_i - \tilde{\Sigma}_k$:
+\begin{equation}
+\mathrm{KL}(q_i \| \tilde{q}_k) \approx \frac{1}{2}\delta\mu^T\tilde{\Lambda}_{q_k}\delta\mu + \frac{1}{4}\mathrm{tr}[(\tilde{\Lambda}_{q_k}\delta\Sigma)^2] + O(\delta^3)
+\end{equation}
+
+The first term is quadratic in mean displacement (contributing to the mean-sector mass), and the second term is quadratic in covariance displacement (contributing to the covariance-sector mass). Higher-order terms generate anharmonic corrections to the mass matrix.
+
+\textbf{Gauge covariance of the expansion:} Under $\phi_i \to \phi_i + \xi$, the transported quantities transform as $\tilde{\mu}_k \to \tilde{\mu}_k$ (gauge-invariant) and $\tilde{\Lambda}_{q_k} \to \tilde{\Lambda}_{q_k}$ (gauge-invariant), so the entire KL expansion is gauge-invariant term by term.
+
+\section{Gauge Structure and the Emergent Metric}
+\label{app:gauge_metric}
+
+The relationship between gauge structure and emergent geometry can be made more precise. Consider the total induced metric including both belief and gauge contributions:
+\begin{equation}
+\hat{G}_{i,\mu\nu}(c) = G^{(q)}_{i,\mu\nu}(c) + \lambda_\phi \mathrm{tr}[A^{(i)}_\mu(c) A^{(i)}_\nu(c)]
+\end{equation}
+where $A^{(i)}_\mu = U_i^{-1}\partial_\mu U_i$ is the gauge connection and $\lambda_\phi$ is a coupling constant. The second term contributes ``gauge field energy density'' to the metric, analogous to how the electromagnetic field contributes to the stress-energy tensor in general relativity.
+
+When $F^{(i)}_{\mu\nu} \neq 0$, the gauge field carries non-trivial curvature that affects the emergent geometry. The Yang-Mills-like energy density $\mathrm{tr}[F_{\mu\nu}F^{\mu\nu}]$ provides an additional contribution to the effective metric through:
+\begin{equation}
+\delta G_{\mu\nu} \propto \mathrm{tr}[F_{\mu\alpha}F_\nu^{\ \alpha}] - \frac{1}{4}g_{\mu\nu}\mathrm{tr}[F_{\alpha\beta}F^{\alpha\beta}]
+\end{equation}
+
+This has the form of a stress-energy tensor for the gauge field, suggesting that gauge field dynamics contribute to emergent geometry in a manner structurally parallel to how matter fields contribute to spacetime curvature in general relativity. Whether this parallel can be made quantitative remains an open question.
+
+\section{Mass Evolution from Prior Alignment}
+\label{app:mass_evolution}
+
+As agents align priors through the slow dynamics $\partial p_i/\partial \tau = -\eta_p \tilde{\nabla}_{p_i}\mathcal{F}$, the prior precision $\bar{\Lambda}_{p_i}$ evolves, and with it the bare mass component. The mass evolution equation is:
+\begin{equation}
+\frac{d M_i^{\text{bare}}}{d\tau} = \frac{d \bar{\Lambda}_{p_i}}{d\tau} = -\eta_p \tilde{\nabla}_{\bar{\Sigma}_i}\mathcal{F}
+\end{equation}
+
+For the prior alignment term $\sum_j \gamma_{ij}\mathrm{KL}(p_i \| \Omega_{ij}[p_j])$, the gradient drives $\bar{\Sigma}_i$ toward the precision-weighted average of transported neighbor priors. In the homogeneous limit where all priors converge to $\bar{\Sigma}^*$:
+\begin{equation}
+\bar{\Lambda}^*_p = \frac{N_{\text{neighbors}} \cdot \bar{\Lambda}_{\text{avg}}}{1 + N_{\text{neighbors}}}
+\end{equation}
+
+This shows that social prior alignment increases collective precision, thereby increasing collective mass. More connected agents develop higher precision (sharper priors) and consequently greater inertial resistance to belief change. This provides a mathematical mechanism for the well-known sociological phenomenon of institutional inertia: established institutions with many aligned members develop enormous ``epistemic mass'' that resists change.
 
 \section{Mathematical Details: SO(3) Generators and Transport}
 \label{app:so3}
