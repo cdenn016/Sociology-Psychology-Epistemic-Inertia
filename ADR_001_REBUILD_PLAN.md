@@ -53,11 +53,11 @@ This is NOT a ground-up rewrite. It's a targeted refactor that preserves ~60% of
 | Module | Status | What's needed |
 |--------|--------|---------------|
 | `torch_core/distributions.py` | ✅ Full, tested | Connect to new agent layer |
-| `torch_core/transport.py` | ✅ Full, tested | Extend to GL(d), add curvature |
+| `torch_core/transport.py` | ⚠️ Refactor | Simplify: agents now carry `Omega ∈ GL(K)` directly, not `phi ∈ gl(K)`. Transport `Omega_{ij} = Omega_i Omega_j^{-1}` is batched matmul — no `rodrigues()` or `matrix_exp_so()` needed in the hot path. Keep `push_mean()`, `push_covariance()`, `kl_transported()` as-is. |
 | `torch_core/fisher.py` | ✅ Full, tested | Add pullback metric port |
-| `torch_core/free_energy.py` | ⚠️ Has O(N²) loops | Vectorize pairwise KL |
+| `torch_core/free_energy.py` | ⚠️ Has O(N²) loops | Vectorize pairwise KL using batched `Omega_{ij}` |
 | `torch_core/mass_matrix.py` | ⚠️ Has O(N²) loops | Vectorize, fix beta accumulation bug |
-| `torch_core/dynamics.py` | ✅ Full, autograd | Extend for meta-agent dynamics |
+| `torch_core/dynamics.py` | ✅ Full, autograd | Extend for meta-agent dynamics; update `PhaseState` to carry `Omega` not `phi` |
 
 ### REWRITE (structurally incompatible with GPU)
 | Module | Problem | Replacement |
@@ -81,8 +81,8 @@ This is NOT a ground-up rewrite. It's a targeted refactor that preserves ~60% of
 | Module | Reason |
 |--------|--------|
 | `gradients/free_energy_clean.py` | Replaced by `torch_core/free_energy.py` |
-| `gradients/gauge_fields.py` | Retraction logic moves to manifold optimizer |
-| `gradients/retraction.py` | Same |
+| `gradients/gauge_fields.py` | Retraction logic obsolete — GL(K) is open, no retraction needed |
+| `gradients/retraction.py` | Same — `Omega ∈ GL(K)` eliminates manifold projection |
 | `math_utils/transport.py` | Replaced by `torch_core/transport.py` |
 | `math_utils/fisher_metric.py` | Replaced by `torch_core/fisher.py` |
 | `math_utils/sigma.py` | Initialization moves to `BatchedAgentState` factory |
@@ -115,7 +115,7 @@ This is NOT a ground-up rewrite. It's a targeted refactor that preserves ~60% of
 │  │                   torch_core (GPU)                         │ │
 │  │                                                            │ │
 │  │  distributions.py  — Batched KL, entropy, sanitization     │ │
-│  │  transport.py      — Rodrigues, GL(d) exp, push/pull       │ │
+│  │  transport.py      — GL(K) transport Ω_ij = Ω_i Ω_j⁻¹    │ │
 │  │  free_energy.py    — Vectorized F = KL + β·KL + obs       │ │
 │  │  mass_matrix.py    — Batched 4-term M_i formula            │ │
 │  │  dynamics.py       — Hamiltonian + damped dynamics          │ │
@@ -142,37 +142,44 @@ class BatchedAgentState:
     """All N agents as batched tensors on a single device."""
     mu: Tensor          # (N, K)         beliefs (means)
     sigma: Tensor       # (N, K, K)      beliefs (covariances)
+    Omega: Tensor       # (N, K, K)      gauge frames, Omega_i ∈ GL(K)
     mu_p: Tensor        # (N, K)         priors (means)
     sigma_p: Tensor     # (N, K, K)      priors (covariances)
-    phi: Tensor         # (N, d_gauge)   gauge fields (Lie algebra elements)
     observations: Tensor # (N, K)        current observations
     obs_precision: Tensor # (N, K, K)    observation noise precision
     device: torch.device
-
-    # Derived (cached, invalidated on mutation)
-    _lambda_q: Tensor | None = None   # (N, K, K)  belief precision
-    _lambda_p: Tensor | None = None   # (N, K, K)  prior precision
-    _omega: Tensor | None = None      # (N, N, K, K) transport operators
-    _beta: Tensor | None = None       # (N, N)     attention weights
-    _kl_matrix: Tensor | None = None  # (N, N)     pairwise KL
 
     @staticmethod
     def create(N, K, device='cuda', **init_kwargs) -> 'BatchedAgentState':
         ...
 ```
 
+#### Gauge Frame Parameterization: `Omega ∈ GL(K)` (not `phi ∈ gl(K)`)
+
+Each agent carries a **frame matrix** `Omega_i ∈ GL(K)` directly, rather than a Lie algebra element `phi_i ∈ gl(K)` with `Omega_i = exp(phi_i)`. This is a deliberate design choice:
+
+- **Transport is trivial**: `Omega_{ij} = Omega_i @ Omega_j^{-1}` — one matmul + one inverse, both trivially batchable. No matrix exponential in the forward pass.
+- **GL(K) is open in R^{K×K}**: The constraint `det(Omega) ≠ 0` is generically satisfied. Gradient steps from a non-singular matrix stay non-singular for reasonable learning rates. No retraction needed.
+- **Richer than SO(K)**: GL(K) admits scaling and shearing, not just rotations. An agent's frame can encode anisotropic rescaling of the belief space, which is physically meaningful (e.g., one agent weights certain belief dimensions more than others).
+- **Previous approach**: The old codebase parameterized `GL+(K)` via `Omega_i = exp(phi_i · G)` where `phi ∈ gl(K)` and `G` are Lie algebra generators. This required SO(K) generators, Rodrigues' formula (K=3), or `torch.linalg.matrix_exp` (general K). All of that complexity is eliminated.
+
+**Covariance transport** remains `Sigma' = Omega @ Sigma @ Omega^T`, which preserves SPD for any invertible `Omega`. For non-orthogonal frames, `Omega^T ≠ Omega^{-1}`, so this is a congruence transform, not a similarity transform — mathematically correct for changing basis of a quadratic form.
+
+**Initialization**: `Omega_i = I + epsilon * randn(K, K)` with `epsilon` small enough to stay in `GL(K)`. Or initialize as random orthogonal matrices via QR decomposition if SO(K) initialization is desired.
+
 ### Key Design Principles
 
 1. **Agents are indices, not objects.** Agent $i$ is `state.mu[i]`, not `agents[i].mu`. All operations are batched over the agent dimension.
 
-2. **Autograd replaces hand-coded gradients.** The free energy `F(state)` is a differentiable scalar. Forces come from `torch.autograd.grad(F, [state.mu, state.sigma, state.phi])`. This eliminates `gradient_engine.py`, `gradient_terms.py`, and `softmax_grads.py` entirely.
+2. **Autograd replaces hand-coded gradients.** The free energy `F(state)` is a differentiable scalar. Forces come from `torch.autograd.grad(F, [state.mu, state.sigma, state.Omega])`. This eliminates `gradient_engine.py`, `gradient_terms.py`, and `softmax_grads.py` entirely.
 
 3. **Pairwise operations are matmul, not loops.** The O(N²) KL matrix becomes:
    ```python
-   # All pairwise transports: (N, N, K, K)
-   omega = compute_all_transports(state.phi)
+   # All pairwise transports: (N, N, K, K) — batched matmul, no exp needed
+   Omega_inv = torch.linalg.inv(state.Omega)              # (N, K, K)
+   Omega_ij = state.Omega[:, None] @ Omega_inv[None, :]   # (N, N, K, K)
    # All pairwise KL: (N, N) — single batched call
-   kl_matrix = batched_pairwise_kl(state.mu, state.sigma, omega)
+   kl_matrix = batched_pairwise_kl(state.mu, state.sigma, Omega_ij)
    # Attention: (N, N)
    beta = torch.softmax(-kl_matrix / tau, dim=-1)
    ```
@@ -191,7 +198,7 @@ class BatchedAgentState:
 - [ ] Fix `multi_agent_mass_matrix.py:549` — incoming beta accumulation (overwrite → sum)
 - [ ] Fix `emergence.py:428` — shape broadcasting in `update_prior_from_global_state()`
 - [ ] Fix `lie_algebra.py:341` — replace SO(1,3) exp placeholder with `scipy.linalg.expm`
-- [ ] Verify `gradient_terms.py:320` — chain rule for transport gradient (Ω vs Ω^T)
+- [ ] Verify `gradient_terms.py:320` — chain rule for transport gradient (Ω vs Ω^T) — note: this uses the old `phi` parameterization; verify math still holds for reference, but the new engine bypasses this via autograd on `Omega` directly
 - [ ] Add `agent.update_beliefs()`, `agent.update_priors()`, `agent.update_gauge()` stubs or fix caller
 - [ ] Run existing 23 tests, ensure all pass
 - [ ] Add 5 regression tests for the fixed bugs
@@ -204,19 +211,31 @@ class BatchedAgentState:
 
 **Goal:** Eliminate O(N²) Python loops in `free_energy.py`, `mass_matrix.py`, and softmax attention.
 
+**Key simplification:** With agents carrying `Omega_i ∈ GL(K)` directly, the pairwise transport computation becomes trivial:
+```python
+# All N² transports in one batched call — no matrix exp needed
+Omega_inv = torch.linalg.inv(Omega)                  # (N, K, K)
+Omega_ij = Omega[:, None, :, :] @ Omega_inv[None, :, :, :]  # (N, N, K, K)
+```
+This eliminates the need for batched Rodrigues or `matrix_exp_so()` entirely. The bottleneck shifts to batched KL computation (log-det + trace on `(N, N, K, K)` tensors), which is standard batched linear algebra.
+
 **Deliverables:**
 - [ ] `torch_core/attention.py` [NEW] — Mixture-of-sources softmax attention
-  - `compute_all_transports(phi)` → `(N, N, K, K)` batched
-  - `pairwise_kl_matrix(mu, sigma, omega)` → `(N, N)` batched
+  - `compute_all_transports(Omega)` → `(N, N, K, K)` — batched matmul + inverse
+  - `pairwise_kl_matrix(mu, sigma, Omega_ij)` → `(N, N)` — batched KL
   - `softmax_attention(kl_matrix, tau, pi)` → `(N, N)` with prior support
   - Causal masking via `pi_j = 0` for future agents
+- [ ] `torch_core/transport.py` — Refactor for GL(K) frames
+  - Keep `push_mean()`, `push_covariance()`, `kl_transported()` (already take `Omega` as input)
+  - Add `compute_all_transports(Omega)` → `(N, N, K, K)` batched
+  - Deprecate `rodrigues()`, `matrix_exp_so()`, `compute_transport(phi_i, phi_j, generators)` — move to `torch_core/lie.py` utility module for reference/testing
 - [ ] `torch_core/free_energy.py` — Replace loops with einsum/batched ops
   - `free_energy_alignment(state, beta)` — fully vectorized
   - `free_energy_total(state)` — single forward pass, returns scalar
 - [ ] `torch_core/mass_matrix.py` — Vectorized 4-term formula
   - `mass_diagonal(state, beta)` → `(N, K, K)` — all agents simultaneously
   - `mass_full(state, beta)` → `(N*K, N*K)` — full block matrix
-- [ ] Tests: Parity with NumPy reference for N=2,4,8 agents, K=3,5
+- [ ] Tests: Parity with loop-based reference for N=2,4,8 agents, K=3,5
 
 **Performance target:** N=100, K=5 on GPU in <100ms per step (currently impossible).
 
@@ -231,8 +250,9 @@ class BatchedAgentState:
 **Deliverables:**
 - [ ] `engine/state.py` — `BatchedAgentState` dataclass with factory methods
   - `create(N, K, device)`, `from_numpy(agents)`, `to_numpy()`
-  - Cache invalidation for derived quantities
+  - `Omega` initialized as `I + eps*randn` or via QR for random orthogonal start
   - SPD validation on sigma mutations
+  - GL(K) validation on Omega (det ≠ 0 check, condition number monitoring)
 - [ ] `engine/system.py` — `TensorSystem`
   - `free_energy(state) → scalar` (differentiable)
   - `step_gradient(state, lr) → state` (natural gradient descent = overdamped limit)
@@ -245,8 +265,9 @@ class BatchedAgentState:
 - [ ] Autograd replaces all hand-coded gradients:
   ```python
   F = system.free_energy(state)
-  grad_mu, grad_sigma, grad_phi = torch.autograd.grad(F, [state.mu, state.sigma, state.phi])
+  grad_mu, grad_sigma, grad_Omega = torch.autograd.grad(F, [state.mu, state.sigma, state.Omega])
   ```
+  Note: The gradient `∂F/∂Omega` lives in `gl(K) ≅ R^{K×K}` (tangent space of GL(K) at Omega_i). For gradient descent, update `Omega_i ← Omega_i - lr * grad_Omega_i`. GL(K) is open, so this stays in GL(K) for small enough lr.
 - [ ] Tests: Reproduce all 5 belief_inertia simulation figures (damping, momentum transfer, stopping distance, resonance, perseverance) from `torch_core` engine
 - [ ] Numerical gradient checks: `autograd` vs finite-difference for each VFE component
 
@@ -265,7 +286,7 @@ class BatchedAgentState:
   - Returns cluster assignments and coherence scores
 - [ ] `engine/renormalization.py` — RG coarse-graining
   - `renormalize(state, clusters) → MetaState` — coherence-weighted averaging
-  - Meta-agent beliefs, precisions, gauge frames from constituents
+  - Meta-agent beliefs, precisions, gauge frames (`Omega`) from constituents
   - Recursive: `MetaState` is itself a `BatchedAgentState`
 - [ ] `engine/rg_metrics.py` — RG observables
   - Modularity Q(β) of attention matrix
@@ -298,10 +319,14 @@ class BatchedAgentState:
 
 **Deliverables:**
 - [ ] `torch_core/curvature.py` [NEW] — Gauge holonomy and frustration
-  - `holonomy(omega, loop_indices) → (n_loops, K, K)` — compute F_γ for all triangles
+  - `holonomy(Omega_ij, loop_indices) → (n_loops, K, K)` — compute F_γ for all triangles
   - `frustration_energy(state, triangles)` — residual energy from gauge incompatibility
   - `curvature_norm(holonomy)` — scalar measure of ||F_γ - I||
-  - Flat-connection test: verify F_γ = I when all φ_i equal
+
+  **Design note on flat connections:** When transport is `Omega_{ij} = Omega_i Omega_j^{-1}` (factored through per-agent frames), the connection is flat by construction — holonomy around any loop is `I`. Curvature requires transport operators that **don't factor** into per-agent frames. Two approaches:
+  1. **Data-driven transport**: Fit `Omega_{ij}` to empirical frame differences from data (e.g., different expert calibrations). The residual `F_γ = Omega_{12} Omega_{23} Omega_{31} ≠ I` measures genuine gauge frustration.
+  2. **Perturbative curvature**: Add connection terms `A_{ij}` so that `Omega_{ij}^{full} = A_{ij} · Omega_i Omega_j^{-1}`, where `A_{ij} ∈ GL(K)` encodes local connection curvature. Holonomy becomes `Prod_{cycle} A_{ij}`.
+  - Flat-connection test: verify F_γ = I when `Omega_{ij} = Omega_i Omega_j^{-1}` exactly
 - [ ] `experiments/` — Connect experiment infrastructure to new engine
   - Adapter: load public dataset → `BatchedAgentState`
   - Mass proxy computation from data (reputation → Λ_p, watchers → Σβ_ji, etc.)
@@ -313,7 +338,7 @@ class BatchedAgentState:
   - Holonomy-induced polarization: identical beliefs, misaligned frames
   - Phase diagram: fragmentation in (κ, ||F_γ||) plane
 - [ ] Tests:
-  - Holonomy vanishes for flat gauge
+  - Holonomy vanishes for flat gauge (factored `Omega_{ij} = Omega_i Omega_j^{-1}`)
   - Holonomy is gauge-covariant: F'_γ = g F_γ g^{-1}
   - Frustration energy ≥ 0, equals 0 iff flat
 
@@ -372,6 +397,22 @@ class BatchedAgentState:
 - Hand-coded gradients in `gradient_engine.py` (56KB) are unmaintainable when autograd does it in 3 lines
 - The meta/emergence modules have zero tests and multiple bugs — safer to rewrite cleanly
 
+### Why `Omega ∈ GL(K)` instead of `phi ∈ gl(K)` with `Omega = exp(phi)`?
+
+The old parameterization `Omega_i = exp(phi_i · G)` had several costs:
+- **Computational**: Matrix exponential in every forward pass. For SO(3) we had Rodrigues; for general K, `torch.linalg.matrix_exp` on `(N, K, K)` tensors. This was the single most expensive operation in the pairwise transport computation.
+- **Architectural**: Required choosing and maintaining Lie algebra generators `G_a`. For SO(K) these are well-defined, but the theory naturally lives on GL(K) (frame changes include scaling/shearing, not just rotations).
+- **Constraint**: `exp: gl(K) → GL+(K)` only reaches the identity component. Restricting to `GL+(K)` or `SO(K)` is a modeling choice, not a mathematical necessity.
+
+Storing `Omega_i ∈ GL(K)` directly:
+- **Eliminates matrix exp** from the forward pass entirely
+- **Transport** `Omega_{ij} = Omega_i Omega_j^{-1}` is batched matmul + batched inverse — trivially parallelizable
+- **Autograd** through `Omega` works directly in `R^{K×K}`; no chain rule through `exp` needed
+- **GL(K) is open** in `R^{K×K}`, so gradient descent stays in GL(K) for small learning rates. Monitor `det(Omega_i)` and condition number as health checks.
+- **Initialization flexibility**: Start at `I` (identity frames), random orthogonal (QR), or perturbation `I + εR`
+
+**Trade-off**: We lose the guarantee that `Omega_i ∈ SO(K)` (orthogonal, unit det). This means covariance transport `Sigma' = Omega Sigma Omega^T` is a congruence transform, not a similarity transform. Both preserve SPD. The congruence version also changes the "size" of the covariance (scales eigenvalues), which may be physically meaningful (frame changes that rescale uncertainty).
+
 ### Why not JAX instead of PyTorch?
 - PyTorch has better debugging (eager mode), more ecosystem support, and the existing `torch_core/` is already PyTorch
 - JAX's functional style would require rewriting all state management
@@ -393,13 +434,17 @@ class BatchedAgentState:
 - Scaling to N > 100 agents for realistic social network simulations
 - Debugging via autograd (no more hand-coded gradient errors)
 - Testing via property-based checks on tensor operations
+- Pairwise transport: `Omega_i Omega_j^{-1}` is a single batched matmul — no matrix exp, no generators, no Rodrigues
+- Richer gauge group: GL(K) admits scaling/shearing frames, not just rotations
 
 **What becomes harder:**
 - The χ-weighted spatial integration from `geometry_base.py` doesn't have a direct GPU analog yet — this is deferred to a future phase
 - Agents with heterogeneous state dimensions (different K per agent) require padding or ragged tensors
 - The "it-from-bit" pullback metric requires spatial gradients (`np.gradient`) which need a torch port
+- GL(K) frames can become ill-conditioned — need condition number monitoring and optional regularization (e.g., `loss += lambda * ||Omega^T Omega - I||` to softly encourage orthogonality if desired)
 
 **What we'll need to revisit:**
 - Spatial manifold support (currently 0D/1D/2D) — for now, focus on 0D (point agents) which covers all 8 experiments
 - Stochastic dynamics (Langevin noise) — add in Phase 5 if needed
 - Online learning / streaming data — future work, not needed for current studies
+- Whether SO(K) restriction is needed for specific experiments — can always add soft orthogonality penalty
