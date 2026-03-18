@@ -53,8 +53,8 @@ conditions.
 The framework's deeper structure explains why phenomenological mass/spring 
 models of belief dynamics have proven empirically successful: the Fisher 
 information metric, the unique Riemannian metric on probability spaces, 
-naturally plays the role of an inertial mass tensor. Confident beliefs resist 
-change while uncertain beliefs update readily---not by analogy to physics but 
+naturally suggests an inertial mass tensor. Confident beliefs resist
+change while uncertain beliefs update readily---not by analogy to physics but
 as a consequence of information geometry. We adopt a Hamiltonian ansatz treating 
 precision as epistemic inertia, which reduces to standard Bayesian free energy 
 descent in the overdamped limit while predicting oscillation, overshooting, and 
@@ -77,7 +77,7 @@ Furthermore, beliefs propagate through networks of agents in attention patterns 
 
 As an intuitive example, consider an agent with strong priors about a political position. When presented with contradicting evidence, their belief doesn't immediately flip but resists change, may overshoot when it does shift, and might oscillate before settling. Conversely, an uncertain agent responds quickly to new evidence with minimal resistance. These phenomena, typically attributed to cognitive biases \citep{kahneman2011thinking}, emerge naturally from belief inertia.
 
-This article provides three primary contributions. First, we derive second-order belief dynamics from a variational free energy model, showing that the Fisher information metric provides a natural inertial mass tensor $M = \Lambda_{\text{prior}} + \Lambda_{\text{observation}} + \Lambda_{\text{social}}^{\text{in}} + \Lambda_{\text{social}}^{\text{out}}$ combining prior conviction, sensory data, and social interactions (both incoming influence and outgoing recoil). Via pullback geometry on statistical manifolds \citep{Amari2016,nielsen2020elementary}, we extend the variational free energy to multi-agent systems where social coupling takes the form $D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)$, penalizing disagreement with neighbors after gauge transport into a common reference frame.
+This article provides three primary contributions. First, we propose second-order belief dynamics motivated by the variational free energy, showing that the Hessian of the free energy provides a natural candidate for an inertial mass tensor $M = \Lambda_{\text{prior}} + \Lambda_{\text{observation}} + \Lambda_{\text{social}}^{\text{in}} + \Lambda_{\text{social}}^{\text{out}}$ combining prior conviction, sensory data, and social interactions (both incoming influence and outgoing recoil). Via pullback geometry on statistical manifolds \citep{Amari2016,nielsen2020elementary}, we extend the variational free energy to multi-agent systems where social coupling takes the form $D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)$, penalizing disagreement with neighbors after gauge transport into a common reference frame.
 
 Second, we demonstrate that several foundational models from sociology and opinion dynamics emerge as limiting cases of our unified framework. DeGroot social learning \citep{degroot1974}, Friedkin-Johnsen opinion dynamics \citep{friedkin1990}, bounded confidence models \citep{hegselmann2002opinion,deffuant2000}, echo chamber formation, and Social Impact Theory \citep{latane1981psychology} all arise from appropriate parameter regimes and approximations of the same variational free energy functional. This unification reveals that phenomena previously requiring separate theoretical apparatuses---consensus formation, polarization, and bounded confidence---are manifestations of a single geometric principle operating under different boundary conditions.
 
@@ -136,9 +136,11 @@ The transformed belief can then be compared with agent $i$'s own beliefs via KL 
 D_{ij} = D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)
 \end{equation}
 
-The gauge group $G$ could, in principle, be any Lie group acting on the statistical manifold such as $\mathrm{SO}(d)$ (rotations), $\mathrm{GL}(d)$ (general linear transformations), affine transformations, or more exotic choices. Different groups encode different assumptions about how agents' reference frames can differ. For simplicity, we work with $G = \mathrm{SO}(d)$, which preserves the metric structure such that agents agree on how different two beliefs are, even if they disagree on what the beliefs may mean.
+The natural gauge group for KL-based belief coupling is $G = \mathrm{GL}(d)$, the general linear group of invertible $d \times d$ matrices \citep{Dennis2025}. This is because KL divergence between Gaussians is invariant under any invertible linear transformation of the sufficient statistics: for any $\Omega \in \mathrm{GL}(d)$, we have $D_{\mathrm{KL}}(\Omega \cdot q \| \Omega \cdot p) = D_{\mathrm{KL}}(q \| p)$. The only requirement is invertibility ($\det \Omega \neq 0$), not orthogonality. Since our transport operators are parameterized via the matrix exponential, $\det(\exp(\phi)) = \exp(\mathrm{tr}(\phi)) > 0$, so their determinants are always positive. Important subgroups include $\mathrm{SO}(d)$ (rotations, preserving the metric structure so that agents agree on how different two beliefs are), $\mathrm{SL}(d)$ (volume-preserving transformations), and $\mathrm{O}(d)$ (orthogonal transformations). For the concrete derivations in this paper, we work primarily in the flat gauge limit $\Omega_{ij} = I$ or with $G = \mathrm{SO}(d)$ for illustrative purposes, but the general $\mathrm{GL}(d)$ structure is available for applications (such as language modeling \citep{Dennis2025}) where reference frame transformations are not metric-preserving.
 
-As we show later, the flat gauge ($\Omega_{ij} = I$ for all agent pairs) recovers standard consensus models where all agents share a common reference frame. All derivations in this paper, such as the mass formula, classical model limits, and dynamical predictions, hold in the flat gauge limit. The general gauge structure is mathematical scaffolding that could, generally, accommodate reference frame heterogeneity (e.g., cultural or linguistic translation effects) but is not empirically motivated in the present article. We retain it for full generality while emphasizing that the core results do not depend on non-trivial gauge choices but may be extended in suitable situations (see appendix).
+As we show later, the flat gauge ($\Omega_{ij} = I$ for all agent pairs) recovers standard consensus models where all agents share a common reference frame. All derivations in this paper, such as the mass formula, classical model limits, and dynamical predictions, hold in the flat gauge limit.
+
+We retain the general gauge structure for three reasons. First, gauge equivariance has proven essential in geometric deep learning: gauge equivariant CNNs \citep{cohen2019gauge} and recent gauge-covariant transformers \citep{he2025cask} demonstrate that enforcing covariance under local reference frame changes substantially improves generalization in learned representations. We conjecture that the same principle applies to social and cognitive modeling, where agents genuinely encode information in incompatible frames (e.g., different cultural schemas, disciplinary vocabularies, or linguistic representations). Second, the gauge framework provides the natural language for multi-agent extensions where reference frame heterogeneity becomes non-trivial, such as cross-cultural opinion dynamics or multi-lingual information processing. Third, the gauge covariance of Hamilton's equations (Appendix~\ref{app:gauge}) ensures that all physical predictions are frame-independent, a desirable theoretical property regardless of whether non-flat gauge is empirically invoked. We emphasize that the core results of this paper do not depend on non-trivial gauge choices; the gauge structure is a principled extension whose empirical relevance we anticipate exploring in future work on cross-cultural belief dynamics and language modeling.
 
 \subsection{Multi-Agent Free Energy}
 
@@ -149,7 +151,7 @@ The total variational free energy for a network of agents balances individual be
 &\quad - \sum_i \underbrace{\mathbb{E}_{q_i}[\log p(o_i \mid c_i)]}_{\text{Sensory evidence}}
 \end{align}
 
-where $\beta_{ij}$ represents the attention agent $i$ places in agent $j$'s beliefs and we take $p_i$ to be quasi-static. The attention naturally emerges as
+where $c_i$ denotes the hidden causes (latent state) that agent $i$ infers, with $\mu_i = \mathbb{E}_{q_i}[c_i]$ being the posterior mean belief about these causes. The coefficient $\beta_{ij}$ represents the attention agent $i$ places in agent $j$'s beliefs and we take $p_i$ to be quasi-static. The attention naturally emerges as
 
 \begin{equation}
 \beta_{ij} = \frac{\exp(-D_{\mathrm{KL}}(q_i \| \Omega_{ij} \cdot q_j)/\tau)}{\sum_k \exp(-D_{\mathrm{KL}}(q_i \| \Omega_{ik} \cdot q_k)/\tau)}
@@ -190,7 +192,7 @@ For a trajectory $\mu(t)$ parameterized by some external parameter $t$, the tota
 \tau = \int \sqrt{\dot{\mu}^T \Sigma^{-1} \dot{\mu}} \, dt
 \end{equation}
 
-This is analogous to proper time in special relativity, where different observers (agents) experience time differently depending on their state. Here, the velocity through belief space determines how quickly proper time accumulates, with high-precision agents experiencing faster proper time for identical parametric motion. 
+This is analogous to proper time in special relativity, where different observers (agents) experience time differently depending on their state. Here, the velocity through belief space determines how quickly proper time accumulates, with high-precision agents experiencing faster proper time for identical parametric motion. Crucially, this metric structure motivates the kinetic energy $T = \frac{1}{2}\dot{\mu}^T \mathbf{M} \dot{\mu}$ adopted in the Hamiltonian formulation below, and the belief perseverance decay time $\tau = M/\gamma$ (Section~\ref{sec:overshoot}) can be understood as the proper time required for a belief to relax to equilibrium.
 
 %==============================================================================
 \subsection{Hamiltonian Formulation of Belief Dynamics}
@@ -208,23 +210,23 @@ the mass matrix takes a remarkably interpretable form.
 \subsection{Mass as Fisher Information: The Complete Derivation}
 %------------------------------------------------------------------------------
 
-Our central result enabling Hamiltonian mechanics on belief space is that the effective cognitive inertia (the resistance to belief change) emerges as the total Fisher information from all sources of constraint. We derive this explicitly from the variational free energy functional.
+The central observation motivating our Hamiltonian ansatz is that the Hessian of the variational free energy---which measures the curvature of the free energy landscape and thus the resistance to belief change---takes the form of a total precision matrix combining all sources of constraint. We compute this Hessian explicitly and adopt it as an inertial mass tensor.
 
 \subsubsection{The Variational Free Energy}
 
 The complete variational free energy for a multi-agent system decomposes as
 
 \begin{equation}
-F = \underbrace{\sum_i D_{\mathrm{KL}}(q_i \| p_i)}_{\text{complexity}} - \underbrace{\sum_i \mathbb{E}_{q_i}[\log p(o_i|c_i)]}_{\text{accuracy}} + \underbrace{\sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k)}_{\text{consensus}}
+\mathcal{F} = \underbrace{\sum_i D_{\mathrm{KL}}(q_i \| p_i)}_{\text{complexity}} - \underbrace{\sum_i \mathbb{E}_{q_i}[\log p(o_i|c_i)]}_{\text{accuracy}} + \underbrace{\sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k)}_{\text{consensus}}
 \end{equation}
 
-where $q_i$ is agent $i$'s posterior belief, $p_i$ is agent $i$'s prior, $p(o_i|c_i)$ is the observation likelihood with hidden state $c_i$, $\Omega_{ik}\cdot q_k$ is neighbor $k$'s belief transported into agent $i$'s reference frame, and $\beta_{ik}$ is the attention-weighted coupling strength. Denoting the full state vector $\xi = (\mu_1, \ldots, \mu_N, \Sigma_1, \ldots, \Sigma_N)$, the mass matrix is the Hessian of this free energy:
+where $q_i$ is agent $i$'s posterior belief, $p_i$ is agent $i$'s prior, $p(o_i|c_i)$ is the observation likelihood with hidden state $c_i$, $\Omega_{ik}\cdot q_k$ is neighbor $k$'s belief transported into agent $i$'s reference frame, and $\beta_{ik}$ is the attention-weighted coupling strength. Denoting the full state vector $\xi = (\mu_1, \ldots, \mu_N, \Sigma_1, \ldots, \Sigma_N)$, we define the mass matrix as the Hessian of this free energy:
 
 \begin{equation}
-\mathbf{M} = \frac{\partial^2 F}{\partial\xi\partial\xi^\top}
+\mathbf{M} = \frac{\partial^2 \mathcal{F}}{\partial\xi\partial\xi^\top}
 \end{equation}
 
-This Hessian defines the effective mass matrix $\mathbf{M}$ for belief dynamics. Unlike the intrinsic Fisher-Rao metric (which depends only on the belief geometry), this Hessian mass matrix incorporates contributions from priors, observations, and social coupling. Each term in $F$ contributes independently to the total mass.
+This Hessian defines the effective mass matrix $\mathbf{M}$ for belief dynamics. A key distinction must be noted: this Hessian mass is \emph{not} the intrinsic Fisher-Rao metric $\mathcal{I}(\theta) = \mathrm{Cov}_{q}[(\nabla \log q)(\nabla \log q)^T]$, which depends only on the belief distribution $q_i$. Rather, it is the curvature of the \emph{total free energy landscape}, which incorporates contributions from priors, observations, and social coupling. In the single-agent case with prior $p$ only, the Hessian of $D_{\mathrm{KL}}(q \| p)$ with respect to the parameters of $q$ yields the \emph{reference} distribution's precision $\Lambda_p$, not the Fisher information of $q$ itself. The two coincide only at the critical point $q = p$. We therefore refer to $\mathbf{M}$ as the ``Hessian mass'' to distinguish it from the Fisher-Rao metric, while noting that both reduce to the precision matrix for Gaussians. Each term in $F$ contributes independently to the total mass.
 
 \subsubsection{Contribution 1: Prior Precision}
 
@@ -406,7 +408,7 @@ Another prediction of our Hamiltonian epistemic dynamics is oscillation phenomen
 The damping coefficient $\gamma$ is not a new free parameter but inherits directly from standard variational inference. To see this, note that in the overdamped limit where $M\ddot{\mu} \ll \gamma\dot{\mu}$, the equation of motion $M\ddot{\mu} + \gamma\dot{\mu} + \nabla F = 0$ reduces to $\gamma\dot{\mu} \approx -\nabla F$, yielding $\dot{\mu} = -\gamma^{-1}\nabla F$. This is precisely gradient descent on the free energy, $\dot{q} = -\nabla_q F$, with learning rate $\eta = \gamma^{-1}$. Thus $\gamma$ is simply the inverse learning rate from standard variational inference. The underdamped regime ($\gamma < 2\sqrt{KM}$) corresponds to fast learning where inertial effects become significant, introducing dynamics not present in first-order treatments.
 
 \begin{equation}
-M_i\ddot{\mu}_i + \gamma_i\dot{\mu}_i + \nabla_{\mu_i}F = 0
+M_i\ddot{\mu}_i + \gamma_i\dot{\mu}_i + \nabla_{\mu_i}\mathcal{F} = 0
 \end{equation}
 
 where $\gamma_i > 0$ is a damping coefficient.  This equation, from the physics perspective, is the well-known damped harmonic oscillator.
@@ -510,7 +512,7 @@ When agents interact through the attention free energy ($\beta_{ij}$ term), mome
 The full multi-agent dynamics with damping are
 
 \begin{equation}
-\boxed{M_i\ddot{\mu}_i + \gamma_i\dot{\mu}_i + \nabla_{\mu_i}F = 0}
+\boxed{M_i\ddot{\mu}_i + \gamma_i\dot{\mu}_i + \nabla_{\mu_i}\mathcal{F} = 0}
 \end{equation}
 
 We may expand the gradient as 
@@ -522,7 +524,7 @@ M_i\ddot{\mu}_i = -\gamma_i\dot{\mu}_i - \bar{\Lambda}_{p_i}(\mu_i - \bar{\mu}_i
 Then this can be written as
 
 \begin{equation}
-\boxed{\underbrace{M_i\ddot{\mu}_i}_{\text{Inertia}} = -\underbrace{\gamma_i\dot{\mu}_i}_{\text{Damping}} - \underbrace{\nabla_{\mu_i}F_{\text{prior}}}_{\text{Prior force}} - \underbrace{\nabla_{\mu_i}F_{\text{consensus}}}_{\text{Social force}}}
+\boxed{\underbrace{M_i\ddot{\mu}_i}_{\text{Inertia}} = -\underbrace{\gamma_i\dot{\mu}_i}_{\text{Damping}} - \underbrace{\nabla_{\mu_i}\mathcal{F}_{\text{prior}}}_{\text{Prior force}} - \underbrace{\nabla_{\mu_i}\mathcal{F}_{\text{consensus}}}_{\text{Social force}}}
 \end{equation}
 
 \paragraph{Dynamic attention.} The expansion above assumes fixed attention weights $\beta_{ij}$. When attention is dynamic, the gradient includes an additional term from the product rule:
@@ -532,6 +534,8 @@ Then this can be written as
 \end{equation}
 
 The second term represents attention reallocation: agents are pulled toward neighbors whose attention would increase most upon approach. This amplifies homophily beyond the direct KL force, accelerating polarization when attention is sharply selective (low $\kappa$). Most derivations in this paper assume fixed attention, neglecting this effect. The full product rule becomes significant when modeling adaptive attention such as in active learning, persuasion dynamics, or computational implementations where attention weights are optimized. We reserve these terms to future investigation.
+
+\paragraph{Regime of validity.} When attention weights $\beta_{ij}$ are dynamic (softmax), the mass matrix $M_i$ itself depends on the state $\{\mu_j, \Sigma_j\}$, making the Hamiltonian non-separable. The clean oscillator results derived below---frequency $\omega = \sqrt{K/M}$, decay time $\tau = M/\gamma$, overshoot distance $d \propto \sqrt{M/K}$---are therefore valid only in the regime of small perturbations around equilibrium, where the mass matrix can be treated as approximately constant. For large-amplitude dynamics or rapidly evolving attention, the state-dependent mass introduces additional nonlinear effects (parametric driving, adiabatic mass variation) not captured by the linearized analysis. The computational validation in Section~\ref{sec:computational_validation} confirms that the linearized predictions are quantitatively accurate for the parameter regimes explored.
 
 
 \subsubsection{Epistemic Momentum Transfer}
@@ -711,7 +715,7 @@ The DeGroot update rule \eqref{eq:degroot_classical} emerges from gradient flow 
 Under these conditions, the free energy reduces to:
 
 \begin{equation}
-F[\mu] = \frac{\lambda_\beta}{2\sigma^2} \sum_{i,j} w_{ij} \|\mu_i - \mu_j\|^2
+\mathcal{F}[\mu] = \frac{\lambda_\beta}{2\sigma^2} \sum_{i,j} w_{ij} \|\mu_i - \mu_j\|^2
 \end{equation}
 
 \textbf{Step 2: Compute gradient.}
@@ -727,12 +731,12 @@ The mass matrix is $M_i \approx \sigma^{-2} I$. Gradient flow gives:
 \end{equation}
 
 \textbf{Step 4: Discretize.}
-Forward Euler with $\Delta\tau = 1/\lambda_\beta$:
+Forward Euler with step size $\Delta\tau = 1/\lambda_\beta$:
 \begin{equation}
 \mu_i(\tau + \Delta\tau) = \sum_j w_{ij}\mu_j(\tau)
 \end{equation}
 
-This is exactly the DeGroot update \eqref{eq:degroot_classical}. \qed
+This is exactly the DeGroot update \eqref{eq:degroot_classical}. We note that recovering the \emph{exact} DeGroot form requires this specific discretization step size; a generic step $\Delta\tau$ yields the interpolation $\mu_i(\tau + \Delta\tau) = (1 - \lambda_\beta\Delta\tau)\mu_i(\tau) + \lambda_\beta\Delta\tau\sum_j w_{ij}\mu_j(\tau)$, which reduces to DeGroot when $\lambda_\beta\Delta\tau = 1$. The continuous-time dynamics are the more fundamental object; DeGroot emerges as a particular temporal discretization. \qed
 \end{proof}
 
 \subsubsection{What the Unified Framework Adds}
@@ -781,7 +785,7 @@ Moreover, the stubbornness parameter $\alpha_i$ emerges from prior precision and
 \textbf{Step 1: VFE with self-coupling.}
 Including the prior term:
 \begin{equation}
-F[\mu] = \frac{\alpha}{2\Sigma_p} \sum_i \|\mu_i - \mu_i(0)\|^2 + \frac{\lambda_\beta}{2\sigma^2} \sum_{i,j} w_{ij} \|\mu_i - \mu_j\|^2
+\mathcal{F}[\mu] = \frac{\alpha}{2\Sigma_p} \sum_i \|\mu_i - \mu_i(0)\|^2 + \frac{\lambda_\beta}{2\sigma^2} \sum_{i,j} w_{ij} \|\mu_i - \mu_j\|^2
 \end{equation}
 
 \textbf{Step 2: Equilibrium condition.}
@@ -1200,9 +1204,13 @@ Forecast overshooting & Friction/stickiness & Momentum decay \\
 \end{tabular}
 \end{table}
 
-Standard Bayesian updating and its neural implementations (predictive coding, active inference) correspond to first-order dissipative dynamics \citep{Friston2010, bogacz2017tutorial}. The free energy principle emerges as a limiting case: in the overdamped limit ($\gamma \gg 2\sqrt{KM}$), inertial terms become negligible and dynamics reduce to gradient descent on the free energy landscape. Novel predictions arise when damping is sufficiently weak that second-order terms contribute meaningfully.
+Standard Bayesian updating and its neural implementations (predictive coding, active inference) correspond to first-order dissipative dynamics \citep{Friston2010, bogacz2017tutorial}. The free energy principle emerges as a limiting case: in the overdamped limit ($\gamma \gg 2\sqrt{KM}$), inertial terms become negligible and dynamics reduce to gradient descent on the free energy landscape. Novel predictions arise when damping is sufficiently weak that second-order terms contribute meaningfully. Recent work on multi-agent active inference \citep{flache2017models} and epistemic communities explores social extensions of the free energy principle, but without the gauge-geometric structure or inertial dynamics developed here.
 
-The DeGroot model of social learning \citep{degroot1974} and its extensions assume instantaneous opinion averaging without momentum. Our framework predicts that strongly-held beliefs (high $\Lambda$) should resist social influence and potentially induce oscillatory collective dynamics in networks with strong coupling.  These phenomena are absent from standard consensus models but consistent with observed polarization dynamics.
+The connection between momentum methods in optimization and Hamiltonian mechanics has been established in the machine learning literature \citep{diakonikolas2021momentum}, where heavy-ball and Nesterov acceleration are analyzed as discretizations of continuous-time Hamiltonian systems. Our framework applies this same physical insight to belief dynamics rather than parameter optimization, identifying the Fisher information (precision) as the natural mass rather than treating it as a hyperparameter.
+
+The DeGroot model of social learning \citep{degroot1974} and its extensions assume instantaneous opinion averaging without momentum. Recent work has extended these models with memory effects and higher-order interactions, but the core dynamics remain first-order. Our framework predicts that strongly-held beliefs (high $\Lambda$) should resist social influence and potentially induce oscillatory collective dynamics in networks with strong coupling. These phenomena are absent from standard consensus models but consistent with observed polarization dynamics.
+
+We note that recent Bayesian accounts of confirmation bias \citep{daSilva2023confirmation} explain the phenomenon as a consequence of resource-rational approximations to exact inference. Our geometric account is complementary: where resource-rationality attributes bias to computational limitations, the inertial framework attributes it to the curvature of the free energy landscape. Both perspectives predict that higher confidence produces stronger bias, but through different mechanisms (approximation quality vs. epistemic mass).
 
 \subsection{Hierarchical Extensions}
 
@@ -1218,7 +1226,7 @@ Several simplifying assumptions warrant future relaxation.
 
 \textbf{Quasi-static precision.} We have treated precision $\Lambda$ as slowly-varying relative to the mean $\mu$ for demonstrative purposes. The complete theory couples mean and precision dynamics on $\mathbb{R}^d \times \mathrm{SPD}(d)$, allowing precision itself to oscillate or exhibit inertia.
 
-\textbf{Empirical validation.} Direct observation of underdamped belief oscillation, precision-scaled relaxation, or resonant persuasion remains for future experimental work. The Kaplowitz-Fink results \citep{kaplowitz1983, fink2002} provide suggestive evidence, but replication with controlled experiments utilizing the present framework's predictions would strengthen the empirical case.
+\textbf{Empirical validation.} We emphasize that the present contribution is primarily theoretical: the unification of classical sociological models under a single variational principle and the characterization of epistemic inertia as a geometric phenomenon. The overdamped derivations (Section~\ref{sec:classical_limits}) stand independently of the Hamiltonian ansatz and constitute the paper's most robust claims. Direct observation of the underdamped predictions---belief oscillation, precision-scaled relaxation, or resonant persuasion---remains for future experimental work. The Kaplowitz-Fink results \citep{kaplowitz1983, fink2002} provide suggestive evidence, and publicly available datasets on opinion dynamics, economic expectation revisions \citep{coibion2015}, and perceptual adaptation provide natural targets for quantitative validation against the framework's specific functional forms. We intend to pursue such validation in subsequent work.
 
 
 
@@ -1261,16 +1269,16 @@ The Hamiltonian formulation of belief dynamics reflects deep geometric structure
 
 \subsubsection{The Principal Bundle}
 
-The geometric setting is a principal $G$-bundle $\pi: P \to \mathcal{C}$ where $\mathcal{C}$ denotes the base manifold encoding agent positions and social network topology, $G = \mathrm{SO}(d)$ is the gauge group corresponding to rotations in belief space, and the fiber $\pi^{-1}(c)$ over each point $c \in \mathcal{C}$ is the space of reference frames.
+The geometric setting is a principal $G$-bundle $\pi: P \to \mathcal{C}$ where $\mathcal{C}$ denotes the base manifold encoding agent positions and social network topology, $G \subseteq \mathrm{GL}(d)$ is the gauge group acting on belief space, and the fiber $\pi^{-1}(c)$ over each point $c \in \mathcal{C}$ is the space of reference frames. The natural choice is $G = \mathrm{GL}(d)$ (the maximal group under which KL divergence is invariant), though metric-preserving subgroups such as $\mathrm{SO}(d)$ are appropriate when agents share a common notion of statistical distance. The results in this appendix hold for any closed subgroup $G \subseteq \mathrm{GL}(d)$.
 
-Each agent $i$ located at $c_i \in \mathcal{C}$ expresses beliefs in a local frame. The \textbf{transport operator} $\Omega_{ik} \in \mathrm{SO}(d)$ relates agent $k$'s frame to agent $i$'s frame.
+Each agent $i$ located at $c_i \in \mathcal{C}$ expresses beliefs in a local frame. The \textbf{transport operator} $\Omega_{ik} \in G$ relates agent $k$'s frame to agent $i$'s frame.
 
 \subsubsection{Gauge Transformations}
 
 A \textbf{gauge transformation} is a smooth assignment of group elements to each agent
 
 \begin{equation}
-g: \{1, \ldots, N\} \to \mathrm{SO}(d), \quad i \mapsto g_i
+g: \{1, \ldots, N\} \to G, \quad i \mapsto g_i
 \end{equation}
 
 Under this transformation, belief parameters transform as:
@@ -1318,7 +1326,7 @@ The mean-sector mass matrix transforms as a tensor under gauge transformations.
 
 Define the block-diagonal gauge matrix:
 \begin{equation}
-\mathbf{G} = \mathrm{diag}(g_1, g_2, \ldots, g_N) \in \mathrm{SO}(d)^N
+\mathbf{G} = \mathrm{diag}(g_1, g_2, \ldots, g_N) \in G^N
 \end{equation}
 
 Then the full mean-sector mass matrix transforms as:
@@ -1391,11 +1399,10 @@ The velocity equation $\dot{\mu} = (\mathbf{M}^\mu)^{-1}\pi^\mu$ transforms as:
 \dot{\mu}' &= ((\mathbf{M}^\mu)')^{-1}(\pi^\mu)' \nonumber\\
 &= (\mathbf{G}\mathbf{M}^\mu\mathbf{G}^T)^{-1}\mathbf{G}\pi^\mu \nonumber\\
 &= \mathbf{G}^{-T}(\mathbf{M}^\mu)^{-1}\mathbf{G}^{-1}\mathbf{G}\pi^\mu \nonumber\\
-&= \mathbf{G}(\mathbf{M}^\mu)^{-1}\pi^\mu \quad \text{(since } \mathbf{G}^{-T} = \mathbf{G} \text{ for SO}(d)\text{)} \nonumber\\
-&= \mathbf{G}\dot{\mu}
+&= \mathbf{G}^{-T}(\mathbf{M}^\mu)^{-1}\pi^\mu = \mathbf{G}^{-T}\dot{\mu}
 \end{align}
 
-This confirms $\dot{\mu}$ transforms as a vector: $\dot{\mu}' = \mathbf{G}\dot{\mu}$.
+For the metric-preserving subgroup $G = \mathrm{SO}(d)$, we have $\mathbf{G}^{-T} = \mathbf{G}$ and velocities transform as vectors: $\dot{\mu}' = \mathbf{G}\dot{\mu}$. For general $G \subseteq \mathrm{GL}(d)$, velocities transform contragrediently: $\dot{\mu}' = \mathbf{G}^{-T}\dot{\mu}$. In either case, the kinetic energy $T = \frac{1}{2}\dot{\mu}^T\mathbf{M}^\mu\dot{\mu}$ is gauge-invariant, since $(\dot{\mu}')^T(\mathbf{M}^\mu)'\dot{\mu}' = \dot{\mu}^T\mathbf{G}^{-1}\mathbf{G}\mathbf{M}^\mu\mathbf{G}^T\mathbf{G}^{-T}\dot{\mu} = \dot{\mu}^T\mathbf{M}^\mu\dot{\mu}$.
 
 \subsubsection{Force Equation}
 
@@ -1419,7 +1426,7 @@ The geodesic force transforms similarly, ensuring full covariance:
 
 The transport operators $\Omega_{ik}$ encode a discrete connection on the agent network. For agents connected along an edge $e = (i,k)$, define:
 \begin{equation}
-A_e = \Omega_{ik} \in \mathrm{SO}(d)
+A_e = \Omega_{ik} \in G
 \end{equation}
 
 Under gauge transformation:
@@ -1433,7 +1440,7 @@ This is the discrete analog of the gauge transformation $A \mapsto gAg^{-1} + g\
 
 The curvature around a closed loop $\gamma = (i \to j \to k \to i)$ is:
 \begin{equation}
-F_\gamma = \Omega_{ij}\Omega_{jk}\Omega_{ki} \in \mathrm{SO}(d)
+F_\gamma = \Omega_{ij}\Omega_{jk}\Omega_{ki} \in G
 \end{equation}
 
 This is gauge-covariant: $F_\gamma' = g_i F_\gamma g_i^{-1}$.
@@ -1444,14 +1451,14 @@ A \textbf{flat connection} satisfies $F_\gamma = I$ for all loops, meaning belie
 
 Consider an infinitesimal variation of the connection:
 \begin{equation}
-\delta\Omega_{ik} = \omega_{ik} \, \Omega_{ik}, \quad \omega_{ik} \in \mathfrak{so}(d)
+\delta\Omega_{ik} = \omega_{ik} \, \Omega_{ik}, \quad \omega_{ik} \in \mathfrak{g}
 \end{equation}
 
 The variation of transported precision is:
 \begin{equation}
 \delta\tilde{\Lambda}_k = \omega_{ik}\tilde{\Lambda}_k + \tilde{\Lambda}_k\omega_{ik}^T = [\omega_{ik}, \tilde{\Lambda}_k]
 \end{equation}
-where this equals the commutator since $\omega_{ik}^T = -\omega_{ik}$ (antisymmetry).
+where $[\omega_{ik}, \tilde{\Lambda}_k] = \omega_{ik}\tilde{\Lambda}_k - \tilde{\Lambda}_k\omega_{ik}$ is the matrix commutator. (For $G = \mathrm{SO}(d)$, the antisymmetry $\omega^T = -\omega$ gives $\delta\tilde{\Lambda}_k = \omega_{ik}\tilde{\Lambda}_k + \tilde{\Lambda}_k\omega_{ik}^T = [\omega_{ik}, \tilde{\Lambda}_k]$.)
 
 %------------------------------------------------------------------------------
 \subsection{Variation of the Mass Matrix Under Connection Changes}
@@ -1471,7 +1478,7 @@ where this equals the commutator since $\omega_{ik}^T = -\omega_{ik}$ (antisymme
 &= -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{q_k} - \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T\omega_{ki}^T
 \end{align}
 
-Using $\omega_{ki}^T = -\omega_{ki}$ (antisymmetry):
+For the $\mathrm{SO}(d)$ case, using $\omega_{ki}^T = -\omega_{ki}$:
 \begin{equation}
 \boxed{\delta[\mathbf{M}^\mu]_{ik} = -\beta_{ik}\omega_{ik}\Omega_{ik}\Lambda_{q_k} + \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T\omega_{ki}}
 \end{equation}
@@ -1510,7 +1517,7 @@ T_{(\mu,\Sigma)}\mathcal{Q} = H_{(\mu,\Sigma)} \oplus V_{(\mu,\Sigma)}
 
 The tangent space at each point splits into a \textbf{vertical space} $V$ consisting of directions along gauge orbits (pure gauge changes) and a \textbf{horizontal space} $H$ consisting of directions orthogonal to gauge orbits (physical changes). The connection determines the horizontal subspace. A vector $v = (\delta\mu, \delta\Sigma)$ is horizontal if:
 \begin{equation}
-\mathcal{G}(v, \xi_X) = 0 \quad \forall X \in \mathfrak{so}(d)
+\mathcal{G}(v, \xi_X) = 0 \quad \forall X \in \mathfrak{g}
 \end{equation}
 where $\xi_X$ is the vector field generated by $X$.
 
@@ -1575,7 +1582,7 @@ Each agent $i$ maintains a belief distribution $q_i = \mathcal{N}(\mu_i, \Sigma_
 \tilde{\Lambda}_{q_k} &= \Omega_{ik}\Lambda_{q_k}\Omega_{ik}^T & &\text{(transported precision)}
 \end{align}
 %
-where $\Omega_{ik} \in \mathrm{SO}(d)$ is the gauge transport operator from agent $k$'s frame to agent $i$'s frame, given by $\Omega_{ik} = e^{\phi_i}e^{-\phi_k}$ with $\phi_i \in \mathfrak{so}(d)$.
+where $\Omega_{ik} \in G \subseteq \mathrm{GL}(d)$ is the gauge transport operator from agent $k$'s frame to agent $i$'s frame, given by $\Omega_{ik} = e^{\phi_i}e^{-\phi_k}$ with $\phi_i \in \mathfrak{g}$, the Lie algebra of $G$.
 
 %-----------------------------------------------------------------------
 \subsection{The Extended Free Energy Functional}
@@ -2064,102 +2071,98 @@ In variational inference, the forward KL $D_{\mathrm{KL}}(q \| p)$ is the natura
 % APPENDIX: DERIVATION OF SOCIAL COUPLING FROM NORMALIZED GENERATIVE MODEL
 %==============================================================================
 
-\section{Derivation of Social Coupling from Normalized Generative Model}
+\section{Derivation of Social Coupling from Mixture-of-Sources Generative Model}
 \label{app:social_coupling}
 
-While it is possible to construct a fully general variational free energy involving hyper-priors, prior-prior agreement, and general bundle morphisms (e.g. $q$ and $p$ could, in principle live in entirely different statistical fibers) we focus only on the quasi-static limit whereby priors evolve much slower than beliefs.
+The social coupling term $\sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k)$ in our free energy is not an ad hoc regularizer but emerges from a mixture-of-sources generative model with gauge-transported components. This derivation, adapted from the $\mathrm{GL}(K)$ attention framework \citep{Dennis2025}, establishes the coupling as posterior inference over which neighboring agent generated the focal agent's latent state.
 
-This construction leads to a generalized variational free energy given by
+\subsection{Mixture-of-Sources Generative Model}
 
+Agent $i$ seeks to update its belief $q_i(c)$ by attending to a set of source agents $j$. Agent $i$'s generative model assumes its latent state $c$ was drawn from one of the neighboring agents, selected by a categorical latent variable $z \in \{1, \ldots, N\}$:
 
 \begin{equation}
-\begin{aligned}
-\mathcal{F}[\{q_i\}, \{s_i\}] &= 
-\underbrace{\sum_i D_{\mathrm{KL}}(q_i \| p_i)}_{\text{(1) Belief prior}} 
-+ \underbrace{\sum_i D_{\mathrm{KL}}(s_i \| r_i)}_{\text{(2) Model prior}} \\
-&\quad+ \underbrace{\sum_{i,j} \beta_{ij} D_{\mathrm{KL}}(q_i \| \Omega_{ij} q_j)}_{\text{(3) Belief alignment}} \\
-&\quad+ \underbrace{\sum_{i,j} \gamma_{ij} D_{\mathrm{KL}}(s_i \| \tilde{\Omega}_{ij} s_j)}_{\text{(4) Model alignment}} \\
-&\quad- \underbrace{\mathbb{E}_q[\log p(o \mid \{k_i\}, \{m_i\})]}_{\text{(5) Observation likelihood}}
-\end{aligned}
-\label{eq:free_energy_decomposed}
+P(c, z) = P(c \mid z)\, P(z),
+\label{eq:mixture_joint}
 \end{equation}
 
-where $r_i$ is an agents hyper-prior, $\tilde\Omega_{ij}$ is a transport operator distinct from $\Omega_{ij}$ on the "model fiber" $\mathcal{B}_q$, $s_i$ is an agent's prior and $\gamma_{ij}$ is the model-fiber analogue to $\beta_{ij}$ ($k,m$ are latents). 
+where $P(z = j) = \pi_j$ is the prior probability of attending to agent $j$ (the attention prior), and $P(c \mid z = j) = \mathcal{N}(c;\, \Omega_{ij}\mu_j,\, \Omega_{ij}\Sigma_j\Omega_{ij}^\top)$ is agent $j$'s belief transported into agent $i$'s gauge frame via the transport operator $\Omega_{ij} \in G$, where $G$ is the gauge group (see below).
 
-In the limit where all agents share gauge-equivalent priors,  which do not vary substantially over time, then we can focus on the fast variables $q$ to consider the variational free energy given in the text.  All that remains is to explicitly show how the social/attention coupling term arises.
+This construction is consistent with the gauge structure developed in the main text. Agent $j$'s belief $q_j(c_j)$ lives in $j$'s local frame, and $\Omega_{ij} \cdot q_j$ is agent $i$'s representation of what agent $j$ believes, as seen from $i$'s reference frame. The categorical variable $z$ endows the model with probabilistic source selection: attention is posterior inference over which neighbor generated agent $i$'s state.
 
-The social coupling term $\sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k)$ in our free energy is not an ad hoc regularizer but emerges naturally from a properly normalized generative model with auxiliary agreement variables. This appendix provides the derivation, establishing the coupling as a consequence of gauge-transported Gaussian consistency constraints.  The generalized variational free energy, as given above, then emerges analogously.
+The component distributions $P(c \mid z{=}j) = \Omega_{ij} \cdot q_j$ depend on the variational posteriors $q_j$ of other agents. This can be understood as an augmented model where the full system has a joint generative model over all agents' latent states, and the pairwise KL terms emerge as variational couplings in the mean-field decomposition of the joint ELBO. At the fixed point of the joint optimization over all $\{q_i\}$ simultaneously, the pairwise objectives are mutually consistent.
 
-\subsection{Auxiliary Agreement Variables}
+\subsection{Variational Posterior and Alignment Free Energy}
 
-To enforce consistency between agents after gauge transport, we introduce an auxiliary agreement variable for each ordered pair $(i,k)$:
+We approximate the true posterior $P(c, z \mid \text{data})$ using mean-field factorization:
+
 \begin{equation}
-z_{ik} \in \mathbb{R}^{d}
+Q(c, z) = q_i(c) \cdot \beta(z),
 \end{equation}
-The variable $z_{ik}$ represents what agent $i$ believes agent $k$'s belief looks like after transporting $k$'s belief into $i$'s gauge frame. These auxiliary variables serve as latent mediators that, when integrated out, yield the effective pairwise coupling between agents.
 
-\subsection{The Product-of-Gaussians Construction}
+where $\beta(z = j) \equiv \beta_{ij} \geq 0$ are variational attention weights satisfying $\sum_j \beta_{ij} = 1$.
 
-Each agreement variable $z_{ik}$ is drawn from a product of two Gaussians that simultaneously constrain it to match both agent $i$'s belief and the gauge-transported belief of agent $k$:
+The alignment free energy is the KL divergence between the variational posterior and the generative model:
+
 \begin{equation}
-p(z_{ik} \mid \mu_i, \mu_k) \propto \mathcal{N}(z_{ik}; \mu_i, \Lambda_{ik}^{-1}) \cdot \mathcal{N}(z_{ik}; \Omega_{ik}\mu_k, \Lambda_{ik}^{-1})
+\mathcal{F}_{\text{align}} = D_{\mathrm{KL}}[Q(c,z) \| P(c,z)] = \sum_j \beta_{ij} \int dc\, q_i(c) \log \frac{q_i(c)\, \beta_{ij}}{P(c \mid z{=}j)\, \pi_j}.
 \end{equation}
-where $\Lambda_{ik} \succ 0$ is the alignment precision matrix and $\Omega_{ik} \in \mathrm{SO}(d)$ is the gauge transport operator from agent $k$'s frame to agent $i$'s frame.
 
-When we integrate out the agreement variable $z_{ik}$, the normalizing constant depends on $(\mu_i, \mu_k)$. Using the standard result for products of Gaussians:
+Decomposing the logarithm yields:
+
 \begin{equation}
-\int \mathcal{N}(z; a, \Sigma) \cdot \mathcal{N}(z; b, \Sigma) \, dz = \mathcal{N}(a; b, 2\Sigma) \propto \exp\left(-\frac{1}{4}(a-b)^\top\Sigma^{-1}(a-b)\right)
+\mathcal{F}_{\text{align}} = \sum_j \beta_{ij} \left[ \underbrace{\int dc\, q_i(c) \log \frac{q_i(c)}{P(c \mid z{=}j)}}_{= \, D_{\mathrm{KL}}[q_i \,\|\, \Omega_{ij} q_j]} + \log \beta_{ij} - \log \pi_j \right].
+\label{eq:mixture_free_energy}
 \end{equation}
 
-This induces an effective coupling between agents. The marginal prior over belief means, after integrating out all agreement variables, takes the form:
+The identification of the integral with $D_{\mathrm{KL}}[q_i \| \Omega_{ij} q_j]$ follows directly from the definition of KL divergence and the generative model $P(c \mid z{=}j) = (\Omega_{ij} q_j)(c)$, with no approximation.
+
+Defining an alignment energy $E_{ij} \equiv D_{\mathrm{KL}}[q_i \| \Omega_{ij} q_j]$:
+
 \begin{equation}
-p(\{\mu_i\}) \propto \left[\prod_i p_i(\mu_i)\right] \cdot \exp\left(-\frac{1}{4}\sum_{i,k}(\mu_i - \Omega_{ik}\mu_k)^\top\Lambda_{ik}(\mu_i - \Omega_{ik}\mu_k)\right)
+\mathcal{F}_{\text{align}} = \sum_j \beta_{ij} \big( E_{ij} + \log \beta_{ij} - \log \pi_j \big).
 \end{equation}
-where $p_i(\mu_i) = \mathcal{N}(\mu_i; \bar{\mu}_i, \bar{\Sigma}_i)$ is agent $i$'s local prior. The quadratic terms in the exponential encode pairwise alignment costs, with the factor of $1/4$ arising directly from the Gaussian product formula. This construction yields tractable quadratic potentials, in contrast to general unnormalized Markov random fields where partition functions are intractable.
 
-\subsection{Variational Free Energy}
+This has the standard ``energy minus entropy'' form $\mathcal{F}_{\text{align}} = \langle E \rangle_\beta - H(\beta) + \text{const}$, where $H(\beta) = -\sum_j \beta_{ij} \log \beta_{ij}$ is the entropy of the attention distribution.
 
-Under a mean-field posterior approximation $q(\{\mu_i\}) = \prod_i q_i(\mu_i)$ with Gaussian factors $q_i = \mathcal{N}(\mu_i; \mu_{q,i}, \Sigma_{q,i})$, the variational free energy is:
+\subsection{Minimization and the Softmax Solution}
+
+Minimizing $\mathcal{F}_{\text{align}}$ with respect to $\beta_{ij}$ subject to the constraint $\sum_j \beta_{ij} = 1$ via Lagrange multipliers yields:
+
 \begin{equation}
-\mathcal{F} = \mathbb{E}_q[\log q] - \mathbb{E}_q[\log p(\{\mu_i\})] - \mathbb{E}_q[\log p(o \mid \{\mu_i\})]
+E_{ik} + \log \beta_{ik} + 1 - \log \pi_k - \lambda = 0.
 \end{equation}
 
-Using the marginal prior from the previous section, we have $-\log p(\{\mu_i\}) = \sum_i [-\log p_i(\mu_i)] + \frac{1}{4}\sum_{i,k}(\mu_i - \Omega_{ik}\mu_k)^\top\Lambda_{ik}(\mu_i - \Omega_{ik}\mu_k) + \text{const}$. Taking expectations:
+Solving and normalizing produces the softmax form weighted by attention priors $\pi_k$:
+
 \begin{equation}
-\mathcal{F} = \sum_i D_{\mathrm{KL}}(q_i \| p_i) + \frac{1}{4}\sum_{i,k} \mathbb{E}_{q_i q_k}\left[(\mu_i - \Omega_{ik}\mu_k)^\top \Lambda_{ik} (\mu_i - \Omega_{ik}\mu_k)\right] - \mathbb{E}_q[\log p(o \mid \{\mu_i\})]
+\beta_{ik} = \frac{\pi_k \exp(-E_{ik})}{\sum_m \pi_m \exp(-E_{im})}.
+\label{eq:mixture_softmax_general}
 \end{equation}
 
-For independent Gaussians, the quadratic expectation evaluates to:
+For a uniform attention prior $\pi_k = 1/N$, the prior factors cancel, yielding:
+
 \begin{equation}
-\mathbb{E}_{q_i q_k}[(\mu_i - \Omega_{ik}\mu_k)^\top \Lambda_{ik} (\mu_i - \Omega_{ik}\mu_k)] = \mathrm{tr}\left[\Lambda_{ik}(\Sigma_{q,i} + \Omega_{ik}\Sigma_{q,k}\Omega_{ik}^\top)\right] + (\mu_{q,i} - \Omega_{ik}\mu_{q,k})^\top \Lambda_{ik} (\mu_{q,i} - \Omega_{ik}\mu_{q,k})
+\boxed{\beta_{ik} = \operatorname{softmax}_k(-E_{ik}) = \operatorname{softmax}_k\!\big(-D_{\mathrm{KL}}[q_i \| \Omega_{ik} q_k]\big).}
+\label{eq:mixture_softmax}
 \end{equation}
 
-\subsection{The Alignment Regime}
+Including a temperature parameter $\tau > 0$ by rescaling $E_{ik} \to E_{ik}/\tau$ recovers the attention weights used throughout this paper.
 
-We choose the coupling precision to be proportional to the transported neighbor's precision:
-\begin{equation}
-\Lambda_{ik} := \tau_{ik} (\Omega_{ik}\Sigma_{q,k}\Omega_{ik}^\top)^{-1}
-\end{equation}
-where $\tau_{ik} > 0$ is a dimensionless coupling strength.
+\subsection{Non-Uniform Priors: Masking and Causal Structure}
 
-In the alignment regime where the coupling drives beliefs toward consistency, we have $\Sigma_{q,i} \approx \Omega_{ik}\Sigma_{q,k}\Omega_{ik}^\top$. Under this condition, the quadratic expectation becomes proportional to the KL divergence:
-\begin{equation}
-\frac{1}{4}\mathbb{E}_{q_i q_k}[(\mu_i - \Omega_{ik}\mu_k)^\top \Lambda_{ik} (\mu_i - \Omega_{ik}\mu_k)] \approx \frac{\tau_{ik}}{2} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k) + \mathrm{const}
-\end{equation}
-where the constant absorbs dimension-dependent terms. Defining the normalized attention weight $\beta_{ik} := \tau_{ik}/2$, we obtain the final form of the social coupling term.
+The general solution \eqref{eq:mixture_softmax_general} with non-uniform priors $\pi_k$ provides a principled mechanism for several architectural features. Setting $\pi_j = 0$ for certain agents implements hard masking (causal structure in temporal networks, preventing influence from future agents). Log-linear priors $\log \pi_j \propto f(i,j)$ implement soft positional or relational biases. This unifies masking, positional encoding, and attention biases as prior structure on the source-selection variable $z$.
 
 \subsection{The Complete Free Energy}
 
-Assembling all terms, the variational free energy takes the form used throughout this paper:
+Combining the alignment free energy (at its $\beta$-optimal point) with the prior anchoring and sensory evidence terms, the total variational free energy takes the form used throughout this paper:
+
 \begin{equation}
 \boxed{
-\mathcal{F}[\{q_i\}] = \sum_i D_{\mathrm{KL}}(q_i \| p_i) + \sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k) - \sum_i \mathbb{E}_{q_i}[\log p(o_i \mid \theta)]
+\mathcal{F}[\{q_i\}] = \sum_i D_{\mathrm{KL}}(q_i \| p_i) + \sum_{i,k} \beta_{ik} D_{\mathrm{KL}}(q_i \| \Omega_{ik}\cdot q_k) - \sum_i \mathbb{E}_{q_i}[\log p(o_i \mid c_i)]
 }
 \end{equation}
 
-This derivation establishes several key points. First, the KL-based social coupling is not an ad hoc choice but emerges from integrating out agreement variables in a normalized generative model. Second, the attention weights $\beta_{ik}$ have a clear interpretation as half the dimensionless coupling strength $\tau_{ik}$. Third, the forward KL direction arises naturally from the construction where agent $i$'s belief is compared against transported neighbor beliefs. Fourth, the gauge transport operators $\Omega_{ik}$ enter through the agreement variable construction, ensuring gauge covariance of the full theory.
-
-The agreement variable construction can be understood intuitively: $z_{ik}$ represents a negotiated belief state that both agents would accept as consistent. The product-of-Gaussians prior penalizes disagreement between agent $i$'s belief and the transported belief of agent $k$. Integrating out this mediator leaves an effective attraction between the beliefs, weighted by how precisely they are required to agree.
+This derivation establishes several key points. First, the KL-based social coupling emerges from posterior inference in a mixture-of-sources generative model, not from ad hoc regularization. Second, the attention weights $\beta_{ik}$ are the variational posterior over source identity, with a clear probabilistic interpretation. Third, the forward KL direction arises naturally: agent $i$'s belief $q_i$ is compared against each transported source belief $\Omega_{ik} q_k$, and the softmax selects the most compatible sources. Fourth, the gauge transport operators $\Omega_{ik}$ enter through the generative model's component distributions, ensuring gauge covariance by construction. Fifth, the derivation holds for any gauge group $G$ acting on the belief space---including $\mathrm{GL}(K)$, $\mathrm{SO}(d)$, or any subgroup---since KL divergence is invariant under invertible linear transformations of the sufficient statistics.
 
 
 %==============================================================================
