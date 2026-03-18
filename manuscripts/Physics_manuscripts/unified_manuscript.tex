@@ -421,7 +421,7 @@ The general mathematical framework is rich but computationally intensive. For th
 
 \textbf{Gaussian fibers:} The fiber is the manifold of $K$-dimensional Gaussian distributions $\mathcal{B} = \{\mathcal{N}(\mu, \Sigma) : \mu \in \mathbb{R}^K, \Sigma \in \mathbb{S}^+_K\}$. Gaussians are maximum entropy distributions for given mean and covariance, providing closed-form KL divergences and well-studied information geometry~\cite{Amari2016}.
 
-\textbf{$\mathrm{SO}(3)$ gauge group:} We choose $G = \mathrm{SO}(3)$, the group of three-dimensional rotations. This is a compact, non-commutative Lie group of dimension three with Lie algebra $\mathfrak{so}(3)$ consisting of antisymmetric matrices. For belief and prior vectors of dimension $d > 3$, the representation $\rho: \mathrm{SO}(3) \to \mathrm{GL}(d)$ is constructed as a direct sum of irreducible representations. Extension to $\mathrm{SO}(N)$ or $\mathrm{SU}(N)$ is straightforward (Section~\ref{sec:gauge_choice}).
+\textbf{$\mathrm{SO}(3)$ gauge group:} We choose $G = \mathrm{SO}(3)$, the group of three-dimensional rotations, as the initial gauge group. This is a compact, non-commutative Lie group of dimension three with Lie algebra $\mathfrak{so}(3)$ consisting of antisymmetric matrices. The natural gauge group for information geometry is the full general linear group $\mathrm{GL}(K)$ (Section~\ref{sec:glk}), of which $\mathrm{SO}(K)$ is a subgroup. We begin with $\mathrm{SO}(3)$ for computational tractability, then extend to $\mathrm{GL}(K)$ in Section~\ref{sec:glk}.
 
 \textbf{Flat base manifold:} $\mathcal{C} = \mathbb{R}^2$ with Euclidean metric $g_{\mathcal{C}} = \delta_{\mu\nu}$. Metrics on $\mathcal{C}$ will be induced by agent beliefs through pullback (Section~\ref{sec:pullback}) rather than assumed a priori.
 
@@ -1134,18 +1134,170 @@ The induced metrics are Riemannian (positive-definite) because they arise from t
 
 \textbf{What a solution requires:} Any resolution must (a) produce indefinite signature from information-geometric principles without ad hoc sign assignments, (b) recover $(-,+,+,+)$ specifically (not arbitrary signatures), and (c) be consistent with the rest of the framework's gauge structure. Without such resolution, claims about emergent spacetime remain mathematical analogy rather than physical explanation.
 
-\subsection{Gauge Group Choice and Extensions}
-\label{sec:gauge_choice}
+\subsection{Extension to the Full General Linear Group $\mathrm{GL}(K)$}
+\label{sec:glk}
 
-Both manuscripts in the original development default to $G = \mathrm{SO}(N)$ without discussing alternatives. The choice has consequences for the mass formula and signature problem.
+\subsubsection{Motivation: Why $\mathrm{GL}(K)$ Is the Natural Gauge Group}
 
-\textbf{$\mathrm{SO}(N)$} (current choice): Real orthogonal rotations of internal frames. Transport preserves real-valued precisions. The mass matrix is real symmetric. Provides physical interpretability through familiar spatial rotations. Cannot produce complex phases needed for quantum structure.
+The restriction to $G = \mathrm{SO}(N)$ in the preceding development was a computational simplification, not a theoretical necessity. From the perspective of information geometry, the natural gauge group is the \emph{full general linear group} $\mathrm{GL}(K)$---the group of all invertible $K \times K$ real matrices. This is because the frame bundle of a statistical manifold is a principal $\mathrm{GL}(K)$-bundle~\cite{Amari2016}, and reparameterizations of statistical models act as $\mathrm{GL}(K)$ transformations on the tangent space. The Fisher-Rao metric is invariant under these reparameterizations (Chentsov's theorem), making $\mathrm{GL}(K)$ the maximal symmetry group of information geometry.
 
-\textbf{$\mathrm{SU}(N)$}: Introduces complex phases through unitary transformations. Transport operators $\Omega_{ij} \in \mathrm{SU}(N)$ act as $\mu \mapsto \Omega_{ij}\mu$ with $\mu \in \mathbb{C}^N$. The mass formula generalizes: $\tilde{\Lambda}_{q_k} = \Omega_{ik}\Lambda_{q_k}\Omega_{ik}^\dagger$ with $\dagger$ replacing transpose. The Hermitian metric $g_{\mu\nu} = \mathrm{Re}\,\mathbb{E}[(\partial_\mu\log q)(\partial_\nu\log q)^*]$ admits indefinite signature through imaginary cross-terms. This connects directly to the Lorentzian signature problem.
+Concretely, when agent $i$ uses parameters $\theta_i$ and agent $j$ uses parameters $\eta_j = f(\theta_j)$ to describe the same family of distributions, the Jacobian $J = \partial\eta/\partial\theta \in \mathrm{GL}(K)$ relates their representations. The Fisher metric transforms as $g_{\theta} = J^T g_{\eta} J$, which is a $\mathrm{GL}(K)$ transformation---not merely an $\mathrm{SO}(K)$ rotation. Restricting to $\mathrm{SO}(K)$ discards the rich structure of scale changes, shearing, and non-orthogonal frame transformations that are natural in information geometry.
 
-\textbf{$\mathrm{U}(1)$}: The electromagnetic gauge group. Agents acquire phases $e^{i\theta_i}$ that multiply beliefs. Attention weights become $\beta_{ij} \propto \exp[-\kappa^{-1}\mathrm{KL}(q_i \| e^{i(\theta_i - \theta_j)}q_j)]$, introducing interference effects absent in $\mathrm{SO}(N)$.
+This insight connects to recent work on structured natural gradient descent via matrix Lie groups, where the variational parameter lives in $\mathrm{GL}(K)$ for dense Gaussian approximations~\cite{Lin2021}, and to Friston's proposal for a neuronal gauge theory where gauge invariance arises from the geometric structure of variational inference itself~\cite{Friston2016gauge}.
 
-The framework's mathematical structure accommodates any compact Lie group $G$ without modification to the variational principle. The choice of $G$ determines which physical phenomena the framework can model. Extension to $\mathrm{SU}(N)$ is the most promising direction for resolving both the signature problem and quantum connections.
+\subsubsection{The $\mathrm{GL}(K)$ Lie Algebra and Exponential Map}
+
+The Lie algebra $\mathfrak{gl}(K) = \{A \in \mathbb{R}^{K \times K}\}$ consists of \emph{all} $K \times K$ real matrices---there is no antisymmetry constraint as in $\mathfrak{so}(K)$. The dimension is $K^2$ (compared to $K(K-1)/2$ for $\mathfrak{so}(K)$), providing a much richer gauge structure. For $K = 3$: $\dim(\mathfrak{gl}(3)) = 9$ versus $\dim(\mathfrak{so}(3)) = 3$.
+
+The Lie algebra decomposes as:
+\begin{equation}
+\mathfrak{gl}(K) = \mathfrak{so}(K) \oplus \mathrm{Sym}(K) = \underbrace{\mathfrak{so}(K)}_{\text{antisymmetric}} \oplus \underbrace{\mathrm{Sym}_0(K)}_{\text{traceless symmetric}} \oplus \underbrace{\mathbb{R} \cdot I}_{\text{scale}}
+\end{equation}
+where $\mathrm{Sym}_0(K)$ denotes traceless symmetric matrices and $\mathbb{R} \cdot I$ represents uniform scaling. This decomposition corresponds to three physically distinct types of gauge transformation:
+
+\begin{itemize}
+\item \textbf{Rotations} ($\mathfrak{so}(K)$): The current framework. Internal frame rotations that preserve distances and angles. These are the gauge transformations already studied.
+
+\item \textbf{Shearing/stretching} ($\mathrm{Sym}_0(K)$): New. Non-isotropic rescalings that distort the internal geometry. These represent agents whose internal coordinate systems are not merely rotated but \emph{deformed} relative to each other---one agent may use a compressed representation along certain directions.
+
+\item \textbf{Scale} ($\mathbb{R} \cdot I$): New. Uniform rescaling of the entire internal space. This corresponds to agents operating at different ``zoom levels'' or precision scales---a crucial degree of freedom for hierarchical systems where meta-agents naturally operate at coarser scales than their constituents.
+\end{itemize}
+
+The exponential map $\exp: \mathfrak{gl}(K) \to \mathrm{GL}(K)$ is the matrix exponential, which is surjective onto $\mathrm{GL}^+(K)$ (the connected component of the identity, i.e., matrices with positive determinant). For $\phi \in \mathfrak{gl}(K)$:
+\begin{equation}
+\exp(\phi) = \sum_{n=0}^{\infty} \frac{\phi^n}{n!} = I + \phi + \frac{\phi^2}{2} + \cdots \in \mathrm{GL}^+(K)
+\end{equation}
+
+\subsubsection{Polar Decomposition of Transport Operators}
+
+Every element $\Omega \in \mathrm{GL}^+(K)$ admits a unique polar decomposition:
+\begin{equation}
+\boxed{\Omega_{ij} = R_{ij} \cdot S_{ij}, \qquad R_{ij} \in \mathrm{SO}(K), \quad S_{ij} \in \mathrm{Sym}^+(K)}
+\end{equation}
+where $R_{ij}$ is an orthogonal rotation and $S_{ij}$ is a positive-definite symmetric matrix. This decomposition separates the transport operator into a \emph{rotational} component (frame reorientation, as in the $\mathrm{SO}(K)$ theory) and a \emph{deformation} component (frame reshaping).
+
+The deformation $S_{ij}$ further decomposes as $S_{ij} = \lambda_{ij} \cdot \hat{S}_{ij}$ where $\lambda_{ij} = (\det S_{ij})^{1/K} > 0$ is the isotropic scale factor and $\hat{S}_{ij} \in \mathrm{SL}(K) \cap \mathrm{Sym}^+(K)$ is the unit-determinant (volume-preserving) deformation.
+
+The physical interpretation is revealing:
+\begin{itemize}
+\item $R_{ij}$: Agent $j$'s internal axes are \emph{rotated} relative to agent $i$'s (the familiar SO(K) gauge transformation)
+\item $\lambda_{ij}$: Agent $j$ operates at a different \emph{scale} than agent $i$ (zoom level mismatch)
+\item $\hat{S}_{ij}$: Agent $j$'s internal space is \emph{anisotropically deformed} relative to agent $i$'s (different directions have different resolutions)
+\end{itemize}
+
+\subsubsection{$\mathrm{GL}(K)$ Action on Gaussian Beliefs}
+
+For Gaussian beliefs $q_j = \mathcal{N}(\mu_j, \Sigma_j)$, the $\mathrm{GL}(K)$ representation acts as:
+\begin{equation}
+\rho(\Omega) \cdot \mathcal{N}(\mu, \Sigma) = \mathcal{N}(\Omega\mu, \Omega\Sigma\Omega^T)
+\end{equation}
+
+Note: this is the same formula as for $\mathrm{SO}(K)$, but now $\Omega \in \mathrm{GL}(K)$ is not orthogonal, so $\Omega^T \neq \Omega^{-1}$. This has profound consequences:
+
+\textbf{Transport of precisions:} The transported precision becomes:
+\begin{equation}
+\tilde{\Lambda}_{q_k} = (\Omega_{ik}\Sigma_k\Omega_{ik}^T)^{-1} = \Omega_{ik}^{-T}\Lambda_{q_k}\Omega_{ik}^{-1}
+\end{equation}
+
+For $\mathrm{SO}(K)$ where $\Omega^{-1} = \Omega^T$, this simplifies to $\tilde{\Lambda}_{q_k} = \Omega_{ik}\Lambda_{q_k}\Omega_{ik}^T$ as before. But for general $\mathrm{GL}(K)$, the transported precision involves the \emph{inverse} of the transport operator rather than its transpose. This asymmetry between how means and precisions transform is a key new feature.
+
+\textbf{Transport of means:} $\tilde{\mu}_k = \Omega_{ik}\mu_k$ (same as before, linear action).
+
+\textbf{KL divergence under transport:} The gauge-covariant KL divergence becomes:
+\begin{align}
+\mathrm{KL}(q_i \| \Omega_{ik}[q_k]) &= \frac{1}{2}\Big[\mathrm{tr}(\Omega_{ik}^{-T}\Lambda_{q_k}\Omega_{ik}^{-1}\Sigma_i) + (\mu_i - \Omega_{ik}\mu_k)^T\Omega_{ik}^{-T}\Lambda_{q_k}\Omega_{ik}^{-1}(\mu_i - \Omega_{ik}\mu_k) \nonumber \\
+&\qquad - K + \log\frac{|\Omega_{ik}\Sigma_k\Omega_{ik}^T|}{|\Sigma_i|}\Big]
+\end{align}
+
+The log-determinant ratio now includes the factor $\log|\det\Omega_{ik}|^2$, which vanishes for $\mathrm{SO}(K)$ (where $|\det\Omega| = 1$) but contributes for general $\mathrm{GL}(K)$. This represents an \emph{information cost of scale mismatch}---agents at different scales pay a free energy penalty proportional to the log-volume ratio of their internal spaces.
+
+\subsubsection{The Mass Formula under $\mathrm{GL}(K)$}
+
+The four-component mass formula (Eq.~\ref{eq:mass_diagonal}) generalizes to:
+\begin{equation}
+\boxed{[M_{\mu\mu}]_{ii} = \bar{\Lambda}_{p_i} + \sum_k \beta_{ik}\Omega_{ik}^{-T}\Lambda_{q_k}\Omega_{ik}^{-1} + \sum_j \beta_{ji}\Lambda_{q_i} + \Lambda_{o_i}}
+\end{equation}
+
+The key change is in the incoming social mass term: $\tilde{\Lambda}_{q_k} = \Omega_{ik}^{-T}\Lambda_{q_k}\Omega_{ik}^{-1}$ rather than $\Omega_{ik}\Lambda_{q_k}\Omega_{ik}^T$. Using the polar decomposition $\Omega_{ik} = R_{ik} S_{ik}$:
+\begin{equation}
+\tilde{\Lambda}_{q_k} = S_{ik}^{-1} R_{ik}^T \Lambda_{q_k} R_{ik} S_{ik}^{-1}
+\end{equation}
+
+The rotation $R_{ik}$ reorients the precision (as before), while the deformation $S_{ik}^{-1}$ \emph{rescales} the precision anisotropically. An agent connected through a transport with large $S_{ik}$ (meaning agent $k$'s representation is ``zoomed in'' relative to $i$) contributes a \emph{reduced} precision to $i$'s mass---the information is ``diluted'' by the scale transformation.
+
+The off-diagonal mass blocks become:
+\begin{equation}
+[M_{\mu\mu}]_{ik} = -\beta_{ik}\Omega_{ik}^{-T}\Lambda_{q_k}\Omega_{ik}^{-1}\Omega_{ik} - \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T = -\beta_{ik}\Omega_{ik}^{-T}\Lambda_{q_k} - \beta_{ki}\Lambda_{q_i}\Omega_{ki}^T
+\end{equation}
+
+Note the asymmetry: the first term uses $\Omega_{ik}^{-T}$ while the second uses $\Omega_{ki}^T$. For $\mathrm{SO}(K)$, these are equal; for $\mathrm{GL}(K)$, they differ, reflecting the non-orthogonality of the transport.
+
+\subsubsection{Connection to Amari's $\alpha$-Connections}
+
+The extension to $\mathrm{GL}(K)$ reveals a deep connection to the dualistic structure of information geometry~\cite{Amari2016}. Amari's $\alpha$-connections $\nabla^{(\alpha)}$ on the statistical manifold are a one-parameter family of affine connections:
+\begin{equation}
+\nabla^{(\alpha)} = \nabla^{(0)} + \frac{\alpha}{2}T
+\end{equation}
+where $\nabla^{(0)}$ is the Levi-Civita connection of the Fisher metric and $T$ is the skewness tensor (Amari-Chentsov tensor). The $\alpha = 1$ connection (exponential connection) and $\alpha = -1$ connection (mixture connection) are dual with respect to the Fisher metric.
+
+In our framework, the $\alpha$-connections can be understood as arising from specific $\mathrm{GL}(K)$ gauge choices. Different values of $\alpha$ correspond to different ``gauge frames'' on the statistical manifold---they represent different ways of parallel-transporting beliefs that privilege either the exponential family structure ($\alpha = 1$) or the mixture family structure ($\alpha = -1$). The Levi-Civita connection ($\alpha = 0$) corresponds to the ``self-dual'' gauge where the connection respects the metric. This provides a gauge-theoretic interpretation of Amari's dualistic structure: the $\alpha$-connections are not arbitrary mathematical constructions but arise naturally from the $\mathrm{GL}(K)$ gauge freedom of the statistical manifold.
+
+\subsubsection{Implications for the Lorentzian Signature Problem}
+
+The extension to $\mathrm{GL}(K)$ offers a new perspective on the Lorentzian signature problem. Unlike $\mathrm{SO}(K)$, the group $\mathrm{GL}(K)$ contains elements with negative eigenvalues in their symmetric part---the deformation $S_{ij}$ in the polar decomposition can approach singularity or, more importantly, the full $\mathrm{GL}(K)$ transport includes elements in $\mathrm{GL}(K) \setminus \mathrm{GL}^+(K)$ (negative determinant) that reverse orientation.
+
+More concretely, consider the induced metric through $\mathrm{GL}(K)$ transport. The pullback metric now includes contributions from the deformation fields:
+\begin{equation}
+\hat{G}_{i,\mu\nu}(c) = G^{(q)}_{i,\mu\nu}(c) + \lambda_\phi \mathrm{tr}[(\Omega_{ij}^{-1}\partial_\mu\Omega_{ij})(\Omega_{ij}^{-1}\partial_\nu\Omega_{ij})]
+\end{equation}
+
+For $\mathrm{SO}(K)$, the second term is automatically positive-definite (the Killing form on $\mathfrak{so}(K)$ is negative-definite, but the trace of squares of antisymmetric matrices is positive). For $\mathrm{GL}(K)$, the Killing form on $\mathfrak{gl}(K)$ has mixed signature:
+\begin{equation}
+\kappa(\phi, \psi) = 2K\,\mathrm{tr}(\phi\psi) - 2\,\mathrm{tr}(\phi)\mathrm{tr}(\psi)
+\end{equation}
+
+The first term $\mathrm{tr}(\phi\psi)$ can be positive or negative depending on whether $\phi$ and $\psi$ are symmetric or antisymmetric. This means the gauge field contribution to the emergent metric can have \emph{indefinite signature}---precisely what is needed for Lorentzian structure. The antisymmetric (rotational) components contribute positive-definite terms, while the symmetric (deformation) components can contribute negative-definite terms.
+
+This does not solve the signature problem---one must still show that precisely one temporal and three spatial dimensions emerge with the correct signature. But it demonstrates that the $\mathrm{GL}(K)$ extension naturally produces the \emph{possibility} of indefinite signature without ad hoc sign assignments, which was impossible within $\mathrm{SO}(K)$.
+
+\subsubsection{$\mathrm{GL}(K)$ Gauge Covariance of the Free Energy}
+
+The free energy functional (Eq.~\ref{eq:free_energy}) remains gauge-covariant under $\mathrm{GL}(K)$ transformations. Under simultaneous transformation $\phi_i \to \phi_i + \xi$ for all $i$ with $\xi: \mathcal{C} \to \mathfrak{gl}(K)$:
+\begin{equation}
+\Omega_{ij} = \exp(\phi_i)\exp(-\phi_j) \to \exp(\phi_i + \xi)\exp(-(\phi_j + \xi)) = \Omega_{ij}
+\end{equation}
+
+This gauge invariance holds for any Lie group, not just compact groups. The key subtlety for $\mathrm{GL}(K)$ (which is non-compact) is that the Haar measure is not finite, so gauge-averaging procedures used for collective geometry (Section~\ref{sec:pullback}) require modification. One approach is to average over the maximal compact subgroup $\mathrm{O}(K) \subset \mathrm{GL}(K)$ instead, which projects onto the rotational component of the gauge freedom while retaining the deformation information.
+
+\subsubsection{Hierarchy of Gauge Group Choices}
+
+The framework now accommodates a hierarchy of gauge group choices with increasing richness:
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Group $G$} & \textbf{$\dim(\mathfrak{g})$} & \textbf{Transport} & \textbf{Signature} & \textbf{Key feature} \\
+\midrule
+$\{e\}$ (trivial) & 0 & $\Omega_{ij} = I$ & + & Standard transformers \\
+$\mathrm{SO}(K)$ & $\frac{K(K-1)}{2}$ & Rotation & + + + & Frame rotations \\
+$\mathrm{GL}^+(K)$ & $K^2$ & Rotation + deformation & $\pm$ & Full reparameterization \\
+$\mathrm{SU}(K)$ & $K^2-1$ & Unitary & $\pm$ (complex) & Quantum phases \\
+$\mathrm{GL}(K,\mathbb{C})$ & $2K^2$ & Complex invertible & $\pm$ & Full quantum + scale \\
+\bottomrule
+\end{tabular}
+\caption{Hierarchy of gauge group choices. Moving down the table increases gauge freedom and the richness of emergent phenomena. The trivial group recovers standard transformers; $\mathrm{SO}(K)$ is the framework as developed; $\mathrm{GL}^+(K)$ is the natural information-geometric extension; $\mathrm{SU}(K)$ introduces quantum structure; $\mathrm{GL}(K,\mathbb{C})$ is the maximal real-dimensional choice.}
+\label{tab:gauge_hierarchy}
+\end{table}
+
+The $\mathrm{GL}^+(K)$ extension is the minimal extension that captures the full reparameterization freedom of information geometry. It contains $\mathrm{SO}(K)$ as a subgroup, so all results derived under $\mathrm{SO}(K)$ carry over as special cases. The additional $K(K+1)/2$ gauge degrees of freedom (scale and shearing) provide new physical structure: scale-dependent mass, anisotropic transport, and the possibility of indefinite signature in the emergent metric.
+
+\subsubsection{Computational Considerations}
+
+The $\mathrm{GL}(K)$ extension increases computational cost. The Lie algebra has $K^2$ generators (versus $K(K-1)/2$ for $\mathrm{SO}(K)$), so gauge frame fields have more components. Matrix exponentials are more expensive for non-antisymmetric matrices (no Rodrigues' formula). However, the polar decomposition $\Omega = RS$ can be computed via SVD, and updates can be structured to exploit the decomposition: rotate with $R$ using the efficient $\mathrm{SO}(K)$ methods, then apply the symmetric deformation $S$.
+
+For the special case of \emph{diagonal} deformations $S = \mathrm{diag}(s_1, \ldots, s_K)$, the additional cost is only $O(K)$ per agent pair (compared to $O(K^3)$ for full $\mathrm{GL}(K)$). This diagonal subgroup $\mathrm{SO}(K) \ltimes (\mathbb{R}^+)^K$ may be a practical intermediate between $\mathrm{SO}(K)$ and full $\mathrm{GL}(K)$, capturing scale freedom in each dimension without the full cost of arbitrary deformations.
 
 %==============================================================================
 \section{Participatory Hierarchy and Transformer Validation}
